@@ -1,5 +1,4 @@
 import Replicate from "replicate";
-const replicate = new Replicate();
 
 export interface FluxKontextInput {
   prompt: string;
@@ -21,6 +20,7 @@ export const fluxKontext = async (input: FluxKontextInput): Promise<FluxKontextO
     safety_tolerance: 2,
   };
 
+  const replicate = new Replicate();
   const mergedInput = { ...defaultInput, ...input };
   const output = await replicate.run("black-forest-labs/flux-kontext-pro", { input: mergedInput });
   return output as FluxKontextOutput;
