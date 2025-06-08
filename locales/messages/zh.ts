@@ -1,5 +1,41 @@
 // locales/zh.ts
 export default {
+  auth: {
+    email: '电子邮箱',
+    emailPlaceholder: 'user@example.com',
+    password: '密码',
+  },
+  login: {
+    title: '登录您的账户',
+    subtitle: '使用您的电子邮箱和密码登录',
+    noAccount: '还没有账号？',
+    signUpLink: '注册',
+    signUpSuffix: '免费使用',
+    errors: {
+      invalidCredentials: '邮箱或密码错误',
+      validationFailed: '请检查您的输入后重试',
+    },
+  },
+  register: {
+    title: '创建账户',
+    submit: '注册',
+    subtitle: '使用您的电子邮箱和密码创建账户',
+    alreadyHaveAccount: '已有账号？',
+    signInLink: '登录',
+    signInSuffix: '已有账号',
+    errors: {
+      userExists: '该邮箱已被注册',
+      createFailed: '创建账户失败',
+      validationFailed: '请检查您的输入后重试',
+      success: '账户创建成功！',
+    },
+  },
+  form: {
+    submit: {
+      loading: '加载中',
+      default: '提交表单',
+    },
+  },
   navigation: {
     home: '首页',
     pricing: '价格套餐',

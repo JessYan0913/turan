@@ -53,7 +53,10 @@ export const register = async (_: RegisterActionState, formData: FormData): Prom
     if (user) {
       return { status: 'user_exists' } as RegisterActionState;
     }
-    await createUser(validatedData.email, validatedData.password);
+    await createUser({
+      email: validatedData.email,
+      password: validatedData.password,
+    });
     await signIn('credentials', {
       email: validatedData.email,
       password: validatedData.password,

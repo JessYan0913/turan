@@ -1,5 +1,41 @@
 // locales/ja.ts
 export default {
+  auth: {
+    email: 'メールアドレス',
+    emailPlaceholder: 'user@example.com',
+    password: 'パスワード',
+  },
+  login: {
+    title: 'ログイン',
+    subtitle: 'メールアドレスとパスワードを使用してログイン',
+    noAccount: 'まだアカウントがありませんか？',
+    signUpLink: 'サインアップ',
+    signUpSuffix: '無料体験',
+    errors: {
+      invalidCredentials: 'メールアドレスまたはパスワードが正しくありません。',
+      validationFailed: '入力内容を確認してから再度お試しください。',
+    },
+  },
+  register: {
+    title: 'アカウント作成',
+    submit: 'サインアップ',
+    subtitle: 'メールアドレスとパスワードを使用してアカウントを作成',
+    alreadyHaveAccount: '既にアカウントがありますか？',
+    signInLink: 'ログイン',
+    signInSuffix: '既にアカウントがあります',
+    errors: {
+      userExists: 'メールアドレスは既に使用されています。',
+      createFailed: 'アカウント作成に失敗しました。',
+      validationFailed: '入力内容を確認してから再度お試しください。',
+      success: 'アカウント作成に成功しました！',
+    },
+  },
+  form: {
+    submit: {
+      loading: '送信中',
+      default: '送信',
+    },
+  },
   navigation: {
     home: 'ホーム',
     pricing: '料金プラン',
