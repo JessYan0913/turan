@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { ArrowRight, ImageIcon, Sparkles, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Prediction } from 'replicate';
+import { type Prediction } from 'replicate';
 import useSWRMutation from 'swr/mutation';
 
 import { useTheme } from '@/components/theme-provider';
@@ -21,8 +21,8 @@ export function ImageEditTab() {
 
   const { trigger: submitEdit, data: prediction } = useSWRMutation<
     Prediction,
-    any,
-    any,
+    Error,
+    string,
     { image: File; prompt: string }
   >('/api/image-edit', async (url: string, { arg }: { arg: { image: File; prompt: string } }) => {
     const formData = new FormData();
@@ -46,7 +46,19 @@ export function ImageEditTab() {
       throw new Error(error.message || 'Failed to process image');
     }
 
-    return await response.json();
+    const data = (await response.json()) as Prediction;
+    const source = new EventSource(`/api/sse/${data.id}`);
+
+    source.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      console.log('💬 Received SSE:', data);
+    };
+
+    source.onerror = (err) => {
+      console.error('SSE error', err);
+      source.close();
+    };
+    return data;
   });
 
   const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
