@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ArrowRight, Camera, Edit3, ImageIcon, Palette, Sparkles, Upload, User, Wand2 } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
+import useSWR from 'swr';
 
 import { ImageSlider } from '@/components/image-slider';
 import { StyleSelector } from '@/components/style-selector';
@@ -13,7 +14,32 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { fetcher } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
+
+export interface StyleOption {
+  id: string;
+  name: string;
+  description: string;
+  preview: string;
+}
+
+export interface StyleOptionsResponse {
+  styleOptions: StyleOption[];
+  avatarStyleOptions: StyleOption[];
+}
+
+export interface ExampleInfo {
+  title: string;
+  before: string;
+  after: string;
+}
+
+export interface ExamplesResponse {
+  editExamples: ExampleInfo[];
+  styleExamples: ExampleInfo[];
+  avatarExamples: ExampleInfo[];
+}
 
 export default function HomePage() {
   const { isDarkMode, themeClasses } = useTheme();
@@ -59,73 +85,25 @@ export default function HomePage() {
     }
   };
 
-  // 风格选项
-  const styleOptions = [
-    {
-      id: 'watercolor',
-      name: '水彩画',
-      description: '柔和的水彩风格',
-      preview: '/placeholder.svg?height=80&width=120&text=水彩',
-    },
-    {
-      id: 'oil-painting',
-      name: '油画',
-      description: '经典油画质感',
-      preview: '/placeholder.svg?height=80&width=120&text=油画',
-    },
-    {
-      id: 'sketch',
-      name: '素描',
-      description: '铅笔素描风格',
-      preview: '/placeholder.svg?height=80&width=120&text=素描',
-    },
-    {
-      id: 'anime',
-      name: '动漫',
-      description: '日式动漫风格',
-      preview: '/placeholder.svg?height=80&width=120&text=动漫',
-    },
-    {
-      id: 'ghibli',
-      name: '吉卜力',
-      description: '宫崎骏动画风格',
-      preview: '/placeholder.svg?height=80&width=120&text=吉卜力',
-    },
-    {
-      id: 'cyberpunk',
-      name: '赛博朋克',
-      description: '未来科幻风格',
-      preview: '/placeholder.svg?height=80&width=120&text=赛博朋克',
-    },
-  ];
+  // Use SWR to fetch and cache the style options
+  const { data: styleData } = useSWR<StyleOptionsResponse>('/api/style-options', fetcher, {
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+    shouldRetryOnError: true,
+    errorRetryCount: 3,
+    errorRetryInterval: 5000,
+  });
 
-  // 头像风格选项
-  const avatarStyleOptions = [
-    {
-      id: 'business',
-      name: '商务正装',
-      description: '专业商务形象',
-      preview: '/placeholder.svg?height=80&width=120&text=商务',
-    },
-    {
-      id: 'casual',
-      name: '休闲风格',
-      description: '轻松自然风格',
-      preview: '/placeholder.svg?height=80&width=120&text=休闲',
-    },
-    {
-      id: 'creative',
-      name: '创意风格',
-      description: '艺术创意形象',
-      preview: '/placeholder.svg?height=80&width=120&text=创意',
-    },
-    {
-      id: 'academic',
-      name: '学术风格',
-      description: '学者专业形象',
-      preview: '/placeholder.svg?height=80&width=120&text=学术',
-    },
-  ];
+  // Destructure the data with default empty arrays
+  const { styleOptions = [], avatarStyleOptions = [] } = styleData || {};
+
+  const { data: examplesData } = useSWR<ExamplesResponse>('api/examples', fetcher, {
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+    shouldRetryOnError: true,
+    errorRetryCount: 3,
+    errorRetryInterval: 5000,
+  });
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
@@ -180,8 +158,8 @@ export default function HomePage() {
                                   height={300}
                                   className="mx-auto max-h-[300px] rounded-lg object-contain shadow-lg"
                                 />
-                                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black bg-opacity-0 transition-all group-hover:bg-opacity-20">
-                                  <p className="rounded-full bg-black bg-opacity-70 px-4 py-2 text-sm text-white opacity-0 transition-opacity group-hover:opacity-100">
+                                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition-all group-hover:bg-black/20">
+                                  <p className="rounded-full bg-black/70 px-4 py-2 text-sm text-white opacity-0 transition-opacity group-hover:opacity-100">
                                     点击更换图片
                                   </p>
                                 </div>
@@ -562,26 +540,22 @@ export default function HomePage() {
                 <h3 className={`text-xl font-semibold ${themeClasses.text}`}>图像编辑</h3>
                 <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
               </div>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {[
-                  { title: '背景替换', desc: '智能识别主体，完美替换背景' },
-                  { title: '物体移除', desc: '无痕移除不需要的物体' },
-                  { title: '颜色调整', desc: '精准调整图片色彩和饱和度' },
-                  { title: '细节增强', desc: 'AI增强图片清晰度和细节' },
-                ].map((example, index) => (
-                  <Card key={index} className={`group border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {examplesData?.editExamples?.map((example, index) => (
+                  <Card key={index} className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
                     <CardContent className="p-0">
-                      <div className="relative h-40 overflow-hidden rounded-t-lg">
-                        <Image
-                          src={`/placeholder.svg?height=160&width=300&text=${example.title}`}
-                          alt={example.title}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      <div className="relative h-40">
+                        <ImageSlider
+                          beforeImage={`/placeholder.svg?height=160&width=400&text=${example.before}`}
+                          afterImage={`/placeholder.svg?height=160&width=400&text=${example.after}`}
+                          beforeLabel="原图"
+                          afterLabel={example.title}
+                          className="h-full rounded-t-lg"
                         />
                       </div>
                       <div className="p-4">
-                        <h4 className={`font-medium ${themeClasses.text} mb-2`}>{example.title}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>{example.desc}</p>
+                        <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
+                        <p className={`text-sm ${themeClasses.textSecondary}`}>拖动滑块查看转换效果</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -597,14 +571,7 @@ export default function HomePage() {
                 <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {[
-                  { style: '水彩画', before: '人像照片', after: '水彩风格' },
-                  { style: '油画', before: '风景照片', after: '油画风格' },
-                  { style: '素描', before: '建筑照片', after: '素描风格' },
-                  { style: '动漫', before: '人物照片', after: '动漫风格' },
-                  { style: '吉卜力', before: '风景照片', after: '吉卜力风格' },
-                  { style: '赛博朋克', before: '城市照片', after: '赛博朋克风格' },
-                ].map((example, index) => (
+                {examplesData?.styleExamples?.map((example, index) => (
                   <Card key={index} className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
                     <CardContent className="p-0">
                       <div className="relative h-40">
@@ -612,12 +579,12 @@ export default function HomePage() {
                           beforeImage={`/placeholder.svg?height=160&width=400&text=${example.before}`}
                           afterImage={`/placeholder.svg?height=160&width=400&text=${example.after}`}
                           beforeLabel="原图"
-                          afterLabel={example.style}
+                          afterLabel={example.title}
                           className="h-full rounded-t-lg"
                         />
                       </div>
                       <div className="p-4">
-                        <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.style}风格转换</h4>
+                        <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
                         <p className={`text-sm ${themeClasses.textSecondary}`}>拖动滑块查看转换效果</p>
                       </div>
                     </CardContent>
@@ -633,43 +600,27 @@ export default function HomePage() {
                 <h3 className={`text-xl font-semibold ${themeClasses.text}`}>头像生成</h3>
                 <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
               </div>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {[
-                  { style: '商务正装', desc: '专业商务形象，适合职场' },
-                  { style: '休闲风格', desc: '轻松自然，日常社交必备' },
-                  { style: '创意风格', desc: '艺术创意，展现个性魅力' },
-                  { style: '学术风格', desc: '知识分子形象，专业权威' },
-                ].map((example, index) => (
-                  <Card key={index} className={`group border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {examplesData?.avatarExamples?.map((example, index) => (
+                  <Card key={index} className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
                     <CardContent className="p-0">
-                      <div className="relative h-40 overflow-hidden rounded-t-lg">
-                        <Image
-                          src={`/placeholder.svg?height=160&width=300&text=${example.style}头像`}
-                          alt={example.style}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      <div className="relative h-40">
+                        <ImageSlider
+                          beforeImage={`/placeholder.svg?height=160&width=400&text=${example.before}`}
+                          afterImage={`/placeholder.svg?height=160&width=400&text=${example.after}`}
+                          beforeLabel="原图"
+                          afterLabel={example.title}
+                          className="h-full rounded-t-lg"
                         />
                       </div>
                       <div className="p-4">
-                        <h4 className={`font-medium ${themeClasses.text} mb-2`}>{example.style}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>{example.desc}</p>
+                        <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
+                        <p className={`text-sm ${themeClasses.textSecondary}`}>拖动滑块查看转换效果</p>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
-            </div>
-
-            {/* 更多示例按钮 */}
-            <div className="text-center">
-              <Button
-                variant="outline"
-                size="lg"
-                className={`transition-all duration-300 ${themeClasses.buttonOutline}`}
-              >
-                <Wand2 className="mr-2 size-4" />
-                查看更多示例
-              </Button>
             </div>
           </div>
 
