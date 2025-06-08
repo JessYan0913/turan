@@ -10,7 +10,14 @@
     "lint": "next lint && eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "next lint --fix && eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "next:fix": "npx @next/codemod@canary next-async-request-api .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "npx tsx lib/db/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "db:push": "drizzle-kit push",
+    "db:pull": "drizzle-kit pull",
+    "db:check": "drizzle-kit check",
+    "db:up": "drizzle-kit up"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -77,6 +84,8 @@
     "@types/react-dom": "^19",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
+    "dotenv": "^16.5.0",
+    "drizzle-kit": "^0.31.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
     "eslint-config-prettier": "^9.1.0",
