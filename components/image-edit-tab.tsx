@@ -2,6 +2,8 @@ import React, { useCallback, useState } from 'react';
 
 import { ArrowRight, ImageIcon, Sparkles, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { Prediction } from 'replicate';
+import useSWRMutation from 'swr/mutation';
 
 import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
@@ -10,43 +12,51 @@ import { Textarea } from '@/components/ui/textarea';
 
 export function ImageEditTab() {
   const { themeClasses } = useTheme();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [resultImage, setResultImage] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [prompt, setPrompt] = useState('');
+
+  const { trigger: submitEdit, data: prediction } = useSWRMutation<
+    Prediction,
+    any,
+    any,
+    { image: File; prompt: string }
+  >('/api/image-edit', async (url: string, { arg }: { arg: { image: File; prompt: string } }) => {
+    const formData = new FormData();
+    formData.append('image', arg.image);
+    formData.append('prompt', arg.prompt);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Failed to process image');
+    }
+
+    return await response.json();
+  });
 
   const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-        setResultImage(null);
-      };
-      reader.readAsDataURL(file);
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setResultImage(null);
     }
   }, []);
-
-  const handleProcess = useCallback(async () => {
-    if (!selectedImage) return;
-
-    setIsProcessing(true);
-
-    // 模拟处理过程
-    setTimeout(() => {
-      setResultImage(selectedImage); // 临时使用原图作为结果
-      setIsProcessing(false);
-    }, 2000);
-  }, [selectedImage]);
 
   const handleDownload = useCallback(() => {
     if (resultImage) {
       const link = document.createElement('a');
       link.href = resultImage;
-      link.download = 'edited-image.png';
+      link.download = selectedImage?.name || 'edited-image.png';
       link.click();
     }
-  }, [resultImage]);
+  }, [resultImage, selectedImage]);
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
@@ -60,11 +70,16 @@ export function ImageEditTab() {
                 {selectedImage ? (
                   <div className="group relative">
                     <Image
-                      src={selectedImage || '/placeholder.svg'}
+                      src={imagePreview || '/placeholder.svg'}
                       alt="上传的图片"
                       width={400}
                       height={300}
                       className="mx-auto max-h-[300px] rounded-lg object-contain shadow-lg"
+                      onLoad={() => {
+                        if (imagePreview) {
+                          URL.revokeObjectURL(imagePreview);
+                        }
+                      }}
                     />
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition-all group-hover:bg-black/20">
                       <p className="rounded-full bg-black/70 px-4 py-2 text-sm text-white opacity-0 transition-opacity group-hover:opacity-100">
@@ -96,12 +111,12 @@ export function ImageEditTab() {
             className={`resize-none ${themeClasses.textarea} border-0 transition-all duration-300 focus:shadow-[0_8px_30px_rgba(59,130,246,0.15)]`}
           />
           <Button
-            onClick={handleProcess}
-            disabled={!selectedImage || isProcessing}
+            onClick={() => submitEdit({ image: selectedImage!, prompt })}
+            disabled={!selectedImage || prediction?.status === 'processing'}
             className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
             size="lg"
           >
-            {isProcessing ? (
+            {prediction?.status === 'processing' ? (
               <>
                 <div className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 处理中...
@@ -136,7 +151,7 @@ export function ImageEditTab() {
                       处理完成
                     </div>
                   </div>
-                ) : isProcessing ? (
+                ) : prediction?.status === 'processing' ? (
                   <div className="space-y-4">
                     <div className="mx-auto size-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-500"></div>
                     <p className={`${themeClasses.text} font-medium`}>AI正在处理您的图片...</p>
