@@ -1,0 +1,73 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:import/typescript",
+    "plugin:import/recommended",
+    "plugin:tailwindcss/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["import", "tailwindcss", "simple-import-sort", "react", "prettier"],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": ["tsconfig.json"]
+      },
+      "alias": {
+        "map": [["@", "./"]],
+        "extensions": [".ts", ".tsx", ".js", ".jsx"]
+      }
+    }
+  },
+  "rules": {
+    "import/order": "off",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          ["^\\u0000"],
+          ["^\\\\.", "^\\\\..", "^\\\\...", "^\\\\/"],
+          ["^react$", "^react-dom$", "^react-router-dom$"],
+          ["^@?\\w"],
+          ["^"],
+          ["^\\.", "^\\..", "^\\...", "^\\/"],
+          ["\\."]
+        ]
+      }
+    ],
+    "simple-import-sort/exports": "error",
+    "tailwindcss/no-custom-classname": "off",
+    "tailwindcss/no-contradicting-classname": "off",
+    "tailwindcss/no-unknown-classes": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "error",
+    "import/no-extraneous-dependencies": "error",
+    "import/no-unassigned-import": "off",
+    "import/no-named-as-default": "off",
+    "react/display-name": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "semi": true,
+        "tabWidth": 2,
+        "printWidth": 120,
+        "trailingComma": "es5",
+        "endOfLine": "auto"
+      }
+    ]
+  }
+}

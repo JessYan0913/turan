@@ -1,10 +1,24 @@
-import Replicate from "replicate";
+import Replicate from 'replicate';
 
 export interface FluxKontextInput {
   prompt: string;
   seed?: number | null;
   input_image?: string | null;
-  aspect_ratio?: 'match_input_image' | '1:1' | '16:9' | '9:16' | '4:3' | '3:4' | '3:2' | '2:3' | '4:5' | '5:4' | '21:9' | '9:21' | '2:1' | '1:2';
+  aspect_ratio?:
+    | 'match_input_image'
+    | '1:1'
+    | '16:9'
+    | '9:16'
+    | '4:3'
+    | '3:4'
+    | '3:2'
+    | '2:3'
+    | '4:5'
+    | '5:4'
+    | '21:9'
+    | '9:21'
+    | '2:1'
+    | '1:2';
   output_format?: 'jpg' | 'png';
   safety_tolerance?: number;
 }
@@ -13,7 +27,21 @@ export interface ProfessionalHeadshotInput {
   input_image: string;
   gender?: 'none' | 'male' | 'female';
   background?: 'white' | 'black' | 'neutral' | 'gray' | 'office';
-  aspect_ratio?: 'match_input_image' | '1:1' | '16:9' | '9:16' | '4:3' | '3:4' | '3:2' | '2:3' | '4:5' | '5:4' | '21:9' | '9:21' | '2:1' | '1:2';
+  aspect_ratio?:
+    | 'match_input_image'
+    | '1:1'
+    | '16:9'
+    | '9:16'
+    | '4:3'
+    | '3:4'
+    | '3:2'
+    | '2:3'
+    | '4:5'
+    | '5:4'
+    | '21:9'
+    | '9:21'
+    | '2:1'
+    | '1:2';
   output_format?: 'jpg' | 'png';
   seed?: number | null;
   safety_tolerance?: number;
@@ -52,10 +80,10 @@ class ReplicateService {
     };
 
     const mergedInput = { ...defaultInput, ...input };
-    const output = await this.replicate.run("black-forest-labs/flux-kontext-pro", { 
-      input: mergedInput 
+    const output = await this.replicate.run('black-forest-labs/flux-kontext-pro', {
+      input: mergedInput,
     });
-    
+
     return output as FluxKontextOutput;
   }
 
@@ -74,10 +102,10 @@ class ReplicateService {
     };
 
     const mergedInput = { ...defaultInput, ...input };
-    const output = await this.replicate.run("flux-kontext-apps/professional-headshot", { 
-      input: mergedInput 
+    const output = await this.replicate.run('flux-kontext-apps/professional-headshot', {
+      input: mergedInput,
     });
-    
+
     return output as ProfessionalHeadshotOutput;
   }
 }

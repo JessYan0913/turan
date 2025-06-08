@@ -1,91 +1,93 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { User, Calendar, Camera, Edit3, Save, X, Crown, Zap, BarChart3 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import { useState } from 'react';
+
+import { BarChart3, Calendar, Camera, Crown, Edit3, Save, User, X, Zap } from 'lucide-react';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ProfilePageProps {
-  isDarkMode: boolean
-  themeClasses: any
+  isDarkMode: boolean;
+  themeClasses: any;
 }
 
 export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    name: "张三",
-    email: "zhangsan@example.com",
-    phone: "138****8888",
-    bio: "热爱AI艺术创作的设计师，专注于数字艺术和创意设计。",
-    joinDate: "2023-06-15",
-    avatar: "/placeholder.svg?height=120&width=120",
-  })
+    name: '张三',
+    email: 'zhangsan@example.com',
+    phone: '138****8888',
+    bio: '热爱AI艺术创作的设计师，专注于数字艺术和创意设计。',
+    joinDate: '2023-06-15',
+    avatar: '/placeholder.svg?height=120&width=120',
+  });
 
-  const [editForm, setEditForm] = useState(userInfo)
+  const [editForm, setEditForm] = useState(userInfo);
 
   const handleSave = () => {
-    setUserInfo(editForm)
-    setIsEditing(false)
-  }
+    setUserInfo(editForm);
+    setIsEditing(false);
+  };
 
   const handleCancel = () => {
-    setEditForm(userInfo)
-    setIsEditing(false)
-  }
+    setEditForm(userInfo);
+    setIsEditing(false);
+  };
 
   // 模拟用户统计数据
   const stats = {
     totalWorks: 156,
     thisMonthWorks: 23,
-    totalProcessingTime: "12.5小时",
-    favoriteStyle: "水彩画",
-    plan: "专业版",
-    planExpiry: "2024-03-15",
+    totalProcessingTime: '12.5小时',
+    favoriteStyle: '水彩画',
+    plan: '专业版',
+    planExpiry: '2024-03-15',
     usageThisMonth: 234,
     planLimit: 500,
-  }
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="grid lg:grid-cols-3 gap-8">
+    <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="grid gap-8 lg:grid-cols-3">
         {/* 左侧：个人信息 */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="space-y-6 lg:col-span-1">
           {/* 头像和基本信息 */}
           <Card className={`${themeClasses.card} border-0 shadow-lg`}>
             <CardContent className="p-6 text-center">
-              <div className="relative inline-block mb-4">
-                <Avatar className="w-24 h-24">
-                  <AvatarImage src={userInfo.avatar || "/placeholder.svg"} />
-                  <AvatarFallback className={isDarkMode ? "bg-gray-700 text-white" : ""}>
-                    <User className="w-12 h-12" />
+              <div className="relative mb-4 inline-block">
+                <Avatar className="size-24">
+                  <AvatarImage src={userInfo.avatar || '/placeholder.svg'} />
+                  <AvatarFallback className={isDarkMode ? 'bg-gray-700 text-white' : ''}>
+                    <User className="size-12" />
                   </AvatarFallback>
                 </Avatar>
                 <Button
                   size="sm"
-                  className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600"
+                  className="absolute -bottom-2 -right-2 size-8 rounded-full bg-blue-500 hover:bg-blue-600"
                 >
-                  <Camera className="w-4 h-4" />
+                  <Camera className="size-4" />
                 </Button>
               </div>
 
               {!isEditing ? (
                 <>
                   <h2 className={`text-xl font-bold ${themeClasses.text} mb-1`}>{userInfo.name}</h2>
-                  <p className={`${themeClasses.textSecondary} text-sm mb-3`}>{userInfo.email}</p>
-                  <p className={`${themeClasses.textSecondary} text-sm mb-4`}>{userInfo.bio}</p>
+                  <p className={`${themeClasses.textSecondary} mb-3 text-sm`}>{userInfo.email}</p>
+                  <p className={`${themeClasses.textSecondary} mb-4 text-sm`}>{userInfo.bio}</p>
                   <Button
                     onClick={() => setIsEditing(true)}
                     variant="outline"
                     size="sm"
-                    className={isDarkMode ? "border-gray-600 text-gray-300 hover:bg-gray-700" : ""}
+                    className={isDarkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : ''}
                   >
-                    <Edit3 className="w-4 h-4 mr-2" />
+                    <Edit3 className="mr-2 size-4" />
                     编辑资料
                   </Button>
                 </>
@@ -126,11 +128,11 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
                   </div>
                   <div className="flex space-x-2">
                     <Button onClick={handleSave} size="sm" className="flex-1">
-                      <Save className="w-4 h-4 mr-2" />
+                      <Save className="mr-2 size-4" />
                       保存
                     </Button>
                     <Button onClick={handleCancel} variant="outline" size="sm" className="flex-1">
-                      <X className="w-4 h-4 mr-2" />
+                      <X className="mr-2 size-4" />
                       取消
                     </Button>
                   </div>
@@ -143,7 +145,7 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
           <Card className={`${themeClasses.card} border-0 shadow-lg`}>
             <CardHeader>
               <CardTitle className={`flex items-center ${themeClasses.text}`}>
-                <Crown className="w-5 h-5 mr-2 text-yellow-500" />
+                <Crown className="mr-2 size-5 text-yellow-500" />
                 当前套餐
               </CardTitle>
             </CardHeader>
@@ -173,9 +175,9 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
         </div>
 
         {/* 右侧：统计和活动 */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           {/* 统计卡片 */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <Card className={`${themeClasses.card} border-0 shadow-lg`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -183,8 +185,8 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
                     <p className={`${themeClasses.textSecondary} text-sm`}>总作品数</p>
                     <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.totalWorks}</p>
                   </div>
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-blue-500" />
+                  <div className="flex size-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                    <BarChart3 className="size-6 text-blue-500" />
                   </div>
                 </div>
               </CardContent>
@@ -197,8 +199,8 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
                     <p className={`${themeClasses.textSecondary} text-sm`}>本月作品</p>
                     <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.thisMonthWorks}</p>
                   </div>
-                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                    <Zap className="w-6 h-6 text-green-500" />
+                  <div className="flex size-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                    <Zap className="size-6 text-green-500" />
                   </div>
                 </div>
               </CardContent>
@@ -211,8 +213,8 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
                     <p className={`${themeClasses.textSecondary} text-sm`}>处理时长</p>
                     <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.totalProcessingTime}</p>
                   </div>
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-purple-500" />
+                  <div className="flex size-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                    <Calendar className="size-6 text-purple-500" />
                   </div>
                 </div>
               </CardContent>
@@ -225,8 +227,8 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
                     <p className={`${themeClasses.textSecondary} text-sm`}>偏好风格</p>
                     <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.favoriteStyle}</p>
                   </div>
-                  <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                    <User className="w-6 h-6 text-orange-500" />
+                  <div className="flex size-12 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
+                    <User className="size-6 text-orange-500" />
                   </div>
                 </div>
               </CardContent>
@@ -241,22 +243,22 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
             <CardContent>
               <div className="space-y-4">
                 {[
-                  { action: "完成风格转换", target: "风景照片", time: "2小时前", type: "success" },
-                  { action: "生成专业头像", target: "商务形象", time: "5小时前", type: "success" },
-                  { action: "背景替换", target: "人像照片", time: "1天前", type: "success" },
-                  { action: "升级到专业版", target: "套餐升级", time: "3天前", type: "info" },
+                  { action: '完成风格转换', target: '风景照片', time: '2小时前', type: 'success' },
+                  { action: '生成专业头像', target: '商务形象', time: '5小时前', type: 'success' },
+                  { action: '背景替换', target: '人像照片', time: '1天前', type: 'success' },
+                  { action: '升级到专业版', target: '套餐升级', time: '3天前', type: 'info' },
                 ].map((activity, index) => (
                   <div
                     key={index}
-                    className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50"
+                    className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50"
                   >
                     <div
-                      className={`w-2 h-2 rounded-full ${
-                        activity.type === "success"
-                          ? "bg-green-500"
-                          : activity.type === "info"
-                            ? "bg-blue-500"
-                            : "bg-gray-400"
+                      className={`size-2 rounded-full ${
+                        activity.type === 'success'
+                          ? 'bg-green-500'
+                          : activity.type === 'info'
+                            ? 'bg-blue-500'
+                            : 'bg-gray-400'
                       }`}
                     ></div>
                     <div className="flex-1">
@@ -274,5 +276,5 @@ export function ProfilePage({ isDarkMode, themeClasses }: ProfilePageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

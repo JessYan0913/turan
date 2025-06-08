@@ -1,11 +1,12 @@
-import 'server-only';
+'use server';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
+import type { InferInsertModel } from 'drizzle-orm';
 import { and, asc, desc, eq, gt, gte, inArray, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { type User, user, type Work, work, type WorkType, type WorkStatus } from './schema';
-import type { InferInsertModel } from 'drizzle-orm';
+
+import { type User, user, type Work, work, type WorkStatus, type WorkType } from './schema';
 
 type NewWork = Omit<Work, 'id' | 'createdAt' | 'updatedAt'>;
 
@@ -58,7 +59,7 @@ export async function getWorks({
       .where(
         and(
           eq(work.userId, userId),
-          searchTerm 
+          searchTerm
             ? sql`LOWER(${work.title}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
                LOWER(${work.style}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
             : undefined,
@@ -71,10 +72,10 @@ export async function getWorks({
       .offset(offset);
 
     const works = await query;
-    
+
     const hasMore = works.length > limit;
     const items = hasMore ? works.slice(0, -1) : works;
-    
+
     // Get total count for pagination
     const countQuery = await db
       .select({ count: sql<number>`count(*)` })
@@ -82,7 +83,7 @@ export async function getWorks({
       .where(
         and(
           eq(work.userId, userId),
-          searchTerm 
+          searchTerm
             ? sql`LOWER(${work.title}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
                LOWER(${work.style}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
             : undefined,
@@ -90,7 +91,7 @@ export async function getWorks({
           status ? eq(work.status, status) : undefined
         )
       )
-      .then(rows => rows[0]?.count || 0);
+      .then((rows) => rows[0]?.count || 0);
 
     return {
       items,
@@ -135,10 +136,7 @@ export async function createWork(data: CreateWorkInput, userId: string): Promise
       status: 'pending' as const,
     };
 
-    const [newWork] = await db
-      .insert(work)
-      .values(newWorkData)
-      .returning();
+    const [newWork] = await db.insert(work).values(newWorkData).returning();
 
     return newWork;
   } catch (error) {
@@ -148,8 +146,8 @@ export async function createWork(data: CreateWorkInput, userId: string): Promise
 }
 
 export async function updateWork(
-  id: string, 
-  userId: string, 
+  id: string,
+  userId: string,
   data: Partial<Omit<NewWork, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>
 ): Promise<Work> {
   try {
@@ -175,9 +173,7 @@ export async function updateWork(
 
 export async function deleteWork(id: string, userId: string): Promise<void> {
   try {
-    const result = await db
-      .delete(work)
-      .where(and(eq(work.id, id), eq(work.userId, userId)));
+    const result = await db.delete(work).where(and(eq(work.id, id), eq(work.userId, userId)));
 
     if (!result || (Array.isArray(result) && result.length === 0)) {
       throw new Error('Work not found or access denied');
@@ -189,17 +185,17 @@ export async function deleteWork(id: string, userId: string): Promise<void> {
 }
 
 export async function updateWorkStatus(
-  id: string, 
-  userId: string, 
+  id: string,
+  userId: string,
   status: WorkStatus,
   processedImage?: string
 ): Promise<Work> {
   try {
-    const updateData: Partial<Work> = { 
+    const updateData: Partial<Work> = {
       status,
-      updatedAt: new Date() 
+      updatedAt: new Date(),
     };
-    
+
     if (processedImage) {
       updateData.processedImage = processedImage;
     }
@@ -248,7 +244,7 @@ export async function createUser({
       .from(user)
       .where(eq(user.email, email))
       .limit(1)
-      .then(rows => rows[0]);
+      .then((rows) => rows[0]);
 
     if (existingUser) {
       throw new Error('User with this email already exists');
@@ -271,10 +267,7 @@ export async function createUser({
       usageCurrent: 0,
     };
 
-    const [newUser] = await db
-      .insert(user)
-      .values(newUserData)
-      .returning();
+    const [newUser] = await db.insert(user).values(newUserData).returning();
 
     // Omit sensitive data from return value
     const { password: _, ...userWithoutPassword } = newUser;
