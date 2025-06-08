@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 
 import { ArrowRight, ImageIcon, Sparkles, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Prediction } from 'replicate';
 import useSWRMutation from 'swr/mutation';
 
@@ -12,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 export function ImageEditTab() {
   const { themeClasses } = useTheme();
+  const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [resultImage, setResultImage] = useState<string | null>(null);
@@ -30,7 +32,14 @@ export function ImageEditTab() {
     const response = await fetch(url, {
       method: 'POST',
       body: formData,
+      credentials: 'include', // Make sure to include credentials for auth
     });
+
+    if (response.status === 401) {
+      // Redirect to login page when unauthorized
+      router.push('/login');
+      return new Promise(() => {}); // Return a never-resolving promise
+    }
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));

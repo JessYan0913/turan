@@ -31,7 +31,6 @@ export default async function RootLayout({
       <body className={inter.className}>
         <I18nProviderClient locale={locale}>
           <ThemeProvider>
-            <Navigation />
             <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           </ThemeProvider>
         </I18nProviderClient>

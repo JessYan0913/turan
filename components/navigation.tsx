@@ -1,8 +1,10 @@
 'use client';
 
-import { Check, Crown, Globe, Home, ImageIcon, Menu, Moon, Palette, Sun, User } from 'lucide-react';
+import { Check, Crown, Globe, Home, ImageIcon, Menu, Moon, Palette, Sun, UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { User } from 'next-auth';
+import { signOut } from 'next-auth/react';
 
 import { useTheme } from '@/components/theme-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,7 +18,7 @@ import {
 
 import { useChangeLocale, useCurrentLocale, useScopedI18n } from '../locales/client';
 
-export function Navigation() {
+export function Navigation({ user }: { user: User | undefined }) {
   const pathname = usePathname();
   const { isDarkMode, toggleTheme, themeClasses } = useTheme();
   const changeLocale = useChangeLocale();
@@ -151,12 +153,14 @@ export function Navigation() {
             {/* 用户头像 */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="size-8 cursor-pointer">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" />
-                  <AvatarFallback className={isDarkMode ? 'bg-gray-700 text-white' : ''}>
-                    <User className="size-4" />
-                  </AvatarFallback>
-                </Avatar>
+                {user && (
+                  <Avatar className="size-8 cursor-pointer">
+                    <AvatarImage src="/placeholder.svg?height=32&width=32" />
+                    <AvatarFallback className={isDarkMode ? 'bg-gray-700 text-white' : ''}>
+                      <UserIcon className="size-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className={isDarkMode ? 'border-gray-700 bg-gray-800' : ''}>
                 <Link href="/profile">
@@ -165,7 +169,10 @@ export function Navigation() {
                   </DropdownMenuItem>
                 </Link>
                 {/* Settings menu item removed as it's not in the translations */}
-                <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
+                <DropdownMenuItem
+                  className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}
+                  onClick={() => signOut({ redirectTo: '/' })}
+                >
                   {t('signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>

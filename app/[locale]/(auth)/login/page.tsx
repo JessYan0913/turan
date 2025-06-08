@@ -35,7 +35,10 @@ export default function Page() {
       });
     } else if (state.status === 'success') {
       setIsSuccessful(true);
+      // 刷新页面以更新认证状态
       router.refresh();
+      // 重定向到首页
+      router.push('/');
     }
   }, [router, state.status, t]);
 

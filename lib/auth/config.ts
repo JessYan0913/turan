@@ -10,9 +10,14 @@ export const authConfig = {
     // while this file is also used in non-Node.js environments
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Redirect to the homepage after successful login
+      if (url.startsWith(baseUrl)) return url;
+      return baseUrl;
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnChat = nextUrl.pathname.startsWith('/');
+      const isOnHome = nextUrl.pathname.startsWith('/');
       const isOnRegister = nextUrl.pathname.startsWith('/register');
       const isOnLogin = nextUrl.pathname.startsWith('/login');
 
@@ -24,7 +29,7 @@ export const authConfig = {
         return true; // Always allow access to register and login pages
       }
 
-      if (isOnChat) {
+      if (isOnHome) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
       }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
+import { auth } from '@/lib/auth';
 import { createPrediction, createWork } from '@/lib/db/queries';
 import { replicate } from '@/lib/replicate';
 
@@ -8,6 +9,14 @@ const WEBHOOK_HOST = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}
 
 export async function POST(request: Request) {
   try {
+    const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const userId = session.user.id;
+
     // Parse FormData from the request
     const formData = await request.formData();
     const imageFile = formData.get('image') as File | null;
@@ -27,7 +36,7 @@ export async function POST(request: Request) {
 
     const work = await createWork(
       { title: '图片编辑', type: 'edit', originalImage: blobData.url, processedImage: '', style: '', metadata: {} },
-      crypto.randomUUID()
+      userId
     );
 
     const prediction = await replicate.predictions.create({

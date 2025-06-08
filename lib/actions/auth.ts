@@ -21,12 +21,18 @@ export const login = async (_: LoginActionState, formData: FormData): Promise<Lo
       password: formData.get('password'),
     });
 
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       email: validatedData.email,
       password: validatedData.password,
       redirect: false,
+      callbackUrl: '/', // 设置登录成功后的回调URL
     });
 
+    if (result?.error) {
+      return { status: 'failed' };
+    }
+
+    // 返回成功状态，页面组件会处理重定向
     return { status: 'success' };
   } catch (error) {
     if (error instanceof z.ZodError) {
