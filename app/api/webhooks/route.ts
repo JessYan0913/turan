@@ -1,19 +1,23 @@
 import { NextResponse } from 'next/server';
 import { type Prediction } from 'replicate';
 
+import { updatePrediction } from '@/lib/db/queries';
+
 import { broadcast } from '../sse/route';
 
 export async function POST(request: Request) {
   try {
     const prediction = (await request.json()) as Prediction;
     console.log('Received webhook:', JSON.stringify(prediction, null, 2));
-
+    updatePrediction(prediction.id, {
+      ...prediction,
+      startedAt: prediction.started_at ? new Date(prediction.started_at) : undefined,
+      completedAt: prediction.completed_at ? new Date(prediction.completed_at) : undefined,
+    });
     switch (prediction.status) {
       case 'processing':
-        console.log('Prediction processing...');
         break;
       case 'succeeded':
-        console.log('Prediction completed!');
         broadcast({});
         break;
       case 'failed':
