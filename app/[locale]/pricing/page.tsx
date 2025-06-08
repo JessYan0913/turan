@@ -2,14 +2,13 @@
 
 import { Check, Crown, Star, Zap } from 'lucide-react';
 
-import { Navigation } from '@/components/navigation';
 import { useTheme } from '@/components/theme-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function PricingPage() {
-  const { isDarkMode, toggleTheme, themeClasses } = useTheme();
+  const { isDarkMode, themeClasses } = useTheme();
 
   const plans = [
     {
@@ -65,9 +64,7 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background}`}>
-      <Navigation isDarkMode={isDarkMode} toggleTheme={toggleTheme} themeClasses={themeClasses} />
-
+    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
       <div className="mx-auto max-w-7xl px-4 py-12">
         {/* 标题区域 */}
         <div className="mb-16 text-center">

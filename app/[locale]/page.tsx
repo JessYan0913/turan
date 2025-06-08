@@ -7,16 +7,17 @@ import Image from 'next/image';
 import type React from 'react';
 
 import { ImageSlider } from '@/components/image-slider';
-import { Navigation } from '@/components/navigation';
 import { StyleSelector } from '@/components/style-selector';
 import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { useScopedI18n } from '@/locales/client';
 
 export default function HomePage() {
-  const { isDarkMode, toggleTheme, themeClasses } = useTheme();
+  const { isDarkMode, themeClasses } = useTheme();
+  const t = useScopedI18n('home');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -127,9 +128,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background}`}>
-      <Navigation isDarkMode={isDarkMode} toggleTheme={toggleTheme} themeClasses={themeClasses} />
-
+    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
       <div className="p-4 md:p-8">
         <div className="mx-auto max-w-6xl">
           {/* 固定的标题区域 */}
@@ -144,13 +143,13 @@ export default function HomePage() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`mx-auto mb-8 grid w-full max-w-md grid-cols-3 ${themeClasses.tabsList}`}>
               <TabsTrigger value="edit" className={themeClasses.tabsTrigger}>
-                图像编辑
+                {t('tabs.edit')}
               </TabsTrigger>
               <TabsTrigger value="style" className={themeClasses.tabsTrigger}>
-                风格转换
+                {t('tabs.style')}
               </TabsTrigger>
               <TabsTrigger value="avatar" className={themeClasses.tabsTrigger}>
-                头像生成
+                {t('tabs.avatar')}
               </TabsTrigger>
             </TabsList>
 

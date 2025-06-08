@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { BarChart3, Calendar, Camera, Crown, Edit3, Save, User, X, Zap } from 'lucide-react';
 
-import { Navigation } from '@/components/navigation';
 import { useTheme } from '@/components/theme-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +15,7 @@ import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function ProfilePage() {
-  const { isDarkMode, toggleTheme, themeClasses } = useTheme();
+  const { isDarkMode, themeClasses } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     name: '张三',
@@ -52,9 +51,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background}`}>
-      <Navigation isDarkMode={isDarkMode} toggleTheme={toggleTheme} themeClasses={themeClasses} />
-
+    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* 左侧：个人信息 */}

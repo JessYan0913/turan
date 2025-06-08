@@ -1,8 +1,10 @@
 'use client';
-import { Crown, Globe, Home, ImageIcon, Menu, Moon, Palette, Sun, User } from 'lucide-react';
+
+import { Check, Crown, Globe, Home, ImageIcon, Menu, Moon, Palette, Sun, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { useTheme } from '@/components/theme-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,14 +14,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface NavigationProps {
-  isDarkMode: boolean;
-  toggleTheme: () => void;
-  themeClasses: any;
-}
+import { useChangeLocale, useCurrentLocale, useScopedI18n } from '../locales/client';
 
-export function Navigation({ isDarkMode, toggleTheme, themeClasses }: NavigationProps) {
+export function Navigation() {
   const pathname = usePathname();
+  const { isDarkMode, toggleTheme, themeClasses } = useTheme();
+  const changeLocale = useChangeLocale();
+  const currentLocale = useCurrentLocale();
+  const t = useScopedI18n('navigation');
+
+  const locales = [
+    { code: 'zh', name: '中文' },
+    { code: 'en', name: 'English' },
+    { code: 'ja', name: '日本語' },
+  ];
 
   const isActive = (path: string) => {
     if (path === '/' && pathname === '/') return true;
@@ -59,7 +67,7 @@ export function Navigation({ isDarkMode, toggleTheme, themeClasses }: Navigation
                 }`}
               >
                 <Home className="size-4" />
-                <span>首页</span>
+                <span>{t('home')}</span>
               </Button>
             </Link>
             <Link href="/pricing">
@@ -76,7 +84,7 @@ export function Navigation({ isDarkMode, toggleTheme, themeClasses }: Navigation
                 }`}
               >
                 <Crown className="size-4" />
-                <span>价格套餐</span>
+                <span>{t('pricing')}</span>
               </Button>
             </Link>
             <Link href="/works">
@@ -93,7 +101,7 @@ export function Navigation({ isDarkMode, toggleTheme, themeClasses }: Navigation
                 }`}
               >
                 <ImageIcon className="size-4" />
-                <span>我的作品</span>
+                <span>{t('works')}</span>
               </Button>
             </Link>
 
@@ -109,15 +117,20 @@ export function Navigation({ isDarkMode, toggleTheme, themeClasses }: Navigation
                   }`}
                 >
                   <Globe className="size-4" />
-                  <span>中文</span>
+                  <span>{locales.find((locale) => locale.code === currentLocale)?.name || currentLocale}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className={isDarkMode ? 'border-gray-700 bg-gray-800' : ''}>
-                <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>中文</DropdownMenuItem>
-                <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                  English
-                </DropdownMenuItem>
-                <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>日本語</DropdownMenuItem>
+                {locales.map((locale) => (
+                  <DropdownMenuItem
+                    key={locale.code}
+                    className={`flex items-center justify-between ${isDarkMode ? 'text-white hover:bg-gray-700' : ''}`}
+                    onSelect={() => changeLocale(locale.code as any)}
+                  >
+                    <span>{locale.name}</span>
+                    {currentLocale === locale.code && <Check className="size-4" />}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -148,12 +161,12 @@ export function Navigation({ isDarkMode, toggleTheme, themeClasses }: Navigation
               <DropdownMenuContent align="end" className={isDarkMode ? 'border-gray-700 bg-gray-800' : ''}>
                 <Link href="/profile">
                   <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                    个人中心
+                    {t('profile')}
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>设置</DropdownMenuItem>
+                {/* Settings menu item removed as it's not in the translations */}
                 <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                  退出登录
+                  {t('signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -176,20 +189,20 @@ export function Navigation({ isDarkMode, toggleTheme, themeClasses }: Navigation
                 </Link>
                 <Link href="/pricing">
                   <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                    价格套餐
+                    {t('pricing')}
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/works">
                   <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                    我的作品
+                    {t('works')}
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                  语言设置
+                  {t('language')}
                 </DropdownMenuItem>
                 <Link href="/profile">
                   <DropdownMenuItem className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                    个人中心
+                    {t('profile')}
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>

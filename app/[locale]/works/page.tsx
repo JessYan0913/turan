@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Calendar, Download, Eye, Filter, ImageIcon, Search, Share2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
-import { Navigation } from '@/components/navigation';
 import { useTheme } from '@/components/theme-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function MyWorksPage() {
-  const { isDarkMode, toggleTheme, themeClasses } = useTheme();
+  const { isDarkMode, themeClasses } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
 
@@ -117,9 +116,7 @@ export default function MyWorksPage() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background}`}>
-      <Navigation isDarkMode={isDarkMode} toggleTheme={toggleTheme} themeClasses={themeClasses} />
-
+    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* 标题和统计 */}
         <div className="mb-8">
