@@ -27,10 +27,7 @@ export const user = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (table) => ({
-    emailIdx: index('user_email_idx').on(table.email),
-    planIdx: index('user_plan_idx').on(table.plan),
-  })
+  (table) => [index('user_email_idx').on(table.email), index('user_plan_idx').on(table.plan)]
 );
 
 export type User = InferSelectModel<typeof user> & {

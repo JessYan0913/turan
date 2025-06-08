@@ -36,7 +36,7 @@ type NewUser = Omit<InferInsertModel<typeof user>, 'id' | 'createdAt' | 'updated
 // https://authjs.dev/reference/adapter/drizzle
 
 const client = postgres(process.env.POSTGRES_URL!);
-export const db = drizzle(client);
+const db = drizzle(client);
 
 export async function getUser(email: string): Promise<Array<User>> {
   try {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
+import { createPrediction, createWork } from '@/lib/db/queries';
 import { replicate } from '@/lib/replicate';
 
 const WEBHOOK_HOST = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NGROK_HOST;
@@ -24,6 +25,11 @@ export async function POST(request: Request) {
     // Upload the file to blob storage
     const blobData = await uploadFileToBlobStorage(imageFile);
 
+    const work = await createWork(
+      { title: '图片编辑', type: 'edit', originalImage: blobData.url, processedImage: '', style: '', metadata: {} },
+      crypto.randomUUID()
+    );
+
     const prediction = await replicate.predictions.create({
       model: 'black-forest-labs/flux-kontext-pro',
       input: {
@@ -32,6 +38,11 @@ export async function POST(request: Request) {
       },
       webhook: `${WEBHOOK_HOST}/api/webhooks`,
       webhook_events_filter: ['start', 'completed', 'logs', 'output'],
+    });
+
+    await createPrediction({
+      workId: work.id,
+      ...prediction,
     });
 
     if (prediction?.error) {
