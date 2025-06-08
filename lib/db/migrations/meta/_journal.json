@@ -8,6 +8,27 @@
       "when": 1749352498505,
       "tag": "0000_fixed_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1749378695439,
+      "tag": "0001_parched_changeling",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749379099180,
+      "tag": "0002_mushy_dakota_north",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1749379493326,
+      "tag": "0003_strange_lockheed",
+      "breakpoints": true
     }
   ]
 }

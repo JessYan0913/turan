@@ -1,0 +1,1 @@
+ALTER TABLE "Work" ALTER COLUMN "status" SET DEFAULT 'processing';

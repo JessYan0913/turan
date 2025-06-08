@@ -47,11 +47,11 @@ export type User = InferSelectModel<typeof user> & {
 export type WorkType = 'style-transfer' | 'avatar' | 'edit' | 'other';
 
 // 定义作品状态
-export type WorkStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type WorkStatus = 'processing' | 'completed' | 'failed';
 
 // 定义作品表结构
 export const work = pgTable(
-  'Work',
+  'work',
   {
     id: varchar('id', { length: 191 })
       .primaryKey()
@@ -64,10 +64,10 @@ export const work = pgTable(
     processedImage: text('processed_image').notNull(),
     style: varchar('style', { length: 100 }).notNull(),
     status: varchar('status', {
-      enum: ['pending', 'processing', 'completed', 'failed'],
+      enum: ['processing', 'completed', 'failed'],
     })
       .notNull()
-      .default('pending'),
+      .default('processing'),
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
@@ -87,3 +87,45 @@ export const work = pgTable(
 );
 
 export type Work = InferSelectModel<typeof work>;
+
+// Define Prediction status types
+export type PredictionStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'canceled';
+
+export const prediction = pgTable(
+  'prediction',
+  {
+    id: varchar('id', { length: 191 }).primaryKey().notNull(),
+    status: varchar('status', {
+      enum: ['starting', 'processing', 'succeeded', 'failed', 'canceled'],
+    }).notNull(),
+    model: varchar('model', { length: 255 }).notNull(),
+    version: varchar('version', { length: 100 }).notNull(),
+    input: jsonb('input').notNull(),
+    output: jsonb('output'),
+    source: varchar('source', { enum: ['api', 'web'] }).notNull(),
+    error: jsonb('error'),
+    logs: text('logs'),
+    metrics: jsonb('metrics').default({}),
+    webhook: text('webhook'),
+    webhookEventsFilter: jsonb('webhook_events_filter'),
+    urls: jsonb('urls').notNull(),
+    workId: varchar('work_id', { length: 191 }).references(() => work.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index('prediction_work_id_idx').on(table.workId),
+    index('prediction_status_idx').on(table.status),
+    index('prediction_created_at_idx').on(table.createdAt),
+    index('prediction_model_idx').on(table.model),
+  ]
+);
+
+export type Prediction = InferSelectModel<typeof prediction> & {
+  // Additional computed properties or relations can be added here
+};
