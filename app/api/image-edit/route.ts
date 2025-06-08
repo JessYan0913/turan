@@ -50,8 +50,9 @@ export async function POST(request: Request) {
     });
 
     await createPrediction({
-      workId: work.id,
       ...prediction,
+      workId: work.id,
+      source: 'api' as const, // Explicitly set source to 'api'
     });
 
     if (prediction?.error) {
