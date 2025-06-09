@@ -1,57 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { getPredictionById } from '@/lib/db/queries';
-import { type Prediction } from '@/lib/db/schema';
+import { createSSEStream, getSSEHeaders } from '@/lib/sse';
 
-let clients: Set<WritableStreamDefaultWriter> = new Set();
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
 
-export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
-  const { id } = await context.params;
-  const prediction = await getPredictionById(id);
-
-  if (!prediction) {
-    return NextResponse.json({ error: 'Prediction not found' }, { status: 404 });
-  }
-
-  const { readable, writable } = new TransformStream();
-  const writer = writable.getWriter();
-  clients.add(writer);
-
-  const encoder = new TextEncoder();
-  const send = (data: Prediction) => {
-    writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
-  };
-
-  // 立即发送一个心跳
-  send(prediction);
-
-  const heartbeat = setInterval(() => {
-    send(prediction);
-  }, 15000);
-
-  // 清理逻辑
-  const close = () => {
-    clearInterval(heartbeat);
-    clients.delete(writer);
-    writer.close();
-  };
-
-  return new Response(readable, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive',
-    },
+  const { stream } = createSSEStream(id, req, {
+    sendTestEvent: true,
+    testEventDelay: 2000,
+    testEventData: { message: '连接测试成功' },
   });
-}
 
-// 后端主动广播用这个
-export function broadcast(data: Prediction) {
-  const encoder = new TextEncoder();
-  const msg = encoder.encode(`data: ${JSON.stringify(data)}\n\n`);
-  for (const writer of clients) {
-    writer.write(msg).catch(() => {
-      clients.delete(writer); // 防止失效链接阻塞
-    });
-  }
+  // 返回NextResponse，保留对路由的完全控制权
+  return new NextResponse(stream, {
+    headers: getSSEHeaders(),
+  });
 }
