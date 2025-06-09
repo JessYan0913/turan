@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { ArrowRight, ImageIcon, Sparkles, Upload } from 'lucide-react';
 import Image from 'next/image';
@@ -10,10 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Work } from '@/lib/db/schema';
+import { useScopedI18n } from '@/locales/client';
 
 export function ImageEditTab() {
   const { themeClasses } = useTheme();
   const router = useRouter();
+  const t = useScopedI18n('imageEdit');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [prompt, setPrompt] = useState('');
@@ -82,7 +84,7 @@ export function ImageEditTab() {
                   <div className="group relative">
                     <Image
                       src={imagePreview || '/placeholder.svg'}
-                      alt="上传的图片"
+                      alt={t('upload.altText')}
                       width={400}
                       height={300}
                       className="mx-auto max-h-[300px] rounded-lg object-contain shadow-lg"
@@ -94,7 +96,7 @@ export function ImageEditTab() {
                     />
                     <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition-all group-hover:bg-black/20">
                       <p className="rounded-full bg-black/70 px-4 py-2 text-sm text-white opacity-0 transition-opacity group-hover:opacity-100">
-                        点击更换图片
+                        {t('upload.changeImage')}
                       </p>
                     </div>
                   </div>
@@ -103,8 +105,8 @@ export function ImageEditTab() {
                     className={`border-2 border-dashed ${themeClasses.uploadBorder} rounded-xl p-12 ${themeClasses.uploadBg} transition-all`}
                   >
                     <Upload className="mx-auto mb-3 size-12 text-blue-400" />
-                    <p className={`${themeClasses.text} font-medium`}>点击上传图片</p>
-                    <p className={`${themeClasses.textMuted} mt-1 text-sm`}>支持 JPG, PNG, WebP 格式</p>
+                    <p className={`${themeClasses.text} font-medium`}>{t('upload.uploadImage')}</p>
+                    <p className={`${themeClasses.textMuted} mt-1 text-sm`}>{t('upload.supportedFormats')}</p>
                   </div>
                 )}
               </label>
@@ -115,7 +117,7 @@ export function ImageEditTab() {
         {/* 编辑指令输入 */}
         <div className="space-y-4">
           <Textarea
-            placeholder="描述您想要的编辑效果，例如：'将背景换成蓝天白云'、'修改发型为短发'..."
+            placeholder={t('prompt.placeholder')}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             rows={3}
@@ -133,12 +135,12 @@ export function ImageEditTab() {
             {isMutating ? (
               <>
                 <div className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                处理中...
+                {t('button.processing')}
               </>
             ) : (
               <>
                 <Sparkles className="mr-2 size-4" />
-                开始编辑
+                {t('button.startEditing')}
               </>
             )}
           </Button>
@@ -155,25 +157,25 @@ export function ImageEditTab() {
                   <div className="space-y-4">
                     <Image
                       src={work?.processedImage || '/placeholder.svg'}
-                      alt="处理结果"
+                      alt={t('result.altText')}
                       width={400}
                       height={300}
                       className="mx-auto max-h-[300px] rounded-lg object-contain shadow-lg"
                     />
                     <div className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
                       <div className="mr-2 size-2 rounded-full bg-green-500"></div>
-                      处理完成
+                      {t('result.completed')}
                     </div>
                   </div>
                 ) : isMutating ? (
                   <div className="space-y-4">
                     <div className="mx-auto size-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-500"></div>
-                    <p className={`${themeClasses.text} font-medium`}>AI正在处理您的图片...</p>
+                    <p className={`${themeClasses.text} font-medium`}>{t('result.processing')}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     <ImageIcon className={`mx-auto size-16 ${themeClasses.textMuted}`} />
-                    <p className={themeClasses.textMuted}>编辑结果将在这里显示</p>
+                    <p className={themeClasses.textMuted}>{t('result.defaultMessage')}</p>
                   </div>
                 )}
               </div>
@@ -185,7 +187,7 @@ export function ImageEditTab() {
                   className={`mt-4 transition-all duration-300 ${themeClasses.buttonSecondary}`}
                 >
                   <ArrowRight className="mr-2 size-4" />
-                  下载图片
+                  {t('button.download')}
                 </Button>
               )}
             </div>

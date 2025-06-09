@@ -54,19 +54,41 @@ export default {
       style: '风格转换',
       avatar: '头像生成',
     },
+  },
+  imageEdit: {
     upload: {
-      title: '上传图片',
-      description: '点击或拖拽图片到此处',
-      button: '选择图片',
+      changeImage: '更换图片',
+      uploadImage: '上传图片',
+      supportedFormats: '支持 JPG、PNG、WebP 格式',
+      altText: '已上传的图片',
     },
     prompt: {
-      placeholder: '描述您想要的图片效果...',
-      generate: '生成',
-      download: '下载结果',
+      placeholder: '描述您想要的编辑效果，例如"将背景改为蓝天白云"、"将发型改为短发"...',
     },
-    styles: {
-      title: '选择风格',
-      loading: '处理中...',
+    button: {
+      processing: '处理中...',
+      startEditing: '开始处理',
+      download: '下载图片',
     },
+    result: {
+      altText: '处理结果',
+      completed: '处理完成',
+      processing: 'AI正在处理您的图片...',
+      defaultMessage: '编辑结果将显示在这里',
+    },
+  },
+  upload: {
+    title: '上传图片',
+    description: '点击或拖拽图片到此处',
+    button: '选择图片',
+  },
+  prompt: {
+    placeholder: '描述您想要的图片效果...',
+    generate: '生成',
+    download: '下载结果',
+  },
+  styles: {
+    title: '选择风格',
+    loading: '处理中...',
   },
 } as const;

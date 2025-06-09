@@ -54,19 +54,41 @@ export default {
       style: 'スタイル変換',
       avatar: 'アバター作成',
     },
+  },
+  imageEdit: {
     upload: {
-      title: '画像をアップロード',
-      description: 'クリックまたはドラッグして画像をアップロード',
-      button: '画像を選択',
+      changeImage: '画像を変更',
+      uploadImage: '画像をアップロード',
+      supportedFormats: 'JPG、PNG、WebP形式に対応',
+      altText: 'アップロードされた画像',
     },
     prompt: {
-      placeholder: '希望の効果を説明してください...',
-      generate: '生成',
-      download: 'ダウンロード',
+      placeholder: '希望の編集内容を説明してください。例：「背景を青空と白い雲に変更」「髪型をショートヘアに変更」...',
     },
-    styles: {
-      title: 'スタイルを選択',
-      loading: '処理中...',
+    button: {
+      processing: '処理中...',
+      startEditing: '編集を開始',
+      download: '画像をダウンロード',
     },
+    result: {
+      altText: '処理結果',
+      completed: '処理が完了しました',
+      processing: 'AIが画像を処理中です...',
+      defaultMessage: '編集結果がここに表示されます',
+    },
+  },
+  upload: {
+    title: '画像をアップロード',
+    description: 'クリックまたはドラッグして画像をアップロード',
+    button: '画像を選択',
+  },
+  prompt: {
+    placeholder: '希望の効果を説明してください...',
+    generate: '生成',
+    download: 'ダウンロード',
+  },
+  styles: {
+    title: 'スタイルを選択',
+    loading: '処理中...',
   },
 } as const;

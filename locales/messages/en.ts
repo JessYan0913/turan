@@ -54,19 +54,42 @@ export default {
       style: 'Style Transfer',
       avatar: 'Avatar Generator',
     },
+  },
+  imageEdit: {
     upload: {
-      title: 'Upload Image',
-      description: 'Click or drag image here',
-      button: 'Select Image',
+      changeImage: 'Change image',
+      uploadImage: 'Upload image',
+      supportedFormats: 'Supports JPG, PNG, WebP formats',
+      altText: 'Uploaded image',
     },
     prompt: {
-      placeholder: 'Describe the effect you want...',
-      generate: 'Generate',
-      download: 'Download Result',
+      placeholder:
+        'Describe the edits you want, e.g. "Change the background to blue sky and white clouds", "Change the hairstyle to short hair"...',
     },
-    styles: {
-      title: 'Select Style',
-      loading: 'Processing...',
+    button: {
+      processing: 'Processing...',
+      startEditing: 'Start Editing',
+      download: 'Download Image',
     },
+    result: {
+      altText: 'Processed result',
+      completed: 'Processing completed',
+      processing: 'AI is processing your image...',
+      defaultMessage: 'Edit results will be shown here',
+    },
+  },
+  upload: {
+    title: 'Upload Image',
+    description: 'Click or drag image here',
+    button: 'Select Image',
+  },
+  prompt: {
+    placeholder: 'Describe the effect you want...',
+    generate: 'Generate',
+    download: 'Download Result',
+  },
+  styles: {
+    title: 'Select Style',
+    loading: 'Processing...',
   },
 } as const;
