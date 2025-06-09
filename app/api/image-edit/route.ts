@@ -5,7 +5,7 @@ import { generateTitle } from '@/lib/actions/ai';
 import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
 import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
-import { createWork } from '@/lib/db/queries';
+import { createWork, updateWork } from '@/lib/db/queries';
 
 export async function POST(request: Request) {
   try {
@@ -35,7 +35,21 @@ export async function POST(request: Request) {
 
     const blobData = await uploadFileToBlobStorage(imageFile);
 
-    const { image: outputImage } = await generateImage({
+    const work = await createWork(
+      {
+        title,
+        type: 'edit',
+        prompt,
+        aiPrompt: prompt,
+        originalImage: blobData.url,
+        processedImage: '',
+        style: '',
+        metadata: {},
+      },
+      userId
+    );
+
+    const { image: outputImage, responses } = await generateImage({
       model: modelProvider.imageModel('image-edit-model'),
       prompt,
       providerOptions: {
@@ -47,20 +61,12 @@ export async function POST(request: Request) {
     });
 
     const outputBlobData = await uploadGeneratedImageToBlobStorage(outputImage, 'output-image.png');
-
-    const work = await createWork(
-      {
-        title,
-        type: 'edit',
-        originalImage: blobData.url,
-        processedImage: outputBlobData.url,
-        style: '',
-        metadata: {},
-      },
-      userId
-    );
-
-    return NextResponse.json(work, { status: 201 });
+    const newWork = await updateWork(work.id, userId, {
+      completedAt: responses[0].timestamp,
+      processedImage: outputBlobData.url,
+      metadata: responses,
+    });
+    return NextResponse.json(newWork, { status: 201 });
   } catch (error) {
     console.error('Error processing image edit:', error);
     return NextResponse.json(

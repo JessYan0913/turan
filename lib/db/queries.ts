@@ -6,28 +6,9 @@ import { and, desc, eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import {
-  type Prediction,
-  prediction,
-  type PredictionStatus,
-  type User,
-  user,
-  type Work,
-  work,
-  type WorkStatus,
-  type WorkType,
-} from './schema';
+import { type User, user, type Work, work, type WorkType } from './schema';
 
 type NewWork = Omit<Work, 'id' | 'createdAt' | 'updatedAt'>;
-
-type NewPrediction = Omit<Prediction, 'id' | 'createdAt' | 'updatedAt' | 'startedAt' | 'completedAt'> & {
-  output: any | null;
-  error: any | null;
-  logs: string | null;
-  metrics: Record<string, any>;
-  webhook: string | null;
-  webhookEventsFilter: string[] | null;
-};
 
 type NewUser = Omit<InferInsertModel<typeof user>, 'id' | 'createdAt' | 'updatedAt'>;
 
@@ -52,7 +33,6 @@ export interface GetWorksOptions {
   userId: string;
   searchTerm?: string;
   type?: WorkType;
-  status?: WorkStatus;
   limit?: number;
   offset?: number;
 }
@@ -67,7 +47,6 @@ export async function getWorks({
   userId,
   searchTerm = '',
   type,
-  status,
   limit = 10,
   offset = 0,
 }: GetWorksOptions): Promise<PaginatedWorks> {
@@ -82,8 +61,7 @@ export async function getWorks({
             ? sql`LOWER(${work.title}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
                LOWER(${work.style}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
             : undefined,
-          type ? eq(work.type, type) : undefined,
-          status ? eq(work.status, status) : undefined
+          type ? eq(work.type, type) : undefined
         )
       )
       .orderBy(desc(work.createdAt))
@@ -106,8 +84,7 @@ export async function getWorks({
             ? sql`LOWER(${work.title}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
                LOWER(${work.style}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
             : undefined,
-          type ? eq(work.type, type) : undefined,
-          status ? eq(work.status, status) : undefined
+          type ? eq(work.type, type) : undefined
         )
       )
       .then((rows) => rows[0]?.count || 0);
@@ -141,10 +118,13 @@ export async function getWorkById(id: string, userId: string): Promise<Work | un
 export interface CreateWorkInput {
   title: string;
   type: WorkType;
+  prompt: string;
+  aiPrompt: string;
   originalImage: string;
   processedImage: string;
   style: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | Array<Record<string, unknown>>;
+  createdAt?: Date;
 }
 
 export async function createWork(data: CreateWorkInput, userId: string): Promise<Work> {
@@ -152,7 +132,7 @@ export async function createWork(data: CreateWorkInput, userId: string): Promise
     const newWorkData = {
       ...data,
       userId,
-      status: 'processing' as const,
+      completedAt: null, // 初始时completedAt为null
     };
 
     const [newWork] = await db.insert(work).values(newWorkData).returning();
@@ -200,227 +180,6 @@ export async function deleteWork(id: string, userId: string): Promise<void> {
   } catch (error) {
     console.error('Failed to delete work:', error);
     throw error instanceof Error ? error : new Error('Failed to delete work');
-  }
-}
-
-export async function updateWorkStatus(
-  id: string,
-  userId: string,
-  status: WorkStatus,
-  processedImage?: string
-): Promise<Work> {
-  try {
-    const updateData: Partial<Work> = {
-      status,
-      updatedAt: new Date(),
-    };
-
-    if (processedImage) {
-      updateData.processedImage = processedImage;
-    }
-
-    const [updatedWork] = await db
-      .update(work)
-      .set(updateData)
-      .where(and(eq(work.id, id), eq(work.userId, userId)))
-      .returning();
-
-    if (!updatedWork) {
-      throw new Error('Work not found or access denied');
-    }
-
-    return updatedWork;
-  } catch (error) {
-    console.error('Failed to update work status:', error);
-    throw error instanceof Error ? error : new Error('Failed to update work status');
-  }
-}
-
-// Prediction related queries
-export interface GetPredictionsOptions {
-  workId: string;
-  status?: PredictionStatus;
-  model?: string;
-  limit?: number;
-  offset?: number;
-}
-
-export interface PaginatedPredictions {
-  items: Prediction[];
-  total: number;
-  hasMore: boolean;
-}
-
-export async function getPredictions({
-  workId,
-  status,
-  model,
-  limit = 10,
-  offset = 0,
-}: GetPredictionsOptions): Promise<PaginatedPredictions> {
-  try {
-    const whereConditions = [
-      eq(prediction.workId, workId),
-      ...(status ? [eq(prediction.status, status)] : []),
-      ...(model ? [eq(prediction.model, model)] : []),
-    ];
-
-    const [predictions, total] = await Promise.all([
-      db
-        .select()
-        .from(prediction)
-        .where(and(...whereConditions))
-        .orderBy(desc(prediction.createdAt))
-        .limit(limit)
-        .offset(offset),
-      db
-        .select({ count: sql<number>`count(*)` })
-        .from(prediction)
-        .where(and(...whereConditions)),
-    ]);
-
-    return {
-      items: predictions,
-      total: Number(total[0]?.count || 0),
-      hasMore: offset + predictions.length < Number(total[0]?.count || 0),
-    };
-  } catch (error) {
-    console.error('Failed to fetch predictions:', error);
-    throw new Error('Failed to fetch predictions');
-  }
-}
-
-export async function getPredictionById(id: string): Promise<Prediction | undefined> {
-  try {
-    const [result] = await db.select().from(prediction).where(eq(prediction.id, id));
-    return result;
-  } catch (error) {
-    console.error('Failed to fetch prediction by ID:', error);
-    throw new Error('Failed to fetch prediction');
-  }
-}
-
-export interface CreatePredictionInput {
-  workId: string;
-  model: string;
-  version: string;
-  input: object;
-  source: 'api' | 'web';
-  webhook?: string;
-  webhookEventsFilter?: string[];
-  urls: {
-    get: string;
-    cancel: string;
-    stream?: string;
-  };
-}
-
-export async function createPrediction(data: CreatePredictionInput): Promise<Prediction> {
-  try {
-    const newPrediction: Omit<Prediction, 'id' | 'createdAt' | 'updatedAt'> = {
-      ...data,
-      status: 'starting',
-      output: null,
-      error: null,
-      logs: null,
-      metrics: {},
-      startedAt: null,
-      completedAt: null,
-      webhook: data.webhook || null,
-      webhookEventsFilter: data.webhookEventsFilter || null,
-    };
-
-    const [result] = await db
-      .insert(prediction)
-      .values({
-        id: crypto.randomUUID(),
-        ...newPrediction,
-      })
-      .returning();
-    return result;
-  } catch (error) {
-    console.error('Failed to create prediction:', error);
-    throw new Error('Failed to create prediction');
-  }
-}
-
-export async function updatePrediction(
-  id: string,
-  updates: Partial<{
-    status: PredictionStatus;
-    output: any;
-    error: any;
-    logs: string;
-    metrics: Record<string, any>;
-    startedAt: Date;
-    completedAt: Date;
-  }>
-): Promise<Prediction> {
-  try {
-    const [result] = await db
-      .update(prediction)
-      .set({
-        ...updates,
-        updatedAt: new Date(),
-      })
-      .where(eq(prediction.id, id))
-      .returning();
-
-    if (!result) {
-      throw new Error('Prediction not found');
-    }
-
-    return result;
-  } catch (error) {
-    console.error('Failed to update prediction:', error);
-    throw new Error('Failed to update prediction');
-  }
-}
-
-export async function deletePrediction(id: string): Promise<void> {
-  try {
-    await db.delete(prediction).where(eq(prediction.id, id));
-  } catch (error) {
-    console.error('Failed to delete prediction:', error);
-    throw new Error('Failed to delete prediction');
-  }
-}
-
-export async function updatePredictionStatus(
-  id: string,
-  status: PredictionStatus,
-  updates: Partial<{
-    output: any;
-    error: any;
-    logs: string;
-    metrics: Record<string, any>;
-  }> = {}
-): Promise<Prediction> {
-  try {
-    const updateData: any = {
-      status,
-      ...updates,
-      updatedAt: new Date(),
-    };
-
-    if (['succeeded', 'failed', 'canceled'].includes(status)) {
-      updateData.completedAt = new Date();
-    }
-
-    if (status === 'processing' && !updates.metrics?.startedAt) {
-      updateData.startedAt = new Date();
-    }
-
-    const [result] = await db.update(prediction).set(updateData).where(eq(prediction.id, id)).returning();
-
-    if (!result) {
-      throw new Error('Prediction not found');
-    }
-
-    return result;
-  } catch (error) {
-    console.error('Failed to update prediction status:', error);
-    throw new Error('Failed to update prediction status');
   }
 }
 

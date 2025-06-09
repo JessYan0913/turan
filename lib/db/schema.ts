@@ -57,19 +57,17 @@ export const work = pgTable(
     type: varchar('type', {
       enum: ['style-transfer', 'avatar', 'edit', 'other'],
     }).notNull(),
+    prompt: text('prompt').notNull().default(''),
+    aiPrompt: text('ai_prompt').notNull().default(''),
     originalImage: text('original_image').notNull(),
     processedImage: text('processed_image').notNull(),
     style: varchar('style', { length: 100 }).notNull(),
-    status: varchar('status', {
-      enum: ['processing', 'completed', 'failed'],
-    })
-      .notNull()
-      .default('processing'),
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
     metadata: jsonb('metadata').default({}),
     createdAt: timestamp('created_at').notNull().defaultNow(),
+    completedAt: timestamp('completed_at'),
     updatedAt: timestamp('updated_at')
       .notNull()
       .defaultNow()
@@ -78,51 +76,9 @@ export const work = pgTable(
   (table) => [
     index('work_user_id_idx').on(table.userId),
     index('work_type_idx').on(table.type),
-    index('work_status_idx').on(table.status),
     index('work_created_at_idx').on(table.createdAt),
+    index('work_completed_at_idx').on(table.completedAt),
   ]
 );
 
 export type Work = InferSelectModel<typeof work>;
-
-// Define Prediction status types
-export type PredictionStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'canceled';
-
-export const prediction = pgTable(
-  'prediction',
-  {
-    id: varchar('id', { length: 191 }).primaryKey().notNull(),
-    status: varchar('status', {
-      enum: ['starting', 'processing', 'succeeded', 'failed', 'canceled'],
-    }).notNull(),
-    model: varchar('model', { length: 255 }).notNull(),
-    version: varchar('version', { length: 100 }).notNull(),
-    input: jsonb('input').notNull(),
-    output: jsonb('output'),
-    source: varchar('source', { enum: ['api', 'web'] }).notNull(),
-    error: jsonb('error'),
-    logs: text('logs'),
-    metrics: jsonb('metrics').default({}),
-    webhook: text('webhook'),
-    webhookEventsFilter: jsonb('webhook_events_filter'),
-    urls: jsonb('urls').notNull(),
-    workId: varchar('work_id', { length: 191 }).references(() => work.id, { onDelete: 'cascade' }),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    startedAt: timestamp('started_at', { withTimezone: true }),
-    completedAt: timestamp('completed_at', { withTimezone: true }),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [
-    index('prediction_work_id_idx').on(table.workId),
-    index('prediction_status_idx').on(table.status),
-    index('prediction_created_at_idx').on(table.createdAt),
-    index('prediction_model_idx').on(table.model),
-  ]
-);
-
-export type Prediction = InferSelectModel<typeof prediction> & {
-  // Additional computed properties or relations can be added here
-};
