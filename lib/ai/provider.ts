@@ -18,6 +18,9 @@ export const modelProvider = customProvider({
     'title-model': siliconflow('Qwen/Qwen3-8B', {
       enable_thinking: false,
     } as any),
+    'prompt-model': siliconflow('Qwen/Qwen3-8B', {
+      enable_thinking: false,
+    } as any),
   },
   imageModels: {
     'image-edit-model': replicate.image('black-forest-labs/flux-kontext-pro'),
