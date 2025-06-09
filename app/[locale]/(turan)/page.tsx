@@ -48,9 +48,9 @@ export default function HomePage() {
           {/* 固定的标题区域 */}
           <div className="mb-10 text-center">
             <h1 className="mb-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-4xl font-bold text-transparent">
-              图然 Turan
+              {t('title')}
             </h1>
-            <p className={`${themeClasses.textSecondary} text-lg`}>每一次生成，都是用心呈现</p>
+            <p className={`${themeClasses.textSecondary} text-lg`}>{t('subtitle')}</p>
           </div>
 
           {/* 主要功能区 */}
@@ -90,16 +90,16 @@ export default function HomePage() {
           <div className="mt-20">
             <div className="mb-16 text-center">
               <h2 className="mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
-                精彩示例展示
+                {t('examples.title')}
               </h2>
-              <p className={`${themeClasses.textSecondary} text-lg`}>看看我们的AI能为您创造什么样的惊喜</p>
+              <p className={`${themeClasses.textSecondary} text-lg`}>{t('examples.subtitle')}</p>
             </div>
 
             {/* 图像编辑示例 */}
             <div className="mb-16">
               <div className="mb-8 flex items-center">
                 <Edit3 className="mr-3 size-5 text-blue-500" />
-                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>图像编辑</h3>
+                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>{t('examples.imageEdit')}</h3>
                 <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -110,14 +110,14 @@ export default function HomePage() {
                         <ImageSlider
                           beforeImage={`/placeholder.svg?height=160&width=400&text=${example.before}`}
                           afterImage={`/placeholder.svg?height=160&width=400&text=${example.after}`}
-                          beforeLabel="原图"
+                          beforeLabel={t('examples.original')}
                           afterLabel={example.title}
                           className="h-full rounded-t-lg"
                         />
                       </div>
                       <div className="p-4">
                         <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>拖动滑块查看转换效果</p>
+                        <p className={`text-sm ${themeClasses.textSecondary}`}>{t('examples.sliderHint')}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -129,7 +129,7 @@ export default function HomePage() {
             <div className="mb-16">
               <div className="mb-8 flex items-center">
                 <Palette className="mr-3 size-5 text-purple-500" />
-                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>风格转换</h3>
+                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>{t('examples.styleTransfer')}</h3>
                 <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -140,14 +140,14 @@ export default function HomePage() {
                         <ImageSlider
                           beforeImage={`/placeholder.svg?height=160&width=400&text=${example.before}`}
                           afterImage={`/placeholder.svg?height=160&width=400&text=${example.after}`}
-                          beforeLabel="原图"
+                          beforeLabel={t('examples.original')}
                           afterLabel={example.title}
                           className="h-full rounded-t-lg"
                         />
                       </div>
                       <div className="p-4">
                         <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>拖动滑块查看转换效果</p>
+                        <p className={`text-sm ${themeClasses.textSecondary}`}>{t('examples.sliderHint')}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -159,7 +159,7 @@ export default function HomePage() {
             <div className="mb-16">
               <div className="mb-8 flex items-center">
                 <Camera className="mr-3 size-5 text-green-500" />
-                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>头像生成</h3>
+                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>{t('examples.avatarGeneration')}</h3>
                 <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -170,14 +170,14 @@ export default function HomePage() {
                         <ImageSlider
                           beforeImage={`/placeholder.svg?height=160&width=400&text=${example.before}`}
                           afterImage={`/placeholder.svg?height=160&width=400&text=${example.after}`}
-                          beforeLabel="原图"
+                          beforeLabel={t('examples.original')}
                           afterLabel={example.title}
                           className="h-full rounded-t-lg"
                         />
                       </div>
                       <div className="p-4">
                         <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>拖动滑块查看转换效果</p>
+                        <p className={`text-sm ${themeClasses.textSecondary}`}>{t('examples.sliderHint')}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -191,7 +191,7 @@ export default function HomePage() {
             <h2
               className={`mb-8 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent`}
             >
-              简单三步，轻松编辑
+              {t('steps.title')}
             </h2>
             <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-3">
               <Card className={`border-0 text-center transition-all duration-300 ${themeClasses.cardSubtle}`}>
@@ -199,8 +199,8 @@ export default function HomePage() {
                   <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
                     <Upload className="size-5 text-white" />
                   </div>
-                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>1. 上传图片</h3>
-                  <p className={`text-sm ${themeClasses.textSecondary}`}>选择您想要编辑的图片</p>
+                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>1. {t('steps.upload.title')}</h3>
+                  <p className={`text-sm ${themeClasses.textSecondary}`}>{t('steps.upload.description')}</p>
                 </CardContent>
               </Card>
               <Card className={`border-0 text-center transition-all duration-300 ${themeClasses.cardSubtle}`}>
@@ -208,8 +208,8 @@ export default function HomePage() {
                   <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
                     <Sparkles className="size-5 text-white" />
                   </div>
-                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>2. 选择功能</h3>
-                  <p className={`text-sm ${themeClasses.textSecondary}`}>描述您想要的编辑效果</p>
+                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>2. {t('steps.select.title')}</h3>
+                  <p className={`text-sm ${themeClasses.textSecondary}`}>{t('steps.select.description')}</p>
                 </CardContent>
               </Card>
               <Card className={`border-0 text-center transition-all duration-300 ${themeClasses.cardSubtle}`}>
@@ -217,8 +217,8 @@ export default function HomePage() {
                   <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
                     <ArrowRight className="size-5 text-white" />
                   </div>
-                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>3. 获取结果</h3>
-                  <p className={`text-sm ${themeClasses.textSecondary}`}>下载编辑后的图片</p>
+                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>3. {t('steps.download.title')}</h3>
+                  <p className={`text-sm ${themeClasses.textSecondary}`}>{t('steps.download.description')}</p>
                 </CardContent>
               </Card>
             </div>

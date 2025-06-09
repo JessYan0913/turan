@@ -54,6 +54,30 @@ export default {
       style: '风格转换',
       avatar: '头像生成',
     },
+    examples: {
+      title: '精彩示例展示',
+      subtitle: '看看我们的AI能为您创造什么样的惊喜',
+      imageEdit: '图像编辑',
+      styleTransfer: '风格转换',
+      avatarGeneration: '头像生成',
+      original: '原图',
+      sliderHint: '拖动滑块查看转换效果',
+    },
+    steps: {
+      title: '简单三步，轻松编辑',
+      upload: {
+        title: '上传图片',
+        description: '选择您想要编辑的图片',
+      },
+      select: {
+        title: '选择功能',
+        description: '描述您想要的编辑效果',
+      },
+      download: {
+        title: '下载结果',
+        description: '保存您的创作成果',
+      },
+    },
   },
   imageEdit: {
     upload: {

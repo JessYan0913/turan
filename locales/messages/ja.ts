@@ -54,6 +54,30 @@ export default {
       style: 'スタイル変換',
       avatar: 'アバター作成',
     },
+    examples: {
+      title: '素晴らしい作例のご紹介',
+      subtitle: 'AIが作り出す驚きの効果をご覧ください',
+      imageEdit: '画像編集',
+      styleTransfer: 'スタイル変換',
+      avatarGeneration: 'アバター生成',
+      original: '元画像',
+      sliderHint: 'スライダーを動かして変化を確認',
+    },
+    steps: {
+      title: 'かんたん3ステップで編集',
+      upload: {
+        title: '画像をアップロード',
+        description: '編集したい画像を選択してください',
+      },
+      select: {
+        title: '機能を選択',
+        description: '希望の編集効果を説明してください',
+      },
+      download: {
+        title: '結果をダウンロード',
+        description: '作品を保存しましょう',
+      },
+    },
   },
   imageEdit: {
     upload: {

@@ -54,6 +54,30 @@ export default {
       style: 'Style Transfer',
       avatar: 'Avatar Generator',
     },
+    examples: {
+      title: 'Showcase of Wonderful Examples',
+      subtitle: 'See what kind of surprises our AI can create for you',
+      imageEdit: 'Image Editing',
+      styleTransfer: 'Style Transfer',
+      avatarGeneration: 'Avatar Generation',
+      original: 'Original',
+      sliderHint: 'Drag the slider to see the transformation',
+    },
+    steps: {
+      title: 'Three Simple Steps to Easy Editing',
+      upload: {
+        title: 'Upload Image',
+        description: 'Select the image you want to edit',
+      },
+      select: {
+        title: 'Select Feature',
+        description: 'Describe the editing effect you want',
+      },
+      download: {
+        title: 'Download Result',
+        description: 'Save your creation',
+      },
+    },
   },
   imageEdit: {
     upload: {
