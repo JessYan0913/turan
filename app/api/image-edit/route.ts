@@ -38,10 +38,10 @@ export async function POST(request: Request) {
     const { image: outputImage } = await generateImage({
       model: modelProvider.imageModel('image-edit-model'),
       prompt,
-      aspectRatio: '1:1',
       providerOptions: {
         replicate: {
           input_image: blobData.url,
+          aspect_ratio: 'match_input_image',
         },
       },
     });

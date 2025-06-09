@@ -22,6 +22,7 @@ export function ImageEditTab() {
     trigger: submitEdit,
     data: work,
     isMutating,
+    reset,
   } = useSWRMutation<Work, Error, string, { image: File; prompt: string }>(
     '/api/image-edit',
     async (url: string, { arg }: { arg: { image: File; prompt: string } }) => {
@@ -121,7 +122,10 @@ export function ImageEditTab() {
             className={`resize-none ${themeClasses.textarea} border-0 transition-all duration-300 focus:shadow-[0_8px_30px_rgba(59,130,246,0.15)]`}
           />
           <Button
-            onClick={() => submitEdit({ image: selectedImage!, prompt })}
+            onClick={() => {
+              reset(); // 先清空之前的work状态
+              submitEdit({ image: selectedImage!, prompt });
+            }}
             disabled={!selectedImage || isMutating}
             className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
             size="lg"
