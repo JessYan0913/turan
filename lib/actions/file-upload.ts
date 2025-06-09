@@ -3,6 +3,12 @@
 import { put } from '@vercel/blob';
 import { z } from 'zod';
 
+// Type for GeneratedFile from ai package
+interface GeneratedFile {
+  base64: string;
+  // Add other properties if needed
+}
+
 // 支持的文件类型
 const SUPPORTED_FILE_TYPES = [
   'application/pdf',
@@ -60,5 +66,35 @@ export async function uploadFileToBlobStorage(file: File) {
   } catch (error) {
     console.error('上传文件失败:', error);
     throw new Error('上传文件失败');
+  }
+}
+
+/**
+ * Upload a GeneratedFile (from ai package) to Vercel Blob storage
+ */
+export async function uploadGeneratedImageToBlobStorage(
+  generatedFile: GeneratedFile,
+  filename: string = 'generated-image.png'
+) {
+  try {
+    // Extract base64 data (remove data URL prefix if present)
+    const base64Data = generatedFile.base64.split(';base64,').pop() || '';
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    // Upload to Vercel Blob storage
+    const blobData = await put(`${Date.now()}-${filename}`, buffer, {
+      access: 'public',
+      contentType: 'image/png',
+    });
+
+    return {
+      ...blobData,
+      fileSize: buffer.byteLength,
+      fileType: 'image/png',
+      filename,
+    };
+  } catch (error) {
+    console.error('上传生成图片失败:', error);
+    throw new Error('上传生成图片失败');
   }
 }

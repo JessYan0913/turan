@@ -1,11 +1,11 @@
+import { experimental_generateImage as generateImage } from 'ai';
 import { NextResponse } from 'next/server';
 
-import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
+import { generateTitle } from '@/lib/actions/ai';
+import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
+import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
-import { createPrediction, createWork } from '@/lib/db/queries';
-import { replicate } from '@/lib/replicate';
-
-const WEBHOOK_HOST = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NGROK_HOST;
+import { createWork } from '@/lib/db/queries';
 
 export async function POST(request: Request) {
   try {
@@ -31,35 +31,36 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Prompt is required' }, { status: 400 });
     }
 
-    // Upload the file to blob storage
+    const title = await generateTitle(prompt);
+
     const blobData = await uploadFileToBlobStorage(imageFile);
 
+    const { image: outputImage } = await generateImage({
+      model: modelProvider.imageModel('image-edit-model'),
+      prompt,
+      aspectRatio: '1:1',
+      providerOptions: {
+        replicate: {
+          input_image: blobData.url,
+        },
+      },
+    });
+
+    const outputBlobData = await uploadGeneratedImageToBlobStorage(outputImage, 'output-image.png');
+
     const work = await createWork(
-      { title: '图片编辑', type: 'edit', originalImage: blobData.url, processedImage: '', style: '', metadata: {} },
+      {
+        title,
+        type: 'edit',
+        originalImage: blobData.url,
+        processedImage: outputBlobData.url,
+        style: '',
+        metadata: {},
+      },
       userId
     );
 
-    const prediction = await replicate.predictions.create({
-      model: 'black-forest-labs/flux-kontext-pro',
-      input: {
-        input_image: blobData.url,
-        prompt,
-      },
-      webhook: `${WEBHOOK_HOST}/api/webhooks`,
-      webhook_events_filter: ['start', 'completed', 'logs', 'output'],
-    });
-
-    await createPrediction({
-      ...prediction,
-      workId: work.id,
-      source: 'api' as const,
-    });
-
-    if (prediction?.error) {
-      return NextResponse.json({ detail: prediction.error }, { status: 500 });
-    }
-
-    return NextResponse.json(prediction, { status: 201 });
+    return NextResponse.json(work, { status: 201 });
   } catch (error) {
     console.error('Error processing image edit:', error);
     return NextResponse.json(

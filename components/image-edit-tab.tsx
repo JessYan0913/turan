@@ -3,81 +3,70 @@ import React, { useCallback, useState } from 'react';
 import { ArrowRight, ImageIcon, Sparkles, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { type Prediction } from 'replicate';
 import useSWRMutation from 'swr/mutation';
 
 import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { Work } from '@/lib/db/schema';
 
 export function ImageEditTab() {
   const { themeClasses } = useTheme();
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
-  const [resultImage, setResultImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState('');
 
-  const { trigger: submitEdit, data: prediction } = useSWRMutation<
-    Prediction,
-    Error,
-    string,
-    { image: File; prompt: string }
-  >('/api/image-edit', async (url: string, { arg }: { arg: { image: File; prompt: string } }) => {
-    const formData = new FormData();
-    formData.append('image', arg.image);
-    formData.append('prompt', arg.prompt);
+  const {
+    trigger: submitEdit,
+    data: work,
+    isMutating,
+  } = useSWRMutation<Work, Error, string, { image: File; prompt: string }>(
+    '/api/image-edit',
+    async (url: string, { arg }: { arg: { image: File; prompt: string } }) => {
+      const formData = new FormData();
+      formData.append('image', arg.image);
+      formData.append('prompt', arg.prompt);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include', // Make sure to include credentials for auth
-    });
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include', // Make sure to include credentials for auth
+      });
 
-    if (response.status === 401) {
-      // Redirect to login page when unauthorized
-      router.push('/login');
-      return new Promise(() => {}); // Return a never-resolving promise
+      if (response.status === 401) {
+        // Redirect to login page when unauthorized
+        router.push('/login');
+        return new Promise(() => {}); // Return a never-resolving promise
+      }
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || 'Failed to process image');
+      }
+
+      const data = (await response.json()) as Work;
+      return data;
     }
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || 'Failed to process image');
-    }
-
-    const data = (await response.json()) as Prediction;
-    const source = new EventSource(`/api/sse/${data.id}`);
-
-    source.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      console.log('💬 Received SSE:', data);
-    };
-
-    source.onerror = (err) => {
-      console.error('SSE error', err);
-      source.close();
-    };
-    return data;
-  });
+  );
 
   const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
-      setResultImage(null);
     }
   }, []);
 
   const handleDownload = useCallback(() => {
-    if (resultImage) {
+    if (work?.processedImage) {
       const link = document.createElement('a');
-      link.href = resultImage;
+      link.href = work.processedImage;
       link.download = selectedImage?.name || 'edited-image.png';
       link.click();
     }
-  }, [resultImage, selectedImage]);
+  }, [work, selectedImage]);
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
@@ -133,11 +122,11 @@ export function ImageEditTab() {
           />
           <Button
             onClick={() => submitEdit({ image: selectedImage!, prompt })}
-            disabled={!selectedImage || prediction?.status === 'processing'}
+            disabled={!selectedImage || isMutating}
             className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
             size="lg"
           >
-            {prediction?.status === 'processing' ? (
+            {isMutating ? (
               <>
                 <div className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 处理中...
@@ -158,10 +147,10 @@ export function ImageEditTab() {
           <CardContent className="h-full p-0">
             <div className={`${themeClasses.resultArea} flex h-full flex-col p-8 text-center`}>
               <div className="flex flex-1 items-center justify-center">
-                {resultImage ? (
+                {work?.processedImage ? (
                   <div className="space-y-4">
                     <Image
-                      src={resultImage || '/placeholder.svg'}
+                      src={work?.processedImage || '/placeholder.svg'}
                       alt="处理结果"
                       width={400}
                       height={300}
@@ -172,7 +161,7 @@ export function ImageEditTab() {
                       处理完成
                     </div>
                   </div>
-                ) : prediction?.status === 'processing' ? (
+                ) : isMutating ? (
                   <div className="space-y-4">
                     <div className="mx-auto size-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-500"></div>
                     <p className={`${themeClasses.text} font-medium`}>AI正在处理您的图片...</p>
@@ -185,7 +174,7 @@ export function ImageEditTab() {
                 )}
               </div>
 
-              {resultImage && (
+              {work?.processedImage && (
                 <Button
                   onClick={handleDownload}
                   variant="outline"
