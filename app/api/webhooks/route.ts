@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { type Prediction } from 'replicate';
 
 import { updatePrediction } from '@/lib/db/queries';
+import { pushToSSE } from '@/lib/sse';
 
 export async function POST(request: Request) {
   try {
@@ -11,7 +12,7 @@ export async function POST(request: Request) {
       startedAt: prediction.started_at ? new Date(prediction.started_at) : undefined,
       completedAt: prediction.completed_at ? new Date(prediction.completed_at) : undefined,
     });
-
+    pushToSSE(prediction.id, 'update', newPrediction);
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('💥 Webhook handling failed:', error);
