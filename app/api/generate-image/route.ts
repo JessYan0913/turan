@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
-
-const WEBHOOK_HOST = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NGROK_HOST;
+import { WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -24,9 +23,9 @@ export async function POST(request: Request) {
     const prediction = await replicate.predictions.create({
       model: 'black-forest-labs/flux-schnell',
       input: {
+        userId,
         prompt,
         output_format: 'png',
-        userId,
       },
       webhook: `${WEBHOOK_HOST}/api/generate-image/webhook`,
       webhook_events_filter: ['completed', 'logs', 'start'],

@@ -1,11 +1,9 @@
-import { experimental_generateImage as generateImage } from 'ai';
 import { NextResponse } from 'next/server';
 
-import { generateTitle } from '@/lib/actions/ai';
-import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
-import { modelProvider } from '@/lib/ai/provider';
+import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
 import { auth } from '@/lib/auth';
-import { createWork, updateWork } from '@/lib/db/queries';
+import { replicate } from '@/lib/replicate';
+import { WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -31,41 +29,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Prompt is required' }, { status: 400 });
     }
 
-    const title = await generateTitle(prompt);
-
     const blobData = await uploadFileToBlobStorage(imageFile);
 
-    const work = await createWork(
-      {
-        title,
-        type: 'edit',
+    const prediction = await replicate.predictions.create({
+      model: 'black-forest-labs/flux-kontext-pro',
+      input: {
+        userId,
         prompt,
-        originalImage: blobData.url,
-        processedImage: '',
-        style: '',
-        metadata: {},
+        output_format: 'png',
+        input_image: blobData.url,
+        aspect_ratio: 'match_input_image',
+        seed: 2,
+        safety_tolerance: 2,
       },
-      userId
-    );
-
-    const { image: outputImage, responses } = await generateImage({
-      model: modelProvider.imageModel('image-edit-model'),
-      prompt,
-      providerOptions: {
-        replicate: {
-          input_image: blobData.url,
-          aspect_ratio: 'match_input_image',
-        },
-      },
+      webhook: `${WEBHOOK_HOST}/api/image-edit/webhook`,
+      webhook_events_filter: ['completed', 'logs', 'start'],
     });
 
-    const outputBlobData = await uploadGeneratedImageToBlobStorage(outputImage, 'output-image.png');
-    const newWork = await updateWork(work.id, userId, {
-      completedAt: responses[0].timestamp,
-      processedImage: outputBlobData.url,
-      metadata: responses,
-    });
-    return NextResponse.json(newWork, { status: 201 });
+    return NextResponse.json(prediction, { status: 201 });
   } catch (error) {
     console.error('Error processing image edit:', error);
     return NextResponse.json(

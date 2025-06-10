@@ -32,3 +32,5 @@ export const fetcher = async (url: string) => {
 
   return res.json();
 };
+
+export const WEBHOOK_HOST = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NGROK_HOST;
