@@ -74,12 +74,29 @@ export function ImageEditTab() {
     }
   }, []);
 
-  const handleDownload = useCallback(() => {
+  const handleDownload = useCallback(async () => {
     if (generatedImage) {
-      const link = document.createElement('a');
-      link.href = generatedImage;
-      link.download = selectedImage?.name || 'edited-image.png';
-      link.click();
+      try {
+        // 获取图片并转换为blob
+        const response = await fetch(generatedImage);
+        const blob = await response.blob();
+
+        // 创建一个临时的blob URL
+        const blobUrl = URL.createObjectURL(blob);
+
+        // 创建下载链接
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = selectedImage?.name || 'edited-image.png';
+        document.body.appendChild(link);
+        link.click();
+
+        // 清理
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+      } catch (error) {
+        console.error('下载图片失败:', error);
+      }
     }
   }, [generatedImage, selectedImage]);
 
