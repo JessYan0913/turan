@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
+import { downloadImage } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
 export function ImageEditTab() {
@@ -77,23 +78,7 @@ export function ImageEditTab() {
   const handleDownload = useCallback(async () => {
     if (generatedImage) {
       try {
-        // 获取图片并转换为blob
-        const response = await fetch(generatedImage);
-        const blob = await response.blob();
-
-        // 创建一个临时的blob URL
-        const blobUrl = URL.createObjectURL(blob);
-
-        // 创建下载链接
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = selectedImage?.name || 'edited-image.png';
-        document.body.appendChild(link);
-        link.click();
-
-        // 清理
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+        await downloadImage(generatedImage, selectedImage?.name || 'edited-image.png');
       } catch (error) {
         console.error('下载图片失败:', error);
       }
