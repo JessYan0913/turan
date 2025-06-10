@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { usePollingRequest } from '@/lib/hooks/usePollingRequest';
+import { usePollingRequest } from '@/hooks/usePollingRequest';
 import { useScopedI18n } from '@/locales/client';
 
 export function ImageEditTab() {

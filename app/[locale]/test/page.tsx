@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { usePollingRequest } from '@/lib/hooks/usePollingRequest';
+import { usePollingRequest } from '@/hooks/usePollingRequest';
 
 export default function ImageGenerationTest() {
   const [prompt, setPrompt] = useState('');
