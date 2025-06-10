@@ -1,0 +1,1 @@
+ALTER TABLE "work" ADD COLUMN "predict_time" numeric(10, 9);

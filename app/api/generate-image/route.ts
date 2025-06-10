@@ -1,0 +1,47 @@
+import { NextResponse } from 'next/server';
+
+import { auth } from '@/lib/auth';
+import { replicate } from '@/lib/replicate';
+
+const WEBHOOK_HOST = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NGROK_HOST;
+
+export async function POST(request: Request) {
+  try {
+    const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const userId = session.user.id;
+
+    const { prompt } = await request.json();
+
+    if (!prompt) {
+      return NextResponse.json({ success: false, message: 'Prompt is required' }, { status: 400 });
+    }
+
+    const prediction = await replicate.predictions.create({
+      model: 'black-forest-labs/flux-schnell',
+      input: {
+        prompt,
+        output_format: 'png',
+        userId,
+      },
+      webhook: `${WEBHOOK_HOST}/api/generate-image/webhook`,
+      webhook_events_filter: ['completed', 'logs', 'start'],
+    });
+
+    return NextResponse.json(prediction, { status: 201 });
+  } catch (error) {
+    console.error('Error processing image generation:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to process image generation',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
+  }
+}

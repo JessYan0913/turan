@@ -1,5 +1,5 @@
 import type { InferSelectModel } from 'drizzle-orm';
-import { boolean, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, jsonb, numeric, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
 import { nanoid } from '@/lib/utils';
 
@@ -41,7 +41,7 @@ export type User = InferSelectModel<typeof user> & {
 };
 
 // 定义作品类型
-export type WorkType = 'style-transfer' | 'avatar' | 'edit' | 'other';
+export type WorkType = 'style-transfer' | 'avatar' | 'edit' | 'generate' | 'other';
 
 // 定义作品状态
 export type WorkStatus = 'processing' | 'completed' | 'failed';
@@ -55,19 +55,19 @@ export const work = pgTable(
       .$defaultFn(() => nanoid()),
     title: varchar('title', { length: 255 }).notNull(),
     type: varchar('type', {
-      enum: ['style-transfer', 'avatar', 'edit', 'other'],
+      enum: ['style-transfer', 'avatar', 'edit', 'generate', 'other'],
     }).notNull(),
     prompt: text('prompt').notNull().default(''),
-    aiPrompt: text('ai_prompt').notNull().default(''),
-    originalImage: text('original_image').notNull(),
-    processedImage: text('processed_image').notNull(),
-    style: varchar('style', { length: 100 }).notNull(),
+    originalImage: text('original_image').default(''),
+    processedImage: text('processed_image').default(''),
+    style: varchar('style', { length: 100 }).default(''),
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
     metadata: jsonb('metadata').default({}),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
     completedAt: timestamp('completed_at'),
+    predictTime: numeric('predict_time', { precision: 10, scale: 9 }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()
       .defaultNow()

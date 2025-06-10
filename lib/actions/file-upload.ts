@@ -3,6 +3,8 @@
 import { put } from '@vercel/blob';
 import { z } from 'zod';
 
+import { nanoid } from '@/lib/utils';
+
 // Type for GeneratedFile from ai package
 interface GeneratedFile {
   base64: string;
@@ -96,5 +98,41 @@ export async function uploadGeneratedImageToBlobStorage(
   } catch (error) {
     console.error('上传生成图片失败:', error);
     throw new Error('上传生成图片失败');
+  }
+}
+
+/**
+ * Saves an online image to Vercel Blob storage
+ * @param imageUrl The URL of the image to save
+ * @param filename Optional custom filename (without extension)
+ * @returns Promise with the URL of the saved image
+ */
+export async function saveOnlineImage(imageUrl: string, filename: string = nanoid()) {
+  try {
+    // Fetch the image
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+
+    // Get the content type from the response or default to jpeg
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const fileExtension = contentType.split('/').pop() || 'jpg';
+    const blobName = `${filename}.${fileExtension}`;
+
+    // Convert the response to a buffer
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Upload to Vercel Blob
+    const blob = await put(blobName, buffer, {
+      access: 'public',
+      contentType,
+    });
+
+    return blob;
+  } catch (error) {
+    console.error('Error saving online image:', error);
+    throw new Error('Failed to save online image');
   }
 }

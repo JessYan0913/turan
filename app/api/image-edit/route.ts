@@ -40,7 +40,6 @@ export async function POST(request: Request) {
         title,
         type: 'edit',
         prompt,
-        aiPrompt: prompt,
         originalImage: blobData.url,
         processedImage: '',
         style: '',

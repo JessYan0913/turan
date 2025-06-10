@@ -119,12 +119,13 @@ export interface CreateWorkInput {
   title: string;
   type: WorkType;
   prompt: string;
-  aiPrompt: string;
-  originalImage: string;
-  processedImage: string;
-  style: string;
+  originalImage?: string;
+  processedImage?: string;
+  style?: string;
   metadata?: Record<string, unknown> | Array<Record<string, unknown>>;
   createdAt?: Date;
+  completedAt?: Date;
+  predictTime?: string;
 }
 
 export async function createWork(data: CreateWorkInput, userId: string): Promise<Work> {
@@ -132,7 +133,6 @@ export async function createWork(data: CreateWorkInput, userId: string): Promise
     const newWorkData = {
       ...data,
       userId,
-      completedAt: null, // 初始时completedAt为null
     };
 
     const [newWork] = await db.insert(work).values(newWorkData).returning();
