@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
       const title = await generateTitle(prompt);
 
-      const processedImageBlob = await saveOnlineImage(prediction.output[0]);
+      const processedImageBlob = await saveOnlineImage(prediction.output);
 
       await createWork(
         {

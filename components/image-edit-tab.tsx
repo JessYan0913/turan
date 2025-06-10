@@ -3,13 +3,14 @@ import { useCallback, useState } from 'react';
 import { ArrowRight, ImageIcon, Sparkles, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import useSWRMutation from 'swr/mutation';
+import { type Prediction } from 'replicate';
 
 import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Work } from '@/lib/db/schema';
+import { useToast } from '@/components/ui/use-toast';
+import { usePollingRequest } from '@/lib/hooks/usePollingRequest';
 import { useScopedI18n } from '@/locales/client';
 
 export function ImageEditTab() {
@@ -20,28 +21,28 @@ export function ImageEditTab() {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [prompt, setPrompt] = useState('');
 
-  const {
-    trigger: submitEdit,
-    data: work,
-    isMutating,
-    reset,
-  } = useSWRMutation<Work, Error, string, { image: File; prompt: string }>(
-    '/api/image-edit',
-    async (url: string, { arg }: { arg: { image: File; prompt: string } }) => {
-      const formData = new FormData();
-      formData.append('image', arg.image);
-      formData.append('prompt', arg.prompt);
+  const { toast } = useToast();
 
-      const response = await fetch(url, {
+  const {
+    execute: submitEdit,
+    data: generatedImage,
+    status,
+    reset,
+  } = usePollingRequest<{ image: File; prompt: string }, Prediction>({
+    request: async (data) => {
+      const formData = new FormData();
+      formData.append('image', data.image);
+      formData.append('prompt', data.prompt);
+
+      const response = await fetch('/api/image-edit', {
         method: 'POST',
         body: formData,
-        credentials: 'include', // Make sure to include credentials for auth
+        credentials: 'include',
       });
 
       if (response.status === 401) {
-        // Redirect to login page when unauthorized
         router.push('/login');
-        return new Promise(() => {}); // Return a never-resolving promise
+        return;
       }
 
       if (!response.ok) {
@@ -49,10 +50,21 @@ export function ImageEditTab() {
         throw new Error(error.message || 'Failed to process image');
       }
 
-      const data = (await response.json()) as Work;
-      return data;
-    }
-  );
+      return response.json();
+    },
+    checkStatus: async (id) => {
+      const response = await fetch(`/api/prediction/${id}`);
+      if (!response.ok) {
+        throw new Error('Failed to check status');
+      }
+      return response.json();
+    },
+    isComplete: (data: Prediction) => data.status === 'succeeded' || data.status === 'failed',
+    getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output : null),
+    successMessage: t('result.completed'),
+    errorMessage: t('result.completed'),
+    timeoutMessage: t('result.completed'),
+  });
 
   const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -63,13 +75,13 @@ export function ImageEditTab() {
   }, []);
 
   const handleDownload = useCallback(() => {
-    if (work?.processedImage) {
+    if (generatedImage) {
       const link = document.createElement('a');
-      link.href = work.processedImage;
+      link.href = generatedImage;
       link.download = selectedImage?.name || 'edited-image.png';
       link.click();
     }
-  }, [work, selectedImage]);
+  }, [generatedImage, selectedImage]);
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
@@ -125,17 +137,24 @@ export function ImageEditTab() {
           />
           <Button
             onClick={() => {
-              reset(); // 先清空之前的work状态
-              submitEdit({ image: selectedImage!, prompt });
+              if (!selectedImage) {
+                toast({
+                  title: t('upload.uploadImage'), // Using existing translation
+                  variant: 'destructive',
+                });
+                return;
+              }
+              reset();
+              submitEdit({ image: selectedImage, prompt });
             }}
-            disabled={!selectedImage || isMutating}
+            disabled={!selectedImage || status === 'loading' || status === 'polling'}
             className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
             size="lg"
           >
-            {isMutating ? (
+            {status === 'loading' || status === 'polling' ? (
               <>
                 <div className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                {t('button.processing')}
+                {status === 'loading' ? t('button.processing') : t('button.processing')}
               </>
             ) : (
               <>
@@ -153,10 +172,10 @@ export function ImageEditTab() {
           <CardContent className="h-full p-0">
             <div className={`${themeClasses.resultArea} flex h-full flex-col p-8 text-center`}>
               <div className="flex flex-1 items-center justify-center">
-                {work?.processedImage ? (
+                {generatedImage ? (
                   <div className="space-y-4">
                     <Image
-                      src={work?.processedImage || '/placeholder.svg'}
+                      src={generatedImage}
                       alt={t('result.altText')}
                       width={400}
                       height={300}
@@ -167,7 +186,7 @@ export function ImageEditTab() {
                       {t('result.completed')}
                     </div>
                   </div>
-                ) : isMutating ? (
+                ) : status === 'loading' || status === 'polling' ? (
                   <div className="space-y-4">
                     <div className="mx-auto size-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-500"></div>
                     <p className={`${themeClasses.text} font-medium`}>{t('result.processing')}</p>
@@ -180,7 +199,7 @@ export function ImageEditTab() {
                 )}
               </div>
 
-              {work?.processedImage && (
+              {generatedImage && (
                 <Button
                   onClick={handleDownload}
                   variant="outline"
