@@ -1,18 +1,12 @@
 import { NextResponse } from 'next/server';
 import { type Prediction } from 'replicate';
 
-import { updatePrediction } from '@/lib/db/queries';
 import { pushToSSE } from '@/lib/sse';
 
 export async function POST(request: Request) {
   try {
     const prediction = (await request.json()) as Prediction;
-    const newPrediction = await updatePrediction(prediction.id, {
-      ...prediction,
-      startedAt: prediction.started_at ? new Date(prediction.started_at) : undefined,
-      completedAt: prediction.completed_at ? new Date(prediction.completed_at) : undefined,
-    });
-    pushToSSE(prediction.id, 'update', newPrediction);
+    pushToSSE(prediction.id, 'update', prediction);
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('💥 Webhook handling failed:', error);
