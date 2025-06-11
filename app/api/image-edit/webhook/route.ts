@@ -26,7 +26,7 @@ export async function POST(request: Request) {
           type: 'edit',
           originalImage: input_image,
           processedImage: processedImageBlob.url,
-          metadata: prediction.metrics,
+          metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
           completedAt: new Date(prediction.completed_at || new Date()),
           predictTime: prediction.metrics?.predict_time?.toString(),
         },

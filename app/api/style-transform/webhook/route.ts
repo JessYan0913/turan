@@ -9,20 +9,24 @@ export async function POST(request: Request) {
   try {
     const prediction = (await request.json()) as Prediction;
     if (prediction.status === 'succeeded') {
-      const { prompt, userId } = prediction.input as {
-        prompt: string;
+      const { prompt, userId, input_image, style } = prediction.input as {
         userId: string;
+        prompt: string;
+        input_image: string;
+        style: string;
       };
 
       const title = await generateTitle(prompt);
 
-      const processedImageBlob = await saveOnlineImage(prediction.output[0]);
+      const processedImageBlob = await saveOnlineImage(prediction.output);
 
       await createWork(
         {
           title,
           prompt,
-          type: 'generate',
+          type: 'style-transfer',
+          style,
+          originalImage: input_image,
           processedImage: processedImageBlob.url,
           metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
           completedAt: new Date(prediction.completed_at || new Date()),
