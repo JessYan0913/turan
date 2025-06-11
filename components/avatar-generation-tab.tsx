@@ -21,7 +21,7 @@ import { useScopedI18n } from '@/locales/client';
 // Define the form schema using Zod
 const avatarGenerationSchema = z.object({
   image: z.instanceof(File, { message: 'Please upload an image' }),
-  style: z.string().min(1, { message: 'Please select a style' }),
+  background: z.string().min(1, { message: 'Please select a background' }),
 });
 
 // Define the form data type from the schema
@@ -44,7 +44,7 @@ export function AvatarGenerationTab() {
   const form = useForm<AvatarGenerationFormValues>({
     resolver: zodResolver(avatarGenerationSchema),
     defaultValues: {
-      style: '',
+      background: '',
     },
   });
 
@@ -53,12 +53,12 @@ export function AvatarGenerationTab() {
     data: generatedImage,
     status,
     reset,
-  } = usePollingRequest<{ image: File; style: string }, Prediction>({
+  } = usePollingRequest<{ image: File; background: string }, Prediction>({
     // 发起生成头像的请求
     request: async (data) => {
       const formData = new FormData();
       formData.append('image', data.image);
-      formData.append('style', data.style);
+      formData.append('background', data.background);
 
       const response = await fetch('/api/avatar-generate', {
         method: 'POST',
@@ -86,7 +86,7 @@ export function AvatarGenerationTab() {
       return response.json();
     },
     isComplete: (data: Prediction) => data.status === 'succeeded' || data.status === 'failed',
-    getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output[0] : null),
+    getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output : null),
     successMessage: t('result.success'),
     errorMessage: t('result.error'),
     timeoutMessage: t('result.timeout'),
@@ -113,7 +113,7 @@ export function AvatarGenerationTab() {
   const onSubmit = useCallback(
     (data: AvatarGenerationFormValues) => {
       reset();
-      generateAvatar({ image: data.image, style: data.style });
+      generateAvatar({ image: data.image, background: data.background });
     },
     [generateAvatar, reset]
   );
@@ -143,15 +143,15 @@ export function AvatarGenerationTab() {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="style"
+              name="background"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <StyleSelector
                       options={avatarStyleOptions || []}
                       value={field.value}
-                      onSelect={(style) => {
-                        field.onChange(style.id);
+                      onSelect={(background) => {
+                        field.onChange(background.id);
                       }}
                       placeholder={t('prompt.placeholder')}
                       isDarkMode={isDarkMode}
