@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,15 +20,6 @@ import { usePollingRequest } from '@/hooks/usePollingRequest';
 import { fetcher } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
-// Define the form schema using Zod
-const avatarGenerationSchema = z.object({
-  image: z.instanceof(File, { message: 'Please upload an image' }),
-  background: z.string().min(1, { message: 'Please select a background' }),
-});
-
-// Define the form data type from the schema
-type AvatarGenerationFormValues = z.infer<typeof avatarGenerationSchema>;
-
 export interface StyleOption {
   id: string;
   name: string;
@@ -40,8 +33,14 @@ export function AvatarGenerationTab() {
   const router = useRouter();
   const t = useScopedI18n('avatarGeneration');
 
+  // Define the form schema using Zod
+  const avatarGenerationSchema = z.object({
+    image: z.instanceof(File, { message: 'Please upload an image' }),
+    background: z.string().min(1, { message: 'Please select a background' }),
+  });
+
   // Initialize react-hook-form with Zod validation
-  const form = useForm<AvatarGenerationFormValues>({
+  const form = useForm<z.infer<typeof avatarGenerationSchema>>({
     resolver: zodResolver(avatarGenerationSchema),
     defaultValues: {
       background: '',
@@ -111,7 +110,7 @@ export function AvatarGenerationTab() {
   );
 
   const onSubmit = useCallback(
-    (data: AvatarGenerationFormValues) => {
+    (data: z.infer<typeof avatarGenerationSchema>) => {
       reset();
       generateAvatar({ image: data.image, background: data.background });
     },

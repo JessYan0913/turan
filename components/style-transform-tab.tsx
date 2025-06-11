@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,23 +28,20 @@ export interface StyleOption {
   preview: string;
 }
 
-// Define the form schema using Zod
-const styleTransformSchema = z.object({
-  image: z.instanceof(File, { message: 'Please upload an image' }),
-  style: z.string().min(1, { message: 'Please select a style' }),
-  prompt: z.string().optional(),
-});
-
-// Define the form data type from the schema
-type StyleTransformFormValues = z.infer<typeof styleTransformSchema>;
-
 export function StyleTransformTab() {
   const { isDarkMode, themeClasses } = useTheme();
   const router = useRouter();
   const t = useScopedI18n('styleTransform');
 
+  // Define the form schema using Zod
+  const styleTransformSchema = z.object({
+    image: z.instanceof(File, { message: 'Please upload an image' }),
+    style: z.string().min(1, { message: 'Please select a style' }),
+    prompt: z.string().optional(),
+  });
+
   // Initialize react-hook-form with Zod validation
-  const form = useForm<StyleTransformFormValues>({
+  const form = useForm<z.infer<typeof styleTransformSchema>>({
     resolver: zodResolver(styleTransformSchema),
     defaultValues: {
       prompt: '',
@@ -113,7 +112,7 @@ export function StyleTransformTab() {
   );
 
   const onSubmit = useCallback(
-    (data: StyleTransformFormValues) => {
+    (data: z.infer<typeof styleTransformSchema>) => {
       reset();
       submitTransform({ image: data.image, prompt: data.prompt || '', style: data.style });
     },

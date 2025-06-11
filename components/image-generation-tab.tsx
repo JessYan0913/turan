@@ -16,19 +16,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
 import { useScopedI18n } from '@/locales/client';
 
-// Define the form schema using Zod
-const imageGenerationSchema = z.object({
-  prompt: z.string().min(1, { message: 'Please enter a prompt' }),
-});
-
-type ImageGenerationFormValues = z.infer<typeof imageGenerationSchema>;
-
 export function ImageGenerationTab() {
   const { themeClasses } = useTheme();
   const t = useScopedI18n('imageGeneration');
 
+  // Define the form schema using Zod
+  const imageGenerationSchema = z.object({
+    prompt: z.string().min(1, { message: 'Please enter a prompt' }),
+  });
+
   // Initialize react-hook-form with Zod validation
-  const form = useForm<ImageGenerationFormValues>({
+  const form = useForm<z.infer<typeof imageGenerationSchema>>({
     resolver: zodResolver(imageGenerationSchema),
     defaultValues: {
       prompt: '',
@@ -76,7 +74,7 @@ export function ImageGenerationTab() {
   });
 
   const onSubmit = useCallback(
-    (data: ImageGenerationFormValues) => {
+    (data: z.infer<typeof imageGenerationSchema>) => {
       reset();
       generateImage({ prompt: data.prompt });
     },

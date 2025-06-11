@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,21 +18,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
 import { useScopedI18n } from '@/locales/client';
 
-// Define the form schema using Zod
-const imageEditSchema = z.object({
-  image: z.instanceof(File, { message: 'Please upload an image' }),
-  prompt: z.string().min(1, { message: 'Please enter a prompt' }),
-});
-
-type ImageEditFormValues = z.infer<typeof imageEditSchema>;
-
 export function ImageEditTab() {
   const { themeClasses } = useTheme();
   const router = useRouter();
   const t = useScopedI18n('imageEdit');
 
+  // Define the form schema using Zod
+  const imageEditSchema = z.object({
+    image: z.instanceof(File, { message: 'Please upload an image' }),
+    prompt: z.string().min(1, { message: 'Please enter a prompt' }),
+  });
+
   // Initialize react-hook-form with Zod validation
-  const form = useForm<ImageEditFormValues>({
+  const form = useForm<z.infer<typeof imageEditSchema>>({
     resolver: zodResolver(imageEditSchema),
     defaultValues: {
       prompt: '',
@@ -91,7 +91,7 @@ export function ImageEditTab() {
   );
 
   const onSubmit = useCallback(
-    (data: ImageEditFormValues) => {
+    (data: z.infer<typeof imageEditSchema>) => {
       reset();
       submitEdit({ image: data.image, prompt: data.prompt });
     },
