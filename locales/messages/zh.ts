@@ -81,12 +81,6 @@ export default {
     },
   },
   imageEdit: {
-    upload: {
-      changeImage: '更换图片',
-      uploadImage: '上传图片',
-      supportedFormats: '支持 JPG、PNG、WebP 格式',
-      altText: '已上传的图片',
-    },
     prompt: {
       placeholder: '描述您想要的编辑效果，例如"将背景改为蓝天白云"、"将发型改为短发"...',
     },
@@ -94,12 +88,6 @@ export default {
       processing: '处理中...',
       startEditing: '开始处理',
       download: '下载图片',
-    },
-    result: {
-      altText: '处理结果',
-      completed: '处理完成',
-      processing: 'AI正在处理您的图片...',
-      defaultMessage: '编辑结果将显示在这里',
     },
   },
   upload: {
@@ -145,5 +133,18 @@ export default {
         description: '图片下载失败，请重试',
       },
     },
+  },
+  resultDisplay: {
+    altText: '处理结果图片',
+    completed: '处理完成',
+    processing: '正在处理您的图片...',
+    defaultMessage: '在这里查看生成结果',
+    download: '下载图片',
+  },
+  imageUploader: {
+    changeImage: '更换图片',
+    uploadImage: '上传图片',
+    supportedFormats: '支持 JPG、PNG、WebP 格式',
+    altText: '已上传的图片',
   },
 } as const;

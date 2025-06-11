@@ -5,6 +5,7 @@ export interface StyleOption {
   name: string;
   description: string;
   preview: string;
+  prompt: string;
 }
 
 // Style options for image editing
@@ -13,37 +14,44 @@ const styleOptions: StyleOption[] = [
     id: 'watercolor',
     name: '水彩画',
     description: '柔和的水彩风格',
-    preview: '/placeholder.svg?height=80&width=120&text=水彩',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/watercolor-Z8JH4ZSxghGP6sLe52NWv7Bx4vHEvt.jpg',
+    prompt: 'watercolor style',
   },
   {
     id: 'oil-painting',
     name: '油画',
     description: '经典油画质感',
-    preview: '/placeholder.svg?height=80&width=120&text=油画',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/oil_painting-AYBJF8kmuP2EJNF2gaD9qKSJi9SYZq.jpg',
+    prompt: 'oil painting style',
   },
   {
     id: 'sketch',
     name: '素描',
     description: '铅笔素描风格',
-    preview: '/placeholder.svg?height=80&width=120&text=素描',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/sketch-6oXiC1pkS2IESTeBTP7pUAHNjwfaHa.jpg',
+    prompt: 'sketch style',
   },
   {
     id: 'anime',
     name: '动漫',
     description: '日式动漫风格',
-    preview: '/placeholder.svg?height=80&width=120&text=动漫',
+    preview:
+      'https://2hav3s1paktcascm.public.blob.vercel-storage.com/japanese_anime-e5mmAcpzirq73IYmNgmNUNw6waN57A.jpg',
+    prompt: 'japanese anime style',
   },
   {
     id: 'ghibli',
     name: '吉卜力',
     description: '宫崎骏动画风格',
-    preview: '/placeholder.svg?height=80&width=120&text=吉卜力',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/ghibli-HXo6xKMUTK9PYLrhIMW5YZpbadrI0Q.jpg',
+    prompt: 'ghibli style',
   },
   {
     id: 'cyberpunk',
     name: '赛博朋克',
     description: '未来科幻风格',
-    preview: '/placeholder.svg?height=80&width=120&text=赛博朋克',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/cyberpunk-lrumHLuIWlhLfhCf82TQopwq4JZiuB.jpg',
+    prompt: 'cyberpunk style',
   },
 ];
 
@@ -54,24 +62,28 @@ const avatarStyleOptions: StyleOption[] = [
     name: '商务正装',
     description: '专业商务形象',
     preview: '/placeholder.svg?height=80&width=120&text=商务',
+    prompt: 'business style',
   },
   {
     id: 'casual',
     name: '休闲风格',
     description: '轻松自然风格',
     preview: '/placeholder.svg?height=80&width=120&text=休闲',
+    prompt: 'casual style',
   },
   {
     id: 'creative',
     name: '创意风格',
     description: '艺术创意形象',
     preview: '/placeholder.svg?height=80&width=120&text=创意',
+    prompt: 'creative style',
   },
   {
     id: 'academic',
     name: '学术风格',
     description: '学者专业形象',
     preview: '/placeholder.svg?height=80&width=120&text=学术',
+    prompt: 'academic style',
   },
 ];
 

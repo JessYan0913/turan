@@ -81,12 +81,6 @@ export default {
     },
   },
   imageEdit: {
-    upload: {
-      changeImage: 'Change image',
-      uploadImage: 'Upload image',
-      supportedFormats: 'Supports JPG, PNG, WebP formats',
-      altText: 'Uploaded image',
-    },
     prompt: {
       placeholder:
         'Describe the edits you want, e.g. "Change the background to blue sky and white clouds", "Change the hairstyle to short hair"...',
@@ -95,12 +89,6 @@ export default {
       processing: 'Processing...',
       startEditing: 'Start Editing',
       download: 'Download Image',
-    },
-    result: {
-      altText: 'Processed result',
-      completed: 'Processing completed',
-      processing: 'AI is processing your image...',
-      defaultMessage: 'Edit results will be shown here',
     },
   },
   upload: {
@@ -147,5 +135,18 @@ export default {
         description: 'Failed to download image, please try again',
       },
     },
+  },
+  resultDisplay: {
+    altText: 'Generated image',
+    completed: 'Generation Complete',
+    processing: 'AI is generating your image...',
+    defaultMessage: 'Generated result will appear here',
+    download: 'Download Image',
+  },
+  imageUploader: {
+    changeImage: 'Change Image',
+    uploadImage: 'Upload Image',
+    supportedFormats: 'Supports JPG, PNG, WebP formats',
+    altText: 'Uploaded Image',
   },
 } as const;

@@ -81,12 +81,6 @@ export default {
     },
   },
   imageEdit: {
-    upload: {
-      changeImage: '画像を変更',
-      uploadImage: '画像をアップロード',
-      supportedFormats: 'JPG、PNG、WebP形式に対応',
-      altText: 'アップロードされた画像',
-    },
     prompt: {
       placeholder: '希望の編集内容を説明してください。例：「背景を青空と白い雲に変更」「髪型をショートヘアに変更」...',
     },
@@ -94,12 +88,6 @@ export default {
       processing: '処理中...',
       startEditing: '編集を開始',
       download: '画像をダウンロード',
-    },
-    result: {
-      altText: '処理結果',
-      completed: '処理が完了しました',
-      processing: 'AIが画像を処理中です...',
-      defaultMessage: '編集結果がここに表示されます',
     },
   },
   upload: {
@@ -146,5 +134,18 @@ export default {
         description: '画像のダウンロードに失敗しました。もう一度お試しください',
       },
     },
+  },
+  resultDisplay: {
+    altText: '生成した画像',
+    completed: '生成完了',
+    processing: '画像を生成中です...',
+    defaultMessage: '生成結果がここに表示されます',
+    download: '画像をダウンロード',
+  },
+  imageUploader: {
+    changeImage: '画像を変更',
+    uploadImage: '画像をアップロード',
+    supportedFormats: 'JPG、PNG、WebP 形式に対応',
+    altText: 'アップロードされた画像',
   },
 } as const;
