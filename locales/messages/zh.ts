@@ -53,6 +53,7 @@ export default {
       edit: '图像编辑',
       style: '风格转换',
       avatar: '头像生成',
+      generate: '图像生成',
     },
     examples: {
       title: '精彩示例展示',
@@ -114,5 +115,35 @@ export default {
   styles: {
     title: '选择风格',
     loading: '处理中...',
+  },
+  imageGeneration: {
+    promptLabel: '提示词',
+    promptPlaceholder: '描述您想要生成的图片，例如"一只在草地上奔跑的金毛犬"、"夕阳下的海滩风景"...',
+    resultLabel: '生成结果',
+    button: {
+      processing: '生成中...',
+      generate: '生成图片',
+      download: '下载图片',
+    },
+    result: {
+      altText: '生成的图片',
+      completed: '生成完成',
+      processing: 'AI正在生成您的图片...',
+      defaultMessage: '生成结果将显示在这里',
+    },
+    success: '图片生成成功',
+    errors: {
+      generateFailed: '生成图片失败',
+      statusCheckFailed: '检查状态失败',
+      timeout: '图片生成时间过长，请稍后刷新页面查看结果',
+      emptyPrompt: {
+        title: '提示词不能为空',
+        description: '请输入提示词以生成图片',
+      },
+      downloadFailed: {
+        title: '下载失败',
+        description: '图片下载失败，请重试',
+      },
+    },
   },
 } as const;

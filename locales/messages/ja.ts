@@ -53,6 +53,7 @@ export default {
       edit: '画像編集',
       style: 'スタイル変換',
       avatar: 'アバター作成',
+      generate: '画像作成',
     },
     examples: {
       title: '素晴らしい作例のご紹介',
@@ -114,5 +115,36 @@ export default {
   styles: {
     title: 'スタイルを選択',
     loading: '処理中...',
+  },
+  imageGeneration: {
+    promptLabel: 'プロンプト',
+    promptPlaceholder:
+      '生成したい画像を説明してください。例：「草原を走るゴールデンレトリバー」、「夕焼けのビーチ風景」...',
+    resultLabel: '生成結果',
+    button: {
+      processing: '生成中...',
+      generate: '画像を生成',
+      download: '画像をダウンロード',
+    },
+    result: {
+      altText: '生成された画像',
+      completed: '生成完了',
+      processing: 'AIが画像を生成中です...',
+      defaultMessage: '生成結果がここに表示されます',
+    },
+    success: '画像が正常に生成されました',
+    errors: {
+      generateFailed: '画像の生成に失敗しました',
+      statusCheckFailed: 'ステータスの確認に失敗しました',
+      timeout: '画像生成に時間がかかっています。後でページを更新して結果を確認してください',
+      emptyPrompt: {
+        title: 'プロンプトを入力してください',
+        description: '画像を生成するにはプロンプトを入力してください',
+      },
+      downloadFailed: {
+        title: 'ダウンロード失敗',
+        description: '画像のダウンロードに失敗しました。もう一度お試しください',
+      },
+    },
   },
 } as const;

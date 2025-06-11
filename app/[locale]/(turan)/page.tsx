@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 
-import { ArrowRight, Camera, Edit3, Palette, Sparkles, Upload } from 'lucide-react';
+import { ArrowRight, Camera, Edit3, Palette, Sparkles, Upload, Wand2 } from 'lucide-react';
 import type React from 'react';
 import useSWR from 'swr';
 
 import { AvatarGenerationTab } from '@/components/avatar-generation-tab';
 import { ImageEditTab } from '@/components/image-edit-tab';
+import { ImageGenerationTab } from '@/components/image-generation-tab';
 import { ImageSlider } from '@/components/image-slider';
 import { StyleTransformTab } from '@/components/style-transform-tab';
 import { useTheme } from '@/components/theme-provider';
@@ -55,7 +56,7 @@ export default function HomePage() {
 
           {/* 主要功能区 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`mx-auto mb-8 grid w-full max-w-md grid-cols-3 ${themeClasses.tabsList}`}>
+            <TabsList className={`mx-auto mb-8 grid w-full max-w-3xl grid-cols-4 gap-1 ${themeClasses.tabsList}`}>
               <TabsTrigger value="edit" className={themeClasses.tabsTrigger}>
                 {t('tabs.edit')}
               </TabsTrigger>
@@ -64,6 +65,9 @@ export default function HomePage() {
               </TabsTrigger>
               <TabsTrigger value="avatar" className={themeClasses.tabsTrigger}>
                 {t('tabs.avatar')}
+              </TabsTrigger>
+              <TabsTrigger value="generate" className={themeClasses.tabsTrigger}>
+                {t('tabs.generate')}
               </TabsTrigger>
             </TabsList>
 
@@ -82,6 +86,11 @@ export default function HomePage() {
               {/* 头像生成功能 */}
               <TabsContent value="avatar" className="mt-0">
                 <AvatarGenerationTab />
+              </TabsContent>
+
+              {/* 图片生成功能 */}
+              <TabsContent value="generate" className="mt-0">
+                <ImageGenerationTab />
               </TabsContent>
             </div>
           </Tabs>

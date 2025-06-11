@@ -53,6 +53,7 @@ export default {
       edit: 'Image Edit',
       style: 'Style Transfer',
       avatar: 'Avatar Generator',
+      generate: 'Image Generator',
     },
     examples: {
       title: 'Showcase of Wonderful Examples',
@@ -113,7 +114,38 @@ export default {
     download: 'Download Result',
   },
   styles: {
-    title: 'Select Style',
+    title: 'Choose Style',
     loading: 'Processing...',
+  },
+  imageGeneration: {
+    promptLabel: 'Prompt',
+    promptPlaceholder:
+      'Describe the image you want to generate, e.g. "A golden retriever running on grass", "Beach sunset scenery"...',
+    resultLabel: 'Generated Result',
+    button: {
+      processing: 'Generating...',
+      generate: 'Generate Image',
+      download: 'Download Image',
+    },
+    result: {
+      altText: 'Generated image',
+      completed: 'Generation Complete',
+      processing: 'AI is generating your image...',
+      defaultMessage: 'Generated result will appear here',
+    },
+    success: 'Image generated successfully',
+    errors: {
+      generateFailed: 'Failed to generate image',
+      statusCheckFailed: 'Failed to check status',
+      timeout: 'Image generation is taking too long, please refresh the page later to check the result',
+      emptyPrompt: {
+        title: 'Prompt cannot be empty',
+        description: 'Please enter a prompt to generate an image',
+      },
+      downloadFailed: {
+        title: 'Download Failed',
+        description: 'Failed to download image, please try again',
+      },
+    },
   },
 } as const;
