@@ -32,7 +32,7 @@ export interface ExamplesResponse {
 export default function HomePage() {
   const { themeClasses } = useTheme();
   const t = useScopedI18n('home');
-  const [activeTab, setActiveTab] = useState('edit');
+  const [activeTab, setActiveTab] = useState('generate');
 
   const { data: examplesData } = useSWR<ExamplesResponse>('api/examples', fetcher, {
     revalidateOnFocus: true,
@@ -57,6 +57,9 @@ export default function HomePage() {
           {/* 主要功能区 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`mx-auto mb-8 grid w-full max-w-3xl grid-cols-4 gap-1 ${themeClasses.tabsList}`}>
+              <TabsTrigger value="generate" className={themeClasses.tabsTrigger}>
+                {t('tabs.generate')}
+              </TabsTrigger>
               <TabsTrigger value="edit" className={themeClasses.tabsTrigger}>
                 {t('tabs.edit')}
               </TabsTrigger>
@@ -65,9 +68,6 @@ export default function HomePage() {
               </TabsTrigger>
               <TabsTrigger value="avatar" className={themeClasses.tabsTrigger}>
                 {t('tabs.avatar')}
-              </TabsTrigger>
-              <TabsTrigger value="generate" className={themeClasses.tabsTrigger}>
-                {t('tabs.generate')}
               </TabsTrigger>
             </TabsList>
 
