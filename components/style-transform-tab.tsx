@@ -39,8 +39,7 @@ type StyleTransformFormValues = z.infer<typeof styleTransformSchema>;
 export function StyleTransformTab() {
   const { isDarkMode, themeClasses } = useTheme();
   const router = useRouter();
-  const t = useScopedI18n('imageEdit');
-  const tResultDisplay = useScopedI18n('resultDisplay');
+  const t = useScopedI18n('styleTransform');
 
   // Initialize react-hook-form with Zod validation
   const form = useForm<StyleTransformFormValues>({
@@ -90,9 +89,9 @@ export function StyleTransformTab() {
     },
     isComplete: (data: Prediction) => data.status === 'succeeded' || data.status === 'failed',
     getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output : null),
-    successMessage: tResultDisplay('completed'),
-    errorMessage: tResultDisplay('completed'),
-    timeoutMessage: tResultDisplay('completed'),
+    successMessage: t('result.success'),
+    errorMessage: t('result.error'),
+    timeoutMessage: t('result.timeout'),
   });
 
   const { data: styleOptions } = useSWR<StyleOption[]>('/api/style-options?tab=style', fetcher, {
@@ -158,7 +157,7 @@ export function StyleTransformTab() {
                         field.onChange(style.id);
                         form.setValue('prompt', style.prompt);
                       }}
-                      placeholder="选择艺术风格"
+                      placeholder={t('prompt.placeholder')}
                       isDarkMode={isDarkMode}
                     />
                   </FormControl>
@@ -181,7 +180,7 @@ export function StyleTransformTab() {
               ) : (
                 <>
                   <Palette className="mr-2 size-4" />
-                  开始转换
+                  {t('button.generate')}
                 </>
               )}
             </Button>

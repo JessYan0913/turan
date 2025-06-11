@@ -51,7 +51,7 @@ export function ImageGenerationTab() {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.message || t('errors.generateFailed'));
+        throw new Error(error.message || t('result.error'));
       }
       const result = await response.json();
       return result;
@@ -60,7 +60,7 @@ export function ImageGenerationTab() {
     checkStatus: async (id) => {
       const response = await fetch(`/api/prediction/${id}`);
       if (!response.ok) {
-        throw new Error(t('errors.statusCheckFailed'));
+        throw new Error(t('result.checkFailed'));
       }
       return response.json();
     },
@@ -70,9 +70,9 @@ export function ImageGenerationTab() {
     getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output[0] : null),
 
     // 自定义消息
-    successMessage: t('success'),
-    errorMessage: t('errors.generateFailed'),
-    timeoutMessage: t('errors.timeout'),
+    successMessage: t('result.success'),
+    errorMessage: t('result.error'),
+    timeoutMessage: t('result.timeout'),
   });
 
   const onSubmit = useCallback(
@@ -85,32 +85,33 @@ export function ImageGenerationTab() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8 md:grid-cols-2">
-        <div className="space-y-6">
-          <FormField
-            control={form.control}
-            name="prompt"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Textarea
-                    placeholder={t('promptPlaceholder')}
-                    disabled={status === 'loading' || status === 'polling'}
-                    rows={4}
-                    className={`resize-none ${themeClasses.textarea} border-0 transition-all duration-300 focus:shadow-[0_8px_30px_rgba(59,130,246,0.15)]`}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid min-h-[calc(100vh-500px)] gap-8 md:grid-cols-2">
+        <div className="flex h-full flex-col space-y-6">
+          <div className="flex-1">
+            <FormField
+              control={form.control}
+              name="prompt"
+              render={({ field }) => (
+                <FormItem className="h-full">
+                  <FormControl>
+                    <Textarea
+                      placeholder={t('prompt.placeholder')}
+                      disabled={status === 'loading' || status === 'polling'}
+                      rows={8}
+                      className={`h-full resize-none ${themeClasses.textarea} border-0 transition-all duration-300 focus:shadow-[0_8px_30px_rgba(59,130,246,0.15)]`}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <Button
             type="submit"
             disabled={status === 'loading' || status === 'polling'}
             className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
-            size="lg"
           >
             {status === 'loading' || status === 'polling' ? (
               <>
@@ -127,8 +128,13 @@ export function ImageGenerationTab() {
         </div>
 
         {/* 结果展示 */}
-        <div>
-          <ResultDisplay generatedImage={generatedImage || null} status={status} imageName={'generated-image.png'} />
+        <div className="flex h-full flex-col">
+          <ResultDisplay
+            generatedImage={generatedImage || null}
+            status={status}
+            imageName="generated-image.png"
+            className="size-full"
+          />
         </div>
       </form>
     </Form>

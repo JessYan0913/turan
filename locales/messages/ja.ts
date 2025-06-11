@@ -86,53 +86,44 @@ export default {
     },
     button: {
       processing: '処理中...',
-      startEditing: '編集を開始',
-      download: '画像をダウンロード',
+      generate: '編集を開始',
+    },
+    result: {
+      success: '編集が完了しました',
+      error: '編集に失敗しました',
+      timeout: '編集がタイムアウトしました',
+      checkFailed: '状態の確認に失敗しました',
     },
   },
-  upload: {
-    title: '画像をアップロード',
-    description: 'クリックまたはドラッグして画像をアップロード',
-    button: '画像を選択',
-  },
-  prompt: {
-    placeholder: '希望の効果を説明してください...',
-    generate: '生成',
-    download: 'ダウンロード',
-  },
-  styles: {
-    title: 'スタイルを選択',
-    loading: '処理中...',
+  styleTransform: {
+    prompt: {
+      placeholder: 'アートスタイルを選択',
+    },
+    button: {
+      processing: '変換中...',
+      generate: 'スタイルを適用',
+    },
+    result: {
+      success: 'スタイル変換が完了しました',
+      error: 'スタイル変換に失敗しました',
+      timeout: '処理がタイムアウトしました',
+      checkFailed: '状態の確認に失敗しました',
+    },
   },
   imageGeneration: {
-    promptLabel: 'プロンプト',
-    promptPlaceholder:
-      '生成したい画像を説明してください。例：「草原を走るゴールデンレトリバー」、「夕焼けのビーチ風景」...',
-    resultLabel: '生成結果',
+    prompt: {
+      placeholder:
+        '生成したい画像を説明してください。例：「草原を走るゴールデンレトリバー」、「夕焼けのビーチ風景」...',
+    },
     button: {
       processing: '生成中...',
       generate: '画像を生成',
-      download: '画像をダウンロード',
     },
     result: {
-      altText: '生成された画像',
-      completed: '生成完了',
-      processing: 'AIが画像を生成中です...',
-      defaultMessage: '生成結果がここに表示されます',
-    },
-    success: '画像が正常に生成されました',
-    errors: {
-      generateFailed: '画像の生成に失敗しました',
-      statusCheckFailed: 'ステータスの確認に失敗しました',
-      timeout: '画像生成に時間がかかっています。後でページを更新して結果を確認してください',
-      emptyPrompt: {
-        title: 'プロンプトを入力してください',
-        description: '画像を生成するにはプロンプトを入力してください',
-      },
-      downloadFailed: {
-        title: 'ダウンロード失敗',
-        description: '画像のダウンロードに失敗しました。もう一度お試しください',
-      },
+      success: '画像生成が成功しました',
+      error: '画像生成に失敗しました',
+      timeout: '画像生成がタイムアウトしました',
+      checkFailed: '画像生成の確認に失敗しました',
     },
   },
   resultDisplay: {

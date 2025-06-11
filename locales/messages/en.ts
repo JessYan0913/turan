@@ -87,53 +87,44 @@ export default {
     },
     button: {
       processing: 'Processing...',
-      startEditing: 'Start Editing',
-      download: 'Download Image',
+      generate: 'Start Editing',
+    },
+    result: {
+      success: 'Editing completed',
+      error: 'Editing failed',
+      timeout: 'Editing timeout',
+      checkFailed: 'Failed to check status',
     },
   },
-  upload: {
-    title: 'Upload Image',
-    description: 'Click or drag image here',
-    button: 'Select Image',
-  },
-  prompt: {
-    placeholder: 'Describe the effect you want...',
-    generate: 'Generate',
-    download: 'Download Result',
-  },
-  styles: {
-    title: 'Choose Style',
-    loading: 'Processing...',
-  },
-  imageGeneration: {
-    promptLabel: 'Prompt',
-    promptPlaceholder:
-      'Describe the image you want to generate, e.g. "A golden retriever running on grass", "Beach sunset scenery"...',
-    resultLabel: 'Generated Result',
+  styleTransform: {
+    prompt: {
+      placeholder: 'Select art style',
+    },
     button: {
       processing: 'Generating...',
       generate: 'Generate Image',
-      download: 'Download Image',
     },
     result: {
-      altText: 'Generated image',
-      completed: 'Generation Complete',
-      processing: 'AI is generating your image...',
-      defaultMessage: 'Generated result will appear here',
+      success: 'Image generated successfully',
+      error: 'Image generation failed',
+      timeout: 'Image generation timeout',
+      checkFailed: 'Failed to check status',
     },
-    success: 'Image generated successfully',
-    errors: {
-      generateFailed: 'Failed to generate image',
-      statusCheckFailed: 'Failed to check status',
-      timeout: 'Image generation is taking too long, please refresh the page later to check the result',
-      emptyPrompt: {
-        title: 'Prompt cannot be empty',
-        description: 'Please enter a prompt to generate an image',
-      },
-      downloadFailed: {
-        title: 'Download Failed',
-        description: 'Failed to download image, please try again',
-      },
+  },
+  imageGeneration: {
+    prompt: {
+      placeholder:
+        'Describe the image you want to generate, e.g. "A golden retriever running on grass", "Beach sunset scenery"...',
+    },
+    button: {
+      processing: 'Generating...',
+      generate: 'Generate Image',
+    },
+    result: {
+      success: 'Image generated successfully',
+      error: 'Image generation failed',
+      timeout: 'Image generation timeout',
+      checkFailed: 'Failed to check status',
     },
   },
   resultDisplay: {

@@ -86,52 +86,43 @@ export default {
     },
     button: {
       processing: '处理中...',
-      startEditing: '开始处理',
-      download: '下载图片',
+      generate: '开始处理',
+    },
+    result: {
+      success: '图片编辑成功',
+      error: '图片编辑失败',
+      timeout: '图片编辑超时',
+      checkFailed: '检查状态失败',
     },
   },
-  upload: {
-    title: '上传图片',
-    description: '点击或拖拽图片到此处',
-    button: '选择图片',
-  },
-  prompt: {
-    placeholder: '描述您想要的图片效果...',
-    generate: '生成',
-    download: '下载结果',
-  },
-  styles: {
-    title: '选择风格',
-    loading: '处理中...',
-  },
-  imageGeneration: {
-    promptLabel: '提示词',
-    promptPlaceholder: '描述您想要生成的图片，例如"一只在草地上奔跑的金毛犬"、"夕阳下的海滩风景"...',
-    resultLabel: '生成结果',
+  styleTransform: {
+    prompt: {
+      placeholder: '选择艺术风格',
+    },
     button: {
       processing: '生成中...',
       generate: '生成图片',
-      download: '下载图片',
     },
     result: {
-      altText: '生成的图片',
-      completed: '生成完成',
-      processing: 'AI正在生成您的图片...',
-      defaultMessage: '生成结果将显示在这里',
+      success: '图片生成成功',
+      error: '图片生成失败',
+      timeout: '图片生成超时',
+      checkFailed: '检查状态失败',
     },
-    success: '图片生成成功',
-    errors: {
-      generateFailed: '生成图片失败',
-      statusCheckFailed: '检查状态失败',
-      timeout: '图片生成时间过长，请稍后刷新页面查看结果',
-      emptyPrompt: {
-        title: '提示词不能为空',
-        description: '请输入提示词以生成图片',
-      },
-      downloadFailed: {
-        title: '下载失败',
-        description: '图片下载失败，请重试',
-      },
+  },
+  imageGeneration: {
+    prompt: {
+      placeholder: '描述您想要生成的图片，例如"一只在草地上奔跑的金毛犬"、"夕阳下的海滩风景"...',
+    },
+    button: {
+      processing: '生成中...',
+      generate: '生成图片',
+    },
+    result: {
+      success: '图片生成成功',
+      error: '图片生成失败',
+      timeout: '图片生成超时',
+      checkFailed: '检查状态失败',
     },
   },
   resultDisplay: {
