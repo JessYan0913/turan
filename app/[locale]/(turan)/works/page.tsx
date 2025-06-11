@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Calendar, Download, Eye, Filter, ImageIcon, Search, Share2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import useSWR from 'swr';
 
 import { useTheme } from '@/components/theme-provider';
 import { Badge } from '@/components/ui/badge';
@@ -11,75 +11,42 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { fetcher } from '@/lib/utils';
+
+export interface WorkInfo {
+  id: number;
+  title: string;
+  type: string;
+  originalImage: string;
+  processedImage: string;
+  style: string;
+  createdAt: string;
+  status: string;
+}
 
 export default function MyWorksPage() {
   const { isDarkMode, themeClasses } = useTheme();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // 从 URL 参数中获取筛选条件
+  const searchTerm = searchParams.get('search') || '';
+  const filterType = searchParams.get('type') || 'all';
+
+  // 更新 URL 参数的函数
+  const createQueryString = (name: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    return params.toString();
+  };
 
   // 模拟作品数据
-  const works = [
-    {
-      id: 1,
-      title: '风景照片风格转换',
-      type: 'style-transfer',
-      originalImage: '/placeholder.svg?height=200&width=300&text=原图1',
-      processedImage: '/placeholder.svg?height=200&width=300&text=水彩风格',
-      style: '水彩画',
-      createdAt: '2024-01-15',
-      status: 'completed',
-    },
-    {
-      id: 2,
-      title: '商务头像生成',
-      type: 'avatar',
-      originalImage: '/placeholder.svg?height=200&width=300&text=原图2',
-      processedImage: '/placeholder.svg?height=200&width=300&text=商务头像',
-      style: '商务正装',
-      createdAt: '2024-01-14',
-      status: 'completed',
-    },
-    {
-      id: 3,
-      title: '背景替换编辑',
-      type: 'edit',
-      originalImage: '/placeholder.svg?height=200&width=300&text=原图3',
-      processedImage: '/placeholder.svg?height=200&width=300&text=新背景',
-      style: '背景替换',
-      createdAt: '2024-01-13',
-      status: 'processing',
-    },
-    {
-      id: 4,
-      title: '人像油画风格',
-      type: 'style-transfer',
-      originalImage: '/placeholder.svg?height=200&width=300&text=原图4',
-      processedImage: '/placeholder.svg?height=200&width=300&text=油画风格',
-      style: '油画',
-      createdAt: '2024-01-12',
-      status: 'completed',
-    },
-    {
-      id: 5,
-      title: '创意头像设计',
-      type: 'avatar',
-      originalImage: '/placeholder.svg?height=200&width=300&text=原图5',
-      processedImage: '/placeholder.svg?height=200&width=300&text=创意头像',
-      style: '创意风格',
-      createdAt: '2024-01-11',
-      status: 'completed',
-    },
-    {
-      id: 6,
-      title: '物体移除编辑',
-      type: 'edit',
-      originalImage: '/placeholder.svg?height=200&width=300&text=原图6',
-      processedImage: '/placeholder.svg?height=200&width=300&text=移除物体',
-      style: '物体移除',
-      createdAt: '2024-01-10',
-      status: 'completed',
-    },
-  ];
+  const { data: works = [] } = useSWR<WorkInfo[]>('/api/works', fetcher);
 
   const filteredWorks = works.filter((work) => {
     const matchesSearch =
@@ -132,12 +99,20 @@ export default function MyWorksPage() {
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
             <Input
               placeholder="搜索作品标题或风格..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              defaultValue={searchTerm}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                router.push(`${pathname}?${createQueryString('search', newValue)}`, { scroll: false });
+              }}
               className={`pl-10 ${themeClasses.textarea}`}
             />
           </div>
-          <Select value={filterType} onValueChange={setFilterType}>
+          <Select
+            value={filterType}
+            onValueChange={(value) => {
+              router.push(`${pathname}?${createQueryString('type', value)}`, { scroll: false });
+            }}
+          >
             <SelectTrigger className={`w-full sm:w-48 ${isDarkMode ? 'border-gray-700 bg-gray-800 text-white' : ''}`}>
               <Filter className="mr-2 size-4" />
               <SelectValue placeholder="筛选类型" />
