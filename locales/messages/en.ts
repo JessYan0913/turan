@@ -111,6 +111,21 @@ export default {
       checkFailed: 'Failed to check status',
     },
   },
+  avatarGeneration: {
+    prompt: {
+      placeholder: 'Select background',
+    },
+    button: {
+      processing: 'Generating...',
+      generate: 'Generate Avatar',
+    },
+    result: {
+      success: 'Avatar generated successfully',
+      error: 'Avatar generation failed',
+      timeout: 'Avatar generation timeout',
+      checkFailed: 'Failed to check status',
+    },
+  },
   imageGeneration: {
     prompt: {
       placeholder:

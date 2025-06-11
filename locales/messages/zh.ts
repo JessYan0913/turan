@@ -110,6 +110,21 @@ export default {
       checkFailed: '检查状态失败',
     },
   },
+  avatarGeneration: {
+    prompt: {
+      placeholder: '选择背景',
+    },
+    button: {
+      processing: '生成中...',
+      generate: '生成头像',
+    },
+    result: {
+      success: '头像生成成功',
+      error: '头像生成失败',
+      timeout: '头像生成超时',
+      checkFailed: '检查状态失败',
+    },
+  },
   imageGeneration: {
     prompt: {
       placeholder: '描述您想要生成的图片，例如"一只在草地上奔跑的金毛犬"、"夕阳下的海滩风景"...',

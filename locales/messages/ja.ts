@@ -110,6 +110,21 @@ export default {
       checkFailed: '状態の確認に失敗しました',
     },
   },
+  avatarGeneration: {
+    prompt: {
+      placeholder: '背景を選択',
+    },
+    button: {
+      processing: '生成中...',
+      generate: 'アバターを生成',
+    },
+    result: {
+      success: 'アバターの生成が完了しました',
+      error: 'アバターの生成に失敗しました',
+      timeout: 'アバター生成がタイムアウトしました',
+      checkFailed: '状態の確認に失敗しました',
+    },
+  },
   imageGeneration: {
     prompt: {
       placeholder:
