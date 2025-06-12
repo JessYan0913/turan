@@ -18,7 +18,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'replicate.delivery',
       },
+      {
+        protocol: 'https',
+        hostname: '**.vercel-storage.com',
+      },
     ],
+    formats: ['image/avif', 'image/webp'],
   },
 };
 

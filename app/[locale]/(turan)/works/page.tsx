@@ -103,6 +103,7 @@ export default async function MyWorksPage({
                     src={work.processedImage || '/placeholder.svg'}
                     alt={work.title}
                     fill
+                    priority
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
