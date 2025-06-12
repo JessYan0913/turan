@@ -81,7 +81,14 @@ export default {
     },
   },
   imageEdit: {
+    title: '画像編集',
+    description: '画像をアップロードして、希望の編集効果を説明してください',
+    upload: {
+      label: '画像をアップロード',
+    },
     prompt: {
+      label: '編集の説明',
+      description: '希望の編集効果を説明してください',
       placeholder: '希望の編集内容を説明してください。例：「背景を青空と白い雲に変更」「髪型をショートヘアに変更」...',
     },
     button: {
@@ -89,6 +96,8 @@ export default {
       generate: '編集を開始',
     },
     result: {
+      title: '編集済み画像',
+      description: '編集された画像のプレビュー',
       success: '編集が完了しました',
       error: '編集に失敗しました',
       timeout: '編集がタイムアウトしました',
@@ -96,7 +105,14 @@ export default {
     },
   },
   styleTransform: {
+    title: 'スタイル変換',
+    description: '画像をアップロードして、適用したいアートスタイルを選択してください',
+    upload: {
+      label: '画像をアップロード',
+    },
     prompt: {
+      label: 'スタイル選択',
+      description: '適用したいアートスタイルを選択してください',
       placeholder: 'アートスタイルを選択',
     },
     button: {
@@ -104,6 +120,8 @@ export default {
       generate: 'スタイルを適用',
     },
     result: {
+      title: 'スタイル変換の結果',
+      description: 'スタイル変換後の画像のプレビュー',
       success: 'スタイル変換が完了しました',
       error: 'スタイル変換に失敗しました',
       timeout: '処理がタイムアウトしました',
@@ -111,7 +129,14 @@ export default {
     },
   },
   avatarGeneration: {
+    title: 'アバター生成',
+    description: '写真をアップロードして、アバターを作成するスタイルを選択してください',
+    upload: {
+      label: '写真をアップロード',
+    },
     prompt: {
+      label: 'スタイル選択',
+      description: 'アバターの背景スタイルを選択してください',
       placeholder: '背景を選択',
     },
     button: {
@@ -119,6 +144,8 @@ export default {
       generate: 'アバターを生成',
     },
     result: {
+      title: 'アバター',
+      description: '生成されたアバターのプレビュー',
       success: 'アバターの生成が完了しました',
       error: 'アバターの生成に失敗しました',
       timeout: 'アバター生成がタイムアウトしました',
@@ -126,7 +153,11 @@ export default {
     },
   },
   imageGeneration: {
+    title: '画像生成',
+    description: 'AIで作成したい画像を記述してください',
     prompt: {
+      label: 'プロンプト入力',
+      description: '生成したい内容を詳しく記述してください',
       placeholder:
         '生成したい画像を説明してください。例：「草原を走るゴールデンレトリバー」、「夕焼けのビーチ風景」...',
     },
@@ -135,6 +166,8 @@ export default {
       generate: '画像を生成',
     },
     result: {
+      title: '生成画像',
+      description: 'AIが生成した画像のプレビュー',
       success: '画像生成が成功しました',
       error: '画像生成に失敗しました',
       timeout: '画像生成がタイムアウトしました',

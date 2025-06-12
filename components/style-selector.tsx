@@ -39,7 +39,7 @@ export function StyleSelector({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`h-auto w-full justify-between py-3 ${
+          className={`h-auto w-full justify-between py-2 ${
             isDarkMode
               ? 'border-gray-700/50 bg-gray-800/70 text-white hover:bg-gray-700'
               : 'border-gray-200/50 bg-white/70 hover:bg-gray-50'
@@ -48,18 +48,18 @@ export function StyleSelector({
           <div className="flex items-center space-x-3">
             {selectedOption ? (
               <>
-                <div className="size-8 shrink-0 overflow-hidden rounded-md">
+                <div className="size-6 shrink-0 overflow-hidden rounded-md">
                   <Image
                     src={selectedOption.preview || '/placeholder.svg'}
                     alt={selectedOption.name}
-                    width={32}
-                    height={32}
+                    width={24}
+                    height={24}
                     className="size-full object-cover"
                   />
                 </div>
                 <div className="text-left">
-                  <div className="font-medium">{selectedOption.name}</div>
-                  <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <div className="text-sm font-medium">{selectedOption.name}</div>
+                  <div className={`text-[11px] leading-tight ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                     {selectedOption.description}
                   </div>
                 </div>
@@ -72,10 +72,10 @@ export function StyleSelector({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className={`w-80 p-2 ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}
+        className={`w-72 p-1.5 ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}
         align="start"
       >
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1.5">
           {options.map((option) => (
             <button
               key={option.id}
@@ -93,7 +93,7 @@ export function StyleSelector({
                     : 'border-2 border-transparent bg-gray-50 hover:bg-gray-100'
               }`}
             >
-              <div className="mb-2 h-20 w-full overflow-hidden rounded-md">
+              <div className="mb-1.5 h-16 w-full overflow-hidden rounded-md">
                 <Image
                   src={option.preview || '/placeholder.svg'}
                   alt={option.name}

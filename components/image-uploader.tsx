@@ -3,7 +3,6 @@ import React, { useCallback, useState } from 'react';
 import { Upload } from 'lucide-react';
 import Image from 'next/image';
 
-import { useTheme } from '@/components/theme-provider';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScopedI18n } from '@/locales/client';
 
@@ -21,7 +20,6 @@ export function ImageUploader({
   className = '',
 }: ImageUploaderProps) {
   const t = useScopedI18n('imageUploader');
-  const { themeClasses } = useTheme();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleImageChange = useCallback(
@@ -40,41 +38,40 @@ export function ImageUploader({
   );
 
   return (
-    <Card className={`overflow-hidden border-0 transition-all duration-300 ${themeClasses.cardLarge} ${className}`}>
-      <CardContent className="p-0">
-        <div className={`${themeClasses.uploadArea} p-8 text-center`}>
-          <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" id={inputId} />
-          <label htmlFor={inputId} className="block cursor-pointer">
-            {imagePreview ? (
-              <div className="group relative">
-                <Image
-                  src={imagePreview}
-                  alt="Uploaded image"
-                  width={400}
-                  height={300}
-                  className="mx-auto max-h-[300px] rounded-lg object-contain"
-                />
-                <div className="mt-4 text-center">
-                  <p className={`${themeClasses.text} text-sm font-medium`}>{imageName || t('altText')}</p>
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition-all group-hover:bg-black/20">
-                  <p className="rounded-full bg-black/70 px-4 py-2 text-sm text-white opacity-0 transition-opacity group-hover:opacity-100">
-                    {t('changeImage')}
-                  </p>
-                </div>
+    <div className={`overflow-hidden rounded-xl transition-all duration-300 ${className}`}>
+      <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" id={inputId} />
+      <label htmlFor={inputId} className="block cursor-pointer">
+        {imagePreview ? (
+          <div className="group relative overflow-hidden rounded-xl">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
+              <Image
+                src={imagePreview}
+                alt="Uploaded image"
+                fill
+                sizes="(max-width: 768px) 100vw, 400px"
+                className="rounded-xl object-cover"
+                priority
+              />
+              <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-transparent transition-all duration-300 group-hover:bg-black/20 group-hover:backdrop-blur-sm">
+                <p className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:opacity-100">
+                  {t('changeImage')}
+                </p>
               </div>
-            ) : (
-              <div
-                className={`border-2 border-dashed ${themeClasses.uploadBorder} rounded-xl p-12 ${themeClasses.uploadBg} transition-all`}
-              >
-                <Upload className="mx-auto mb-3 size-12 text-blue-400" />
-                <p className={`${themeClasses.text} font-medium`}>{t('uploadImage')}</p>
-                <p className={`${themeClasses.textMuted} mt-1 text-sm`}>{t('supportedFormats')}</p>
-              </div>
-            )}
-          </label>
-        </div>
-      </CardContent>
-    </Card>
+            </div>
+            <div className="mt-1 text-center">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{imageName || t('altText')}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-xl border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50/50 to-purple-50/50 p-4 transition-all duration-300 hover:border-blue-300 hover:shadow-md dark:border-blue-800 dark:from-blue-950/10 dark:to-purple-950/10 dark:hover:border-blue-700">
+            <div className="mb-2 rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
+              <Upload className="size-6 text-blue-500" />
+            </div>
+            <p className="text-sm font-medium text-blue-700 dark:text-blue-400">{t('uploadImage')}</p>
+            <p className="mt-1 text-xs text-blue-500/80 dark:text-blue-500/60">{t('supportedFormats')}</p>
+          </div>
+        )}
+      </label>
+    </div>
   );
 }

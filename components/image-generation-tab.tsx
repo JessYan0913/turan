@@ -3,21 +3,19 @@
 import { useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Sparkles } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
 import { z } from 'zod';
 
 import { ResultDisplay } from '@/components/result-display';
-import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
 import { useScopedI18n } from '@/locales/client';
 
 export function ImageGenerationTab() {
-  const { themeClasses } = useTheme();
   const t = useScopedI18n('imageGeneration');
 
   // Define the form schema using Zod
@@ -83,20 +81,32 @@ export function ImageGenerationTab() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid min-h-[calc(100vh-500px)] gap-8 md:grid-cols-2">
-        <div className="flex h-full flex-col space-y-6">
-          <div className="flex-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {/* Left Column - Form Controls */}
+        <div className="rounded-2xl bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-amber-950/20 dark:ring-white/10">
+          <div className="mb-6 space-y-2">
+            <h3 className="text-xl font-medium tracking-tight text-amber-950 dark:text-amber-200">{t('title')}</h3>
+            <p className="text-muted-foreground text-sm">{t('description')}</p>
+          </div>
+
+          <div className="space-y-8">
             <FormField
               control={form.control}
               name="prompt"
               render={({ field }) => (
-                <FormItem className="h-full">
+                <FormItem>
+                  <div className="mb-2 space-y-1">
+                    <FormLabel className="font-medium text-amber-800 dark:text-amber-300">
+                      {t('prompt.label')}
+                    </FormLabel>
+                    <p className="text-muted-foreground text-xs">{t('prompt.description')}</p>
+                  </div>
                   <FormControl>
                     <Textarea
                       placeholder={t('prompt.placeholder')}
                       disabled={status === 'loading' || status === 'polling'}
                       rows={8}
-                      className={`h-full resize-none ${themeClasses.textarea} border-0 transition-all duration-300 focus:shadow-[0_8px_30px_rgba(59,130,246,0.15)]`}
+                      className="resize-none border border-gray-200 bg-white/80 transition-all duration-300 focus:border-amber-300 focus:shadow-[0_8px_30px_rgba(245,158,11,0.15)] dark:border-gray-700 dark:bg-gray-950/50"
                       {...field}
                     />
                   </FormControl>
@@ -106,33 +116,43 @@ export function ImageGenerationTab() {
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={status === 'loading' || status === 'polling'}
-            className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
-          >
-            {status === 'loading' || status === 'polling' ? (
-              <>
-                <div className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                {t('button.processing')}
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 size-4" />
-                {t('button.generate')}
-              </>
-            )}
-          </Button>
+          <div className="mt-8">
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-amber-600 to-orange-600 py-6 text-base font-medium text-white shadow-sm transition-all duration-300 hover:shadow-md disabled:from-amber-400 disabled:to-orange-400"
+              disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
+            >
+              {status === 'loading' || status === 'polling' ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  {t('button.processing')}
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 size-4" />
+                  {t('button.generate')}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
-        {/* 结果展示 */}
-        <div className="flex h-full flex-col">
-          <ResultDisplay
-            generatedImage={generatedImage || null}
-            status={status}
-            imageName="generated-image.png"
-            className="size-full"
-          />
+        {/* Right Column - Result Display */}
+        <div className="flex flex-col rounded-2xl bg-gradient-to-br from-white to-orange-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-orange-950/20 dark:ring-white/10">
+          <div className="mb-6 space-y-2">
+            <h3 className="text-xl font-medium tracking-tight text-orange-950 dark:text-orange-200">
+              {t('result.title')}
+            </h3>
+            <p className="text-muted-foreground text-sm">{t('result.description')}</p>
+          </div>
+          <div className="min-h-[350px] flex-1">
+            <ResultDisplay
+              generatedImage={generatedImage || null}
+              status={status}
+              imageName="generated-image.png"
+              className="h-full"
+            />
+          </div>
         </div>
       </form>
     </Form>

@@ -81,15 +81,24 @@ export default {
     },
   },
   imageEdit: {
+    title: 'Image Editing',
+    description: 'Upload your image and describe the edits you want to make',
+    upload: {
+      label: 'Upload Image',
+    },
     prompt: {
+      label: 'Edit Instructions',
+      description: 'Describe the changes you want to make to your image',
       placeholder:
-        'Describe the edits you want, e.g. "Change the background to blue sky and white clouds", "Change the hairstyle to short hair"...',
+        'Describe the changes you want to make to your image, for example "Change the background to blue sky and white clouds", "Change the hairstyle to short hair"...',
     },
     button: {
       processing: 'Processing...',
       generate: 'Start Editing',
     },
     result: {
+      title: 'Edited Image',
+      description: 'Preview of your edited image',
       success: 'Editing completed',
       error: 'Editing failed',
       timeout: 'Editing timeout',
@@ -97,14 +106,23 @@ export default {
     },
   },
   styleTransform: {
+    title: 'Style Transform',
+    description: 'Upload your photo and select a style to transform your image',
+    upload: {
+      label: 'Upload Photo',
+    },
     prompt: {
-      placeholder: 'Select art style',
+      label: 'Select Style',
+      description: 'Choose an artistic style for your image transformation',
+      placeholder: 'Select an artistic style for your image transformation',
     },
     button: {
       processing: 'Generating...',
       generate: 'Generate Image',
     },
     result: {
+      title: 'Transformed Image',
+      description: 'Preview of your stylized image',
       success: 'Image generated successfully',
       error: 'Image generation failed',
       timeout: 'Image generation timeout',
@@ -112,7 +130,14 @@ export default {
     },
   },
   avatarGeneration: {
+    title: 'Avatar Generation',
+    description: 'Upload your photo and select a style to create your avatar',
+    upload: {
+      label: 'Upload Photo',
+    },
     prompt: {
+      label: 'Select Style',
+      description: 'Choose a background style for your avatar',
       placeholder: 'Select background',
     },
     button: {
@@ -120,6 +145,8 @@ export default {
       generate: 'Generate Avatar',
     },
     result: {
+      title: 'Your Avatar',
+      description: 'Preview of your generated avatar',
       success: 'Avatar generated successfully',
       error: 'Avatar generation failed',
       timeout: 'Avatar generation timeout',
@@ -127,7 +154,11 @@ export default {
     },
   },
   imageGeneration: {
+    title: 'Image Generation',
+    description: 'Describe the image you want to create with AI',
     prompt: {
+      label: 'Your Prompt',
+      description: 'Describe in detail what you want to generate',
       placeholder:
         'Describe the image you want to generate, e.g. "A golden retriever running on grass", "Beach sunset scenery"...',
     },
@@ -136,6 +167,8 @@ export default {
       generate: 'Generate Image',
     },
     result: {
+      title: 'Generated Image',
+      description: 'Preview of your AI-generated image',
       success: 'Image generated successfully',
       error: 'Image generation failed',
       timeout: 'Image generation timeout',

@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User } from 'lucide-react';
+import { Loader2, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
@@ -13,9 +13,8 @@ import { z } from 'zod';
 import { ImageUploader } from '@/components/image-uploader';
 import { ResultDisplay } from '@/components/result-display';
 import { StyleSelector } from '@/components/style-selector';
-import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
 import { fetcher } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
@@ -29,7 +28,6 @@ export interface StyleOption {
 }
 
 export function AvatarGenerationTab() {
-  const { isDarkMode, themeClasses } = useTheme();
   const router = useRouter();
   const t = useScopedI18n('avatarGeneration');
 
@@ -91,7 +89,7 @@ export function AvatarGenerationTab() {
     timeoutMessage: t('result.timeout'),
   });
 
-  const { data: avatarStyleOptions } = useSWR<StyleOption[]>('/api/style-options?tab=avatar', fetcher, {
+  const { data: styles } = useSWR<StyleOption[]>('/api/style-options?tab=avatar', fetcher, {
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
     shouldRetryOnError: true,
@@ -119,41 +117,30 @@ export function AvatarGenerationTab() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8 md:grid-cols-2">
-        <div className="space-y-6">
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field: { onChange, value, ...field } }) => (
-              <FormItem>
-                <FormControl>
-                  <ImageUploader
-                    onImageChange={handleImageUpload}
-                    imageName={form.getValues('image')?.name}
-                    inputId="avatar-image-upload"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {/* Left Column - Form Controls */}
+        <div className="rounded-2xl bg-gradient-to-br from-white to-blue-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
+          <div className="mb-6 space-y-2">
+            <h3 className="text-xl font-medium tracking-tight text-blue-950 dark:text-blue-200">{t('title')}</h3>
+            <p className="text-muted-foreground text-sm">{t('description')}</p>
+          </div>
 
-          {/* 风格选择器 */}
-          <div className="space-y-4">
+          <div className="space-y-8">
             <FormField
               control={form.control}
-              name="background"
+              name="image"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel className="block font-medium text-blue-800 dark:text-blue-300">
+                    {t('upload.label')}
+                  </FormLabel>
                   <FormControl>
-                    <StyleSelector
-                      options={avatarStyleOptions || []}
-                      value={field.value}
-                      onSelect={(background) => {
-                        field.onChange(background.id);
+                    <ImageUploader
+                      onImageChange={(e) => {
+                        field.onChange(e.target.files?.[0]);
                       }}
-                      placeholder={t('prompt.placeholder')}
-                      isDarkMode={isDarkMode}
+                      imageName={field.value?.name}
+                      inputId="avatar-image"
                     />
                   </FormControl>
                   <FormMessage />
@@ -161,15 +148,40 @@ export function AvatarGenerationTab() {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="background"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="mb-2 space-y-1">
+                    <FormLabel className="font-medium text-blue-800 dark:text-blue-300">{t('prompt.label')}</FormLabel>
+                    <p className="text-muted-foreground text-xs">{t('prompt.description')}</p>
+                  </div>
+                  <FormControl>
+                    <StyleSelector
+                      options={styles || []}
+                      value={field.value}
+                      onSelect={(background) => {
+                        field.onChange(background.id);
+                      }}
+                      placeholder={t('prompt.placeholder')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="mt-8">
             <Button
               type="submit"
-              disabled={status === 'loading' || status === 'polling'}
-              className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
-              size="lg"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 py-6 text-base font-medium text-white shadow-sm transition-all duration-300 hover:shadow-md disabled:from-blue-400 disabled:to-purple-400"
+              disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
             >
               {status === 'loading' || status === 'polling' ? (
                 <>
-                  <div className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                   {t('button.processing')}
                 </>
               ) : (
@@ -182,13 +194,22 @@ export function AvatarGenerationTab() {
           </div>
         </div>
 
-        {/* 结果展示 */}
-        <div>
-          <ResultDisplay
-            generatedImage={generatedImage}
-            status={status}
-            imageName={form.getValues('image')?.name || 'avatar.png'}
-          />
+        {/* Right Column - Result Display */}
+        <div className="flex flex-col rounded-2xl bg-gradient-to-br from-white to-purple-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10">
+          <div className="mb-6 space-y-2">
+            <h3 className="text-xl font-medium tracking-tight text-purple-950 dark:text-purple-200">
+              {t('result.title')}
+            </h3>
+            <p className="text-muted-foreground text-sm">{t('result.description')}</p>
+          </div>
+          <div className="min-h-[350px] flex-1">
+            <ResultDisplay
+              generatedImage={generatedImage}
+              status={status}
+              imageName={form.getValues('image')?.name || 'avatar.png'}
+              className="h-full"
+            />
+          </div>
         </div>
       </form>
     </Form>

@@ -5,7 +5,6 @@ import { Inter } from 'next/font/google';
 import { setStaticParamsLocale } from 'next-international/server';
 import type React from 'react';
 
-import { Navigation } from '@/components/navigation';
 import { ThemeProvider } from '@/components/theme-provider';
 import { I18nProviderClient } from '@/locales/client';
 

@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { BarChart3, Calendar, Camera, Crown, Edit3, Save, User, X, Zap } from 'lucide-react';
 
-import { useTheme } from '@/components/theme-provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,6 @@ import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function ProfilePage() {
-  const { isDarkMode, themeClasses } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     name: '张三',
@@ -51,28 +49,24 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
+    <div className={`min-h-screen pt-16 transition-colors duration-300`}>
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* 左侧：个人信息 */}
           <div className="space-y-6 lg:col-span-1">
             {/* 头像和基本信息 */}
-            <Card className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+            <Card className={`border-0 transition-all duration-300`}>
               <CardContent className="p-6 text-center">
                 <div className="relative mb-4 inline-block">
                   <Avatar className="size-24">
                     <AvatarImage src={userInfo.avatar || '/placeholder.svg'} />
-                    <AvatarFallback className={isDarkMode ? 'bg-gray-700 text-white' : ''}>
+                    <AvatarFallback className="bg-gray-700 text-white">
                       <User className="size-12" />
                     </AvatarFallback>
                   </Avatar>
                   <Button
                     size="sm"
-                    className={`absolute -bottom-2 -right-2 size-8 rounded-full transition-all duration-300 ${
-                      isDarkMode
-                        ? 'bg-blue-600 shadow-[0_4px_16px_rgba(59,130,246,0.4)] hover:bg-blue-700 hover:shadow-[0_6px_24px_rgba(59,130,246,0.5)]'
-                        : 'bg-blue-500 shadow-[0_2px_12px_rgba(59,130,246,0.3)] hover:bg-blue-600 hover:shadow-[0_4px_20px_rgba(59,130,246,0.4)]'
-                    }`}
+                    className={`absolute -bottom-2 -right-2 size-8 rounded-full bg-blue-600 shadow-[0_4px_16px_rgba(59,130,246,0.4)] transition-all duration-300 hover:bg-blue-700 hover:shadow-[0_6px_24px_rgba(59,130,246,0.5)]`}
                   >
                     <Camera className="size-4" />
                   </Button>
@@ -80,18 +74,14 @@ export default function ProfilePage() {
 
                 {!isEditing ? (
                   <>
-                    <h2 className={`text-xl font-bold ${themeClasses.text} mb-1`}>{userInfo.name}</h2>
-                    <p className={`${themeClasses.textSecondary} mb-3 text-sm`}>{userInfo.email}</p>
-                    <p className={`${themeClasses.textSecondary} mb-4 text-sm`}>{userInfo.bio}</p>
+                    <h2 className={`mb-1 text-xl font-bold`}>{userInfo.name}</h2>
+                    <p className={`mb-3 text-sm`}>{userInfo.email}</p>
+                    <p className={`mb-4 text-sm`}>{userInfo.bio}</p>
                     <Button
                       onClick={() => setIsEditing(true)}
                       variant="outline"
                       size="sm"
-                      className={`transition-all duration-300 ${
-                        isDarkMode
-                          ? 'border-gray-600/50 bg-gray-700/60 text-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.2)] hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]'
-                          : 'border-gray-200/60 bg-white/80 text-gray-600 shadow-[0_1px_8px_rgba(0,0,0,0.05)] hover:border-gray-300/80 hover:bg-white hover:text-gray-800 hover:shadow-[0_2px_16px_rgba(0,0,0,0.1)]'
-                      }`}
+                      className={`border-gray-600/50 bg-gray-700/60 text-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.2)] transition-all duration-300 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]`}
                     >
                       <Edit3 className="mr-2 size-4" />
                       编辑资料
@@ -100,35 +90,35 @@ export default function ProfilePage() {
                 ) : (
                   <div className="space-y-4 text-left">
                     <div>
-                      <Label className={themeClasses.text}>姓名</Label>
+                      <Label className="text">姓名</Label>
                       <Input
                         value={editForm.name}
                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                        className={themeClasses.textarea}
+                        className="textarea"
                       />
                     </div>
                     <div>
-                      <Label className={themeClasses.text}>邮箱</Label>
+                      <Label className="text">邮箱</Label>
                       <Input
                         value={editForm.email}
                         onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                        className={themeClasses.textarea}
+                        className="textarea"
                       />
                     </div>
                     <div>
-                      <Label className={themeClasses.text}>手机</Label>
+                      <Label className="text">手机</Label>
                       <Input
                         value={editForm.phone}
                         onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                        className={themeClasses.textarea}
+                        className="textarea"
                       />
                     </div>
                     <div>
-                      <Label className={themeClasses.text}>个人简介</Label>
+                      <Label className="text">个人简介</Label>
                       <Textarea
                         value={editForm.bio}
                         onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                        className={themeClasses.textarea}
+                        className="textarea"
                         rows={3}
                       />
                     </div>
@@ -136,11 +126,7 @@ export default function ProfilePage() {
                       <Button
                         onClick={handleSave}
                         size="sm"
-                        className={`flex-1 transition-all duration-300 ${
-                          isDarkMode
-                            ? 'bg-gradient-to-r from-blue-600 to-purple-700 shadow-[0_4px_24px_rgba(59,130,246,0.4)] hover:from-blue-700 hover:to-purple-800 hover:shadow-[0_8px_32px_rgba(59,130,246,0.5)]'
-                            : 'bg-gradient-to-r from-blue-500 to-purple-600 shadow-[0_4px_20px_rgba(59,130,246,0.3)] hover:from-blue-600 hover:to-purple-700 hover:shadow-[0_8px_30px_rgba(59,130,246,0.4)]'
-                        }`}
+                        className={`flex-1 bg-gradient-to-r from-blue-600 to-purple-700 shadow-[0_4px_24px_rgba(59,130,246,0.4)] transition-all duration-300 hover:from-blue-700 hover:to-purple-800 hover:shadow-[0_8px_32px_rgba(59,130,246,0.5)]`}
                       >
                         <Save className="mr-2 size-4" />
                         保存
@@ -149,11 +135,7 @@ export default function ProfilePage() {
                         onClick={handleCancel}
                         variant="outline"
                         size="sm"
-                        className={`flex-1 transition-all duration-300 ${
-                          isDarkMode
-                            ? 'border-gray-600/50 bg-gray-700/60 text-gray-200 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white'
-                            : 'border-gray-200/60 bg-white/80 text-gray-600 hover:border-gray-300/80 hover:bg-white hover:text-gray-800'
-                        }`}
+                        className={`flex-1 border-gray-600/50 bg-gray-700/60 text-gray-200 transition-all duration-300 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white`}
                       >
                         <X className="mr-2 size-4" />
                         取消
@@ -165,26 +147,26 @@ export default function ProfilePage() {
             </Card>
 
             {/* 套餐信息 */}
-            <Card className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+            <Card className={`border-0 transition-all duration-300`}>
               <CardHeader>
-                <CardTitle className={`flex items-center ${themeClasses.text}`}>
+                <CardTitle className={`flex items-center`}>
                   <Crown className="mr-2 size-5 text-yellow-500" />
                   当前套餐
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className={themeClasses.textSecondary}>套餐类型</span>
+                  <span className="textSecondary">套餐类型</span>
                   <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">{stats.plan}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className={themeClasses.textSecondary}>到期时间</span>
-                  <span className={`text-sm ${themeClasses.text}`}>{stats.planExpiry}</span>
+                  <span className="textSecondary">到期时间</span>
+                  <span className={`text-sm`}>{stats.planExpiry}</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className={themeClasses.textSecondary}>本月使用量</span>
-                    <span className={`text-sm ${themeClasses.text}`}>
+                    <span className="textSecondary">本月使用量</span>
+                    <span className={`text-sm`}>
                       {stats.usageThisMonth}/{stats.planLimit}
                     </span>
                   </div>
@@ -193,11 +175,7 @@ export default function ProfilePage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className={`w-full transition-all duration-300 ${
-                    isDarkMode
-                      ? 'border-gray-600/50 bg-gray-700/60 text-gray-200 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white'
-                      : 'border-gray-200/60 bg-white/80 text-gray-600 hover:border-gray-300/80 hover:bg-white hover:text-gray-800'
-                  }`}
+                  className={`w-full border-gray-600/50 bg-gray-700/60 text-gray-200 transition-all duration-300 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white`}
                 >
                   升级套餐
                 </Button>
@@ -209,12 +187,12 @@ export default function ProfilePage() {
           <div className="space-y-6 lg:col-span-2">
             {/* 统计卡片 */}
             <div className="grid gap-6 md:grid-cols-2">
-              <Card className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <Card className={`border-0 transition-all duration-300`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className={`${themeClasses.textSecondary} text-sm`}>总作品数</p>
-                      <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.totalWorks}</p>
+                      <p className={`text-sm`}>总作品数</p>
+                      <p className={`text-2xl font-bold`}>{stats.totalWorks}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
                       <BarChart3 className="size-6 text-blue-500" />
@@ -223,12 +201,12 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <Card className={`border-0 transition-all duration-300`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className={`${themeClasses.textSecondary} text-sm`}>本月作品</p>
-                      <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.thisMonthWorks}</p>
+                      <p className={`text-sm`}>本月作品</p>
+                      <p className={`text-2xl font-bold`}>{stats.thisMonthWorks}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
                       <Zap className="size-6 text-green-500" />
@@ -237,12 +215,12 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <Card className={`border-0 transition-all duration-300`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className={`${themeClasses.textSecondary} text-sm`}>处理时长</p>
-                      <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.totalProcessingTime}</p>
+                      <p className={`text-sm`}>处理时长</p>
+                      <p className={`text-2xl font-bold`}>{stats.totalProcessingTime}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
                       <Calendar className="size-6 text-purple-500" />
@@ -251,12 +229,12 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <Card className={`border-0 transition-all duration-300`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className={`${themeClasses.textSecondary} text-sm`}>偏好风格</p>
-                      <p className={`text-2xl font-bold ${themeClasses.text}`}>{stats.favoriteStyle}</p>
+                      <p className={`text-sm`}>偏好风格</p>
+                      <p className={`text-2xl font-bold`}>{stats.favoriteStyle}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
                       <User className="size-6 text-orange-500" />
@@ -267,9 +245,9 @@ export default function ProfilePage() {
             </div>
 
             {/* 最近活动 */}
-            <Card className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+            <Card className={`border-0 transition-all duration-300`}>
               <CardHeader>
-                <CardTitle className={themeClasses.text}>最近活动</CardTitle>
+                <CardTitle className={`flex items-center`}>最近活动</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -293,11 +271,11 @@ export default function ProfilePage() {
                         }`}
                       ></div>
                       <div className="flex-1">
-                        <p className={`text-sm ${themeClasses.text}`}>
+                        <p className={`text-sm`}>
                           <span className="font-medium">{activity.action}</span>
-                          <span className={themeClasses.textSecondary}> - {activity.target}</span>
+                          <span className={`textSecondary`}> - {activity.target}</span>
                         </p>
-                        <p className={`text-xs ${themeClasses.textMuted}`}>{activity.time}</p>
+                        <p className={`text-xs`}>{activity.time}</p>
                       </div>
                     </div>
                   ))}

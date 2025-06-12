@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Palette } from 'lucide-react';
+import { Loader2, Palette } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
@@ -13,9 +13,8 @@ import { z } from 'zod';
 import { ImageUploader } from '@/components/image-uploader';
 import { ResultDisplay } from '@/components/result-display';
 import { StyleSelector } from '@/components/style-selector';
-import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
 import { fetcher } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
@@ -29,7 +28,6 @@ export interface StyleOption {
 }
 
 export function StyleTransformTab() {
-  const { isDarkMode, themeClasses } = useTheme();
   const router = useRouter();
   const t = useScopedI18n('styleTransform');
 
@@ -119,35 +117,48 @@ export function StyleTransformTab() {
     [submitTransform, reset]
   );
 
-  // handleDownload函数已移至ResultDisplay组件中
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8 md:grid-cols-2">
-        <div className="space-y-6">
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field: { onChange, value, ...field } }) => (
-              <FormItem>
-                <FormControl>
-                  <ImageUploader
-                    onImageChange={handleImageUpload}
-                    imageName={form.getValues('image')?.name}
-                    inputId="style-image-upload"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {/* Left Column - Form Controls */}
+        <div className="rounded-2xl bg-gradient-to-br from-white to-purple-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10">
+          <div className="mb-6 space-y-2">
+            <h3 className="text-xl font-medium tracking-tight text-purple-950 dark:text-purple-200">{t('title')}</h3>
+            <p className="text-muted-foreground text-sm">{t('description')}</p>
+          </div>
 
-          {/* 风格选择器 */}
-          <div className="space-y-4">
+          <div className="space-y-8">
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="block font-medium text-purple-800 dark:text-purple-300">
+                    {t('upload.label')}
+                  </FormLabel>
+                  <FormControl>
+                    <ImageUploader
+                      onImageChange={handleImageUpload}
+                      imageName={form.getValues('image')?.name}
+                      inputId="style-image-upload"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="style"
               render={({ field }) => (
                 <FormItem>
+                  <div className="mb-2 space-y-1">
+                    <FormLabel className="font-medium text-purple-800 dark:text-purple-300">
+                      {t('prompt.label')}
+                    </FormLabel>
+                    <p className="text-muted-foreground text-xs">{t('prompt.description')}</p>
+                  </div>
                   <FormControl>
                     <StyleSelector
                       options={styleOptions || []}
@@ -157,23 +168,23 @@ export function StyleTransformTab() {
                         form.setValue('prompt', style.prompt);
                       }}
                       placeholder={t('prompt.placeholder')}
-                      isDarkMode={isDarkMode}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+          </div>
 
+          <div className="mt-8">
             <Button
               type="submit"
-              disabled={status === 'loading' || status === 'polling'}
-              className={`w-full transition-all duration-300 ${themeClasses.buttonPrimary}`}
-              size="lg"
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-6 text-base font-medium text-white shadow-sm transition-all duration-300 hover:shadow-md disabled:from-purple-400 disabled:to-indigo-400"
+              disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
             >
               {status === 'loading' || status === 'polling' ? (
                 <>
-                  <div className="mr-2 size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <Loader2 className="mr-2 size-4 animate-spin" />
                   {t('button.processing')}
                 </>
               ) : (
@@ -186,13 +197,22 @@ export function StyleTransformTab() {
           </div>
         </div>
 
-        {/* 结果展示 */}
-        <div>
-          <ResultDisplay
-            generatedImage={generatedImage}
-            status={status}
-            imageName={form.getValues('image')?.name || 'styled-image.png'}
-          />
+        {/* Right Column - Result Display */}
+        <div className="flex flex-col rounded-2xl bg-gradient-to-br from-white to-indigo-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-indigo-950/20 dark:ring-white/10">
+          <div className="mb-6 space-y-2">
+            <h3 className="text-xl font-medium tracking-tight text-indigo-950 dark:text-indigo-200">
+              {t('result.title')}
+            </h3>
+            <p className="text-muted-foreground text-sm">{t('result.description')}</p>
+          </div>
+          <div className="min-h-[350px] flex-1">
+            <ResultDisplay
+              generatedImage={generatedImage}
+              status={status}
+              imageName={form.getValues('image')?.name || 'styled-image.png'}
+              className="h-full"
+            />
+          </div>
         </div>
       </form>
     </Form>

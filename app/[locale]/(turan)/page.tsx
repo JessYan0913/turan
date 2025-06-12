@@ -11,7 +11,6 @@ import { ImageEditTab } from '@/components/image-edit-tab';
 import { ImageGenerationTab } from '@/components/image-generation-tab';
 import { ImageSlider } from '@/components/image-slider';
 import { StyleTransformTab } from '@/components/style-transform-tab';
-import { useTheme } from '@/components/theme-provider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetcher } from '@/lib/utils';
@@ -30,7 +29,6 @@ export interface ExamplesResponse {
 }
 
 export default function HomePage() {
-  const { themeClasses } = useTheme();
   const t = useScopedI18n('home');
   const [activeTab, setActiveTab] = useState('generate');
 
@@ -43,36 +41,48 @@ export default function HomePage() {
   });
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
-      <div className="p-4 md:p-8">
+    <div className="min-h-screen py-8 transition-colors duration-300 md:py-12 lg:py-16">
+      <div className="container px-4 md:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           {/* 固定的标题区域 */}
-          <div className="mb-10 text-center">
-            <h1 className="mb-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-4xl font-bold text-transparent">
-              {t('title')}
-            </h1>
-            <p className={`${themeClasses.textSecondary} text-lg`}>{t('subtitle')}</p>
+          <div className="mb-12 space-y-4 text-center">
+            <h1 className="gradient-text text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">{t('title')}</h1>
+            <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">{t('subtitle')}</p>
           </div>
 
           {/* 主要功能区 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`mx-auto mb-8 grid w-full max-w-3xl grid-cols-4 gap-1 ${themeClasses.tabsList}`}>
-              <TabsTrigger value="generate" className={themeClasses.tabsTrigger}>
-                {t('tabs.generate')}
-              </TabsTrigger>
-              <TabsTrigger value="edit" className={themeClasses.tabsTrigger}>
-                {t('tabs.edit')}
-              </TabsTrigger>
-              <TabsTrigger value="style" className={themeClasses.tabsTrigger}>
-                {t('tabs.style')}
-              </TabsTrigger>
-              <TabsTrigger value="avatar" className={themeClasses.tabsTrigger}>
-                {t('tabs.avatar')}
-              </TabsTrigger>
-            </TabsList>
+            <div className="mx-auto mb-8 max-w-3xl px-4">
+              <TabsList className="tabs-list grid h-auto w-full grid-cols-4 gap-0.5 overflow-hidden rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
+                <TabsTrigger
+                  value="generate"
+                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
+                >
+                  <span className="relative z-10">{t('tabs.generate')}</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="edit"
+                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
+                >
+                  <span className="relative z-10">{t('tabs.edit')}</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="style"
+                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
+                >
+                  <span className="relative z-10">{t('tabs.style')}</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="avatar"
+                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
+                >
+                  <span className="relative z-10">{t('tabs.avatar')}</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* 固定高度的内容区域，避免抖动 */}
-            <div className="min-h-[600px]">
+            <div className="min-h-[600px] rounded-xl p-4 md:p-6">
               {/* 图像编辑功能 */}
               <TabsContent value="edit" className="mt-0">
                 <ImageEditTab />
@@ -96,26 +106,26 @@ export default function HomePage() {
           </Tabs>
 
           {/* 简约的精彩示例展示区域 */}
-          <div className="mt-20">
-            <div className="mb-16 text-center">
-              <h2 className="mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
-                {t('examples.title')}
-              </h2>
-              <p className={`${themeClasses.textSecondary} text-lg`}>{t('examples.subtitle')}</p>
+          <div className="mt-24 scroll-m-20" id="examples">
+            <div className="mb-16 space-y-4 text-center">
+              <h2 className="gradient-text text-3xl font-bold tracking-tight md:text-4xl">{t('examples.title')}</h2>
+              <p className="text-muted-foreground mx-auto max-w-2xl text-lg">{t('examples.subtitle')}</p>
             </div>
 
             {/* 图像编辑示例 */}
             <div className="mb-16">
-              <div className="mb-8 flex items-center">
-                <Edit3 className="mr-3 size-5 text-blue-500" />
-                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>{t('examples.imageEdit')}</h3>
-                <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+              <div className="mb-8 flex items-center gap-3">
+                <div className="flex size-8 items-center justify-center rounded-md bg-blue-100 dark:bg-blue-900/30">
+                  <Edit3 className="size-5 text-blue-500" />
+                </div>
+                <h3 className="text-xl font-semibold">{t('examples.imageEdit')}</h3>
+                <div className="bg-border ml-4 h-px flex-1"></div>
               </div>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {examplesData?.editExamples?.map((example, index) => (
-                  <Card key={index} className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+                  <Card key={index} className="card-base group">
                     <CardContent className="p-0">
-                      <div className="relative h-40">
+                      <div className="relative h-40 overflow-hidden rounded-t-lg">
                         <ImageSlider
                           beforeImage={`/placeholder.svg?height=160&width=400&text=${example.before}`}
                           afterImage={`/placeholder.svg?height=160&width=400&text=${example.after}`}
@@ -125,8 +135,8 @@ export default function HomePage() {
                         />
                       </div>
                       <div className="p-4">
-                        <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>{t('examples.sliderHint')}</p>
+                        <h4 className="text-foreground mb-2 font-medium">{example.title}</h4>
+                        <p className="text-muted-foreground text-sm">{t('examples.sliderHint')}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -136,14 +146,16 @@ export default function HomePage() {
 
             {/* 风格转换示例 */}
             <div className="mb-16">
-              <div className="mb-8 flex items-center">
-                <Palette className="mr-3 size-5 text-purple-500" />
-                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>{t('examples.styleTransfer')}</h3>
-                <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+              <div className="mb-8 flex items-center gap-3">
+                <div className="flex size-8 items-center justify-center rounded-md bg-purple-100 dark:bg-purple-900/30">
+                  <Palette className="size-5 text-purple-500" />
+                </div>
+                <h3 className="text-xl font-semibold">{t('examples.styleTransfer')}</h3>
+                <div className="bg-border ml-4 h-px flex-1"></div>
               </div>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {examplesData?.styleExamples?.map((example, index) => (
-                  <Card key={index} className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+                  <Card key={index} className="card-base group">
                     <CardContent className="p-0">
                       <div className="relative h-40">
                         <ImageSlider
@@ -155,8 +167,8 @@ export default function HomePage() {
                         />
                       </div>
                       <div className="p-4">
-                        <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>{t('examples.sliderHint')}</p>
+                        <h4 className="text-foreground mb-1 font-medium">{example.title}</h4>
+                        <p className="text-muted-foreground text-sm">{t('examples.sliderHint')}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -166,14 +178,16 @@ export default function HomePage() {
 
             {/* 头像生成示例 */}
             <div className="mb-16">
-              <div className="mb-8 flex items-center">
-                <Camera className="mr-3 size-5 text-green-500" />
-                <h3 className={`text-xl font-semibold ${themeClasses.text}`}>{t('examples.avatarGeneration')}</h3>
-                <div className="ml-4 h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+              <div className="mb-8 flex items-center gap-3">
+                <div className="flex size-8 items-center justify-center rounded-md bg-green-100 dark:bg-green-900/30">
+                  <Camera className="size-5 text-green-500" />
+                </div>
+                <h3 className="text-xl font-semibold">{t('examples.avatarGeneration')}</h3>
+                <div className="bg-border ml-4 h-px flex-1"></div>
               </div>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {examplesData?.avatarExamples?.map((example, index) => (
-                  <Card key={index} className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+                  <Card key={index} className="card-base group">
                     <CardContent className="p-0">
                       <div className="relative h-40">
                         <ImageSlider
@@ -185,8 +199,8 @@ export default function HomePage() {
                         />
                       </div>
                       <div className="p-4">
-                        <h4 className={`font-medium ${themeClasses.text} mb-1`}>{example.title}</h4>
-                        <p className={`text-sm ${themeClasses.textSecondary}`}>{t('examples.sliderHint')}</p>
+                        <h4 className="text-foreground mb-1 font-medium">{example.title}</h4>
+                        <p className="text-muted-foreground text-sm">{t('examples.sliderHint')}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -196,38 +210,51 @@ export default function HomePage() {
           </div>
 
           {/* 简单的使用步骤 */}
-          <div className="mb-8 mt-16">
-            <h2
-              className={`mb-8 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-center text-2xl font-bold text-transparent`}
-            >
+          <div className="mb-16 mt-24 scroll-m-20" id="how-it-works">
+            <h2 className="gradient-text mb-12 text-center text-3xl font-bold tracking-tight md:text-4xl">
               {t('steps.title')}
             </h2>
-            <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-3">
-              <Card className={`border-0 text-center transition-all duration-300 ${themeClasses.cardSubtle}`}>
-                <CardContent className="pt-6">
-                  <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-                    <Upload className="size-5 text-white" />
+            <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-3">
+              <Card className="card-base text-center transition-all duration-300 hover:translate-y-[-4px]">
+                <CardContent className="p-6">
+                  <div className="relative mb-4">
+                    <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+                      <Upload className="size-5 text-white" />
+                    </div>
+                    <div className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-xs font-bold text-white">
+                      1
+                    </div>
+                    <h3 className="mb-2 font-semibold">{t('steps.upload.title')}</h3>
+                    <p className="text-sm">{t('steps.upload.description')}</p>
                   </div>
-                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>1. {t('steps.upload.title')}</h3>
-                  <p className={`text-sm ${themeClasses.textSecondary}`}>{t('steps.upload.description')}</p>
                 </CardContent>
               </Card>
-              <Card className={`border-0 text-center transition-all duration-300 ${themeClasses.cardSubtle}`}>
-                <CardContent className="pt-6">
-                  <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-                    <Sparkles className="size-5 text-white" />
+              <Card className="card-base text-center transition-all duration-300 hover:translate-y-[-4px]">
+                <CardContent className="p-6">
+                  <div className="relative mb-4">
+                    <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+                      <Sparkles className="size-5 text-white" />
+                    </div>
+                    <div className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-xs font-bold text-white">
+                      2
+                    </div>
+                    <h3 className="mb-2 font-semibold">{t('steps.select.title')}</h3>
+                    <p className="text-sm">{t('steps.select.description')}</p>
                   </div>
-                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>2. {t('steps.select.title')}</h3>
-                  <p className={`text-sm ${themeClasses.textSecondary}`}>{t('steps.select.description')}</p>
                 </CardContent>
               </Card>
-              <Card className={`border-0 text-center transition-all duration-300 ${themeClasses.cardSubtle}`}>
-                <CardContent className="pt-6">
-                  <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-                    <ArrowRight className="size-5 text-white" />
+              <Card className="card-base text-center transition-all duration-300 hover:translate-y-[-4px]">
+                <CardContent className="p-6">
+                  <div className="relative mb-4">
+                    <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+                      <ArrowRight className="size-5 text-white" />
+                    </div>
+                    <div className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-xs font-bold text-white">
+                      3
+                    </div>
+                    <h3 className="mb-2 font-semibold">{t('steps.download.title')}</h3>
+                    <p className="text-sm">{t('steps.download.description')}</p>
                   </div>
-                  <h3 className={`mb-2 font-semibold ${themeClasses.text}`}>3. {t('steps.download.title')}</h3>
-                  <p className={`text-sm ${themeClasses.textSecondary}`}>{t('steps.download.description')}</p>
                 </CardContent>
               </Card>
             </div>

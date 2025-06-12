@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
-import { useTheme } from '@/components/theme-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,7 +24,6 @@ export interface WorkInfo {
 }
 
 export default function MyWorksPage() {
-  const { isDarkMode, themeClasses } = useTheme();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -83,12 +81,12 @@ export default function MyWorksPage() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
+    <div className={`min-h-screen pt-16 transition-colors duration-300`}>
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* 标题和统计 */}
         <div className="mb-8">
-          <h1 className={`text-3xl font-bold ${themeClasses.text} mb-2`}>我的作品</h1>
-          <p className={`${themeClasses.textSecondary}`}>
+          <h1 className="mb-2 text-3xl font-bold">我的作品</h1>
+          <p className="text-secondary">
             共 {works.length} 个作品，{works.filter((w) => w.status === 'completed').length} 个已完成
           </p>
         </div>
@@ -104,7 +102,7 @@ export default function MyWorksPage() {
                 const newValue = e.target.value;
                 router.push(`${pathname}?${createQueryString('search', newValue)}`, { scroll: false });
               }}
-              className={`pl-10 ${themeClasses.textarea}`}
+              className="pl-10"
             />
           </div>
           <Select
@@ -113,23 +111,15 @@ export default function MyWorksPage() {
               router.push(`${pathname}?${createQueryString('type', value)}`, { scroll: false });
             }}
           >
-            <SelectTrigger className={`w-full sm:w-48 ${isDarkMode ? 'border-gray-700 bg-gray-800 text-white' : ''}`}>
+            <SelectTrigger className={`w-full sm:w-48`}>
               <Filter className="mr-2 size-4" />
               <SelectValue placeholder="筛选类型" />
             </SelectTrigger>
-            <SelectContent className={isDarkMode ? 'border-gray-700 bg-gray-800' : ''}>
-              <SelectItem value="all" className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                全部类型
-              </SelectItem>
-              <SelectItem value="style-transfer" className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                风格转换
-              </SelectItem>
-              <SelectItem value="avatar" className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                头像生成
-              </SelectItem>
-              <SelectItem value="edit" className={isDarkMode ? 'text-white hover:bg-gray-700' : ''}>
-                图像编辑
-              </SelectItem>
+            <SelectContent>
+              <SelectItem value="all">全部类型</SelectItem>
+              <SelectItem value="style-transfer">风格转换</SelectItem>
+              <SelectItem value="avatar">头像生成</SelectItem>
+              <SelectItem value="edit">图像编辑</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -138,7 +128,7 @@ export default function MyWorksPage() {
         {filteredWorks.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredWorks.map((work) => (
-              <Card key={work.id} className={`group border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <Card key={work.id} className="group border-0 transition-all duration-300">
                 <CardContent className="p-0">
                   {/* 图片预览 */}
                   <div className="relative h-48 overflow-hidden rounded-t-lg">
@@ -169,37 +159,13 @@ export default function MyWorksPage() {
 
                     {/* 悬停操作按钮 */}
                     <div className="absolute inset-0 flex items-center justify-center space-x-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className={`${
-                          isDarkMode
-                            ? 'border-gray-600/50 bg-gray-800/90 text-white hover:bg-gray-700'
-                            : 'bg-white/90 text-gray-800 hover:bg-white'
-                        } backdrop-blur-sm`}
-                      >
+                      <Button size="sm" variant="secondary" className="backdrop-blur-sm">
                         <Eye className="size-4" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className={`${
-                          isDarkMode
-                            ? 'border-gray-600/50 bg-gray-800/90 text-white hover:bg-gray-700'
-                            : 'bg-white/90 text-gray-800 hover:bg-white'
-                        } backdrop-blur-sm`}
-                      >
+                      <Button size="sm" variant="secondary" className="backdrop-blur-sm">
                         <Download className="size-4" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className={`${
-                          isDarkMode
-                            ? 'border-gray-600/50 bg-gray-800/90 text-white hover:bg-gray-700'
-                            : 'bg-white/90 text-gray-800 hover:bg-white'
-                        } backdrop-blur-sm`}
-                      >
+                      <Button size="sm" variant="secondary" className="backdrop-blur-sm">
                         <Share2 className="size-4" />
                       </Button>
                     </div>
@@ -208,17 +174,15 @@ export default function MyWorksPage() {
                   {/* 作品信息 */}
                   <div className="p-4">
                     <div className="mb-2 flex items-start justify-between">
-                      <h3 className={`font-semibold ${themeClasses.text} line-clamp-1`}>{work.title}</h3>
+                      <h3 className="line-clamp-1 font-semibold">{work.title}</h3>
                       {getStatusBadge(work.status)}
                     </div>
 
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className={isDarkMode ? 'border-gray-600 text-gray-300' : ''}>
-                          {getTypeLabel(work.type)}
-                        </Badge>
+                        <Badge variant="outline">{getTypeLabel(work.type)}</Badge>
                       </div>
-                      <div className={`flex items-center space-x-1 ${themeClasses.textMuted}`}>
+                      <div className="text-muted-foreground flex items-center space-x-1">
                         <Calendar className="size-3" />
                         <span className="text-xs">{work.createdAt}</span>
                       </div>
@@ -227,40 +191,16 @@ export default function MyWorksPage() {
                     {/* 操作按钮 */}
                     <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700">
                       <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className={`transition-all duration-300 ${
-                            isDarkMode
-                              ? 'border-gray-600/50 bg-gray-700/60 text-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.2)] hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]'
-                              : 'border-gray-200/60 bg-white/80 text-gray-600 shadow-[0_1px_8px_rgba(0,0,0,0.05)] hover:border-gray-300/80 hover:bg-white hover:text-gray-800 hover:shadow-[0_2px_16px_rgba(0,0,0,0.1)]'
-                          }`}
-                        >
+                        <Button size="sm" variant="outline" className="transition-all duration-300">
                           <Download className="mr-1 size-3" />
                           下载
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className={`transition-all duration-300 ${
-                            isDarkMode
-                              ? 'border-gray-600/50 bg-gray-700/60 text-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.2)] hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]'
-                              : 'border-gray-200/60 bg-white/80 text-gray-600 shadow-[0_1px_8px_rgba(0,0,0,0.05)] hover:border-gray-300/80 hover:bg-white hover:text-gray-800 hover:shadow-[0_2px_16px_rgba(0,0,0,0.1)]'
-                          }`}
-                        >
+                        <Button size="sm" variant="outline" className={`transition-all duration-300`}>
                           <Share2 className="mr-1 size-3" />
                           分享
                         </Button>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className={`transition-all duration-300 ${
-                          isDarkMode
-                            ? 'text-red-400 hover:bg-red-900/20 hover:text-red-300'
-                            : 'text-red-500 hover:bg-red-50 hover:text-red-600'
-                        }`}
-                      >
+                      <Button size="sm" variant="ghost" className={`transition-all duration-300 `}>
                         <Trash2 className="size-3" />
                       </Button>
                     </div>
@@ -271,17 +211,13 @@ export default function MyWorksPage() {
           </div>
         ) : (
           <div className="py-12 text-center">
-            <ImageIcon className={`mx-auto size-16 ${themeClasses.textMuted} mb-4`} />
-            <h3 className={`text-lg font-semibold ${themeClasses.text} mb-2`}>暂无作品</h3>
-            <p className={`${themeClasses.textSecondary} mb-4`}>
+            <ImageIcon className="text-muted-foreground mx-auto mb-4 size-16" />
+            <h3 className="mb-2 text-lg font-semibold">暂无作品</h3>
+            <p className="text-muted-foreground mb-4">
               {searchTerm || filterType !== 'all' ? '没有找到匹配的作品' : '开始创作您的第一个作品吧'}
             </p>
             <Button
-              className={`transition-all duration-300 ${
-                isDarkMode
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-700 shadow-[0_4px_24px_rgba(59,130,246,0.4)] hover:from-blue-700 hover:to-purple-800 hover:shadow-[0_8px_32px_rgba(59,130,246,0.5)]'
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 shadow-[0_4px_20px_rgba(59,130,246,0.3)] hover:from-blue-600 hover:to-purple-700 hover:shadow-[0_8px_30px_rgba(59,130,246,0.4)]'
-              }`}
+              className={`'bg-gradient-to-r from-blue-500 to-purple-600 shadow-[0_4px_20px_rgba(59,130,246,0.3)] transition-all duration-300 hover:from-blue-600 hover:to-purple-700 hover:shadow-[0_8px_30px_rgba(59,130,246,0.4)]`}
             >
               开始创作
             </Button>

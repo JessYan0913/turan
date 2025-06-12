@@ -2,14 +2,11 @@
 
 import { Check, Crown, Star, Zap } from 'lucide-react';
 
-import { useTheme } from '@/components/theme-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function PricingPage() {
-  const { isDarkMode, themeClasses } = useTheme();
-
   const plans = [
     {
       name: '免费版',
@@ -64,16 +61,14 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${themeClasses.background} pt-16`}>
+    <div className={`min-h-screen pt-16 transition-colors duration-300`}>
       <div className="mx-auto max-w-7xl px-4 py-12">
         {/* 标题区域 */}
         <div className="mb-16 text-center">
           <h1 className="mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-4xl font-bold text-transparent">
             选择适合您的套餐
           </h1>
-          <p className={`${themeClasses.textSecondary} mx-auto max-w-2xl text-lg`}>
-            无论您是个人创作者还是企业用户，我们都有适合您的解决方案
-          </p>
+          <p className={`mx-auto max-w-2xl text-lg`}>无论您是个人创作者还是企业用户，我们都有适合您的解决方案</p>
         </div>
 
         {/* 价格卡片 */}
@@ -83,7 +78,7 @@ export default function PricingPage() {
               key={plan.name}
               className={`relative border-0 transition-all duration-300 ${
                 plan.popular ? 'scale-105 ring-2 ring-blue-500' : ''
-              } ${themeClasses.cardLarge}`}
+              }`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
@@ -103,11 +98,11 @@ export default function PricingPage() {
                 >
                   {plan.icon}
                 </div>
-                <CardTitle className={`text-2xl font-bold ${themeClasses.text}`}>{plan.name}</CardTitle>
-                <p className={`${themeClasses.textSecondary} text-sm`}>{plan.description}</p>
+                <CardTitle className={`text-2xl font-bold`}>{plan.name}</CardTitle>
+                <p className={`text-sm`}>{plan.description}</p>
                 <div className="mt-4">
-                  <span className={`text-4xl font-bold ${themeClasses.text}`}>{plan.price}</span>
-                  <span className={`${themeClasses.textSecondary} text-lg`}>{plan.period}</span>
+                  <span className={`text-4xl font-bold`}>{plan.price}</span>
+                  <span className={`text-lg`}>{plan.period}</span>
                 </div>
               </CardHeader>
 
@@ -116,9 +111,7 @@ export default function PricingPage() {
                   className={`w-full ${
                     plan.popular
                       ? 'bg-gradient-to-r from-blue-500 to-purple-600 shadow-[0_4px_20px_rgba(59,130,246,0.3)] hover:from-blue-600 hover:to-purple-700 hover:shadow-[0_8px_30px_rgba(59,130,246,0.4)]'
-                      : isDarkMode
-                        ? 'bg-gray-700 text-white hover:bg-gray-600'
-                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      : 'bg-gray-700 text-white hover:bg-gray-600'
                   } transition-all duration-300`}
                   size="lg"
                 >
@@ -126,26 +119,26 @@ export default function PricingPage() {
                 </Button>
 
                 <div className="space-y-3">
-                  <h4 className={`font-semibold ${themeClasses.text}`}>功能包含：</h4>
+                  <h4 className={`font-semibold`}>功能包含：</h4>
                   <ul className="space-y-2">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center space-x-3">
                         <Check className="size-4 shrink-0 text-green-500" />
-                        <span className={`text-sm ${themeClasses.textSecondary}`}>{feature}</span>
+                        <span className={`text-sm`}>{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                   {plan.limitations && (
                     <div className="pt-2">
-                      <h4 className={`font-semibold ${themeClasses.textMuted} text-sm`}>限制：</h4>
+                      <h4 className={`text-sm font-semibold`}>限制：</h4>
                       <ul className="mt-1 space-y-1">
                         {plan.limitations.map((limitation, limitIndex) => (
                           <li key={limitIndex} className="flex items-center space-x-3">
                             <div className="flex size-4 shrink-0 items-center justify-center">
                               <div className="size-1 rounded-full bg-gray-400"></div>
                             </div>
-                            <span className={`text-xs ${themeClasses.textMuted}`}>{limitation}</span>
+                            <span className={`text-xs`}>{limitation}</span>
                           </li>
                         ))}
                       </ul>
@@ -159,7 +152,7 @@ export default function PricingPage() {
 
         {/* FAQ 区域 */}
         <div className="mt-20">
-          <h2 className={`text-center text-2xl font-bold ${themeClasses.text} mb-8`}>常见问题</h2>
+          <h2 className={`mb-8 text-center text-2xl font-bold`}>常见问题</h2>
           <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
             {[
               {
@@ -179,10 +172,10 @@ export default function PricingPage() {
                 answer: '企业版提供专属客服、SLA保障、自定义功能开发等服务。',
               },
             ].map((faq, index) => (
-              <Card key={index} className={`border-0 transition-all duration-300 ${themeClasses.card}`}>
+              <Card key={index} className={`border-0 transition-all duration-300`}>
                 <CardContent className="p-6">
-                  <h3 className={`font-semibold ${themeClasses.text} mb-2`}>{faq.question}</h3>
-                  <p className={`${themeClasses.textSecondary} text-sm`}>{faq.answer}</p>
+                  <h3 className={`mb-2 font-semibold`}>{faq.question}</h3>
+                  <p className={`text-sm`}>{faq.answer}</p>
                 </CardContent>
               </Card>
             ))}
