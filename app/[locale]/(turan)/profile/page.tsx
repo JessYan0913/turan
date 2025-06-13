@@ -1,26 +1,10 @@
-import {
-  BarChart3,
-  Camera,
-  Check,
-  Clock,
-  CreditCard,
-  Crown,
-  Edit3,
-  Info,
-  Layers,
-  Save,
-  User,
-  X,
-  Zap,
-} from 'lucide-react';
+import { BarChart3, Camera, Check, Clock, CreditCard, Crown, Edit3, Info, Layers, User, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { auth } from '@/lib/auth';
 import { getUser } from '@/lib/db/queries';
