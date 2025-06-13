@@ -46,7 +46,7 @@ export function Navigation({ user }: { user: User | undefined }) {
             <div className="flex size-9 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 shadow-md">
               <Palette className="size-5 text-white" />
             </div>
-            <span className="gradient-text text-xl font-bold tracking-tight">图然</span>
+            <span className="gradient-text text-xl font-bold tracking-tight">Turan</span>
           </Link>
 
           {/* 桌面端导航菜单 */}
@@ -57,7 +57,7 @@ export function Navigation({ user }: { user: User | undefined }) {
                 className={`flex items-center space-x-2 transition-all duration-300 ${
                   isActive('/')
                     ? 'bg-muted/60 text-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                    : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
                 }`}
               >
                 <Home className="size-4" />
@@ -70,7 +70,7 @@ export function Navigation({ user }: { user: User | undefined }) {
                 className={`flex items-center space-x-2 transition-all duration-300 ${
                   isActive('/pricing')
                     ? 'bg-muted/60 text-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                    : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
                 }`}
               >
                 <Crown className="size-4" />
@@ -83,7 +83,7 @@ export function Navigation({ user }: { user: User | undefined }) {
                 className={`flex items-center space-x-2 transition-all duration-300 ${
                   isActive('/works')
                     ? 'bg-muted/60 text-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                    : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
                 }`}
               >
                 <ImageIcon className="size-4" />
@@ -96,13 +96,13 @@ export function Navigation({ user }: { user: User | undefined }) {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="text-muted-foreground hover:text-foreground hover:bg-muted/50 flex items-center space-x-2 transition-all duration-300"
+                  className="text-muted-foreground hover:bg-muted/50 hover:text-foreground flex items-center space-x-2 transition-all duration-300"
                 >
                   <Globe className="size-4" />
                   <span>{locales.find((locale) => locale.code === currentLocale)?.name || currentLocale}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-popover border-border">
+              <DropdownMenuContent className="border-border bg-popover">
                 {locales.map((locale) => (
                   <DropdownMenuItem
                     key={locale.code}
@@ -138,7 +138,7 @@ export function Navigation({ user }: { user: User | undefined }) {
                   </Avatar>
                 )}
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover border-border">
+              <DropdownMenuContent align="end" className="border-border bg-popover">
                 <Link href="/profile">
                   <DropdownMenuItem>{t('profile')}</DropdownMenuItem>
                 </Link>
@@ -164,7 +164,7 @@ export function Navigation({ user }: { user: User | undefined }) {
                   <Menu className="size-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-popover border-border w-48 rounded-xl shadow-lg">
+              <DropdownMenuContent align="end" className="border-border bg-popover w-48 rounded-xl shadow-lg">
                 <Link href="/">
                   <DropdownMenuItem className="text-popover-foreground hover:bg-accent">首页</DropdownMenuItem>
                 </Link>

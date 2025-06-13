@@ -47,7 +47,7 @@ export default {
     signIn: '登录',
   },
   home: {
-    title: '图然 Turan',
+    title: 'Turan',
     subtitle: '每一次生成，都是用心呈现',
     tabs: {
       edit: '图像编辑',
