@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { BarChart3, Calendar, Camera, Check, Crown, Edit3, Info, Save, User, X, Zap } from 'lucide-react';
+import { BarChart3, Calendar, Camera, Check, CreditCard, Crown, Edit3, Info, Save, User, X, Zap } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +34,7 @@ export default function ProfilePage() {
     setIsEditing(false);
   };
 
-  // 模拟用户统计数据
+  // 扩展用户统计数据
   const stats = {
     totalWorks: 156,
     thisMonthWorks: 23,
@@ -49,17 +49,25 @@ export default function ProfilePage() {
     planExpiry: '2024-03-15',
     usageThisMonth: 234,
     planLimit: 500,
+    recentActivity: [
+      { action: '完成风格转换', target: '风景照片', time: '2小时前', type: 'success' },
+      { action: '生成专业头像', target: '商务形象', time: '5小时前', type: 'success' },
+      { action: '背景替换', target: '人像照片', time: '1天前', type: 'success' },
+      { action: '升级到专业版', target: '套餐升级', time: '3天前', type: 'info' },
+      { action: '获得新成就', target: '创作达人', time: '4天前', type: 'success' },
+      { action: '分享作品', target: '社交媒体', time: '5天前', type: 'info' },
+    ],
   };
 
   return (
     <div className="bg-muted/20 min-h-screen pb-8 pt-16 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* 左侧：个人信息 */}
-          <div className="space-y-5 lg:col-span-1">
-            {/* 头像和基本信息 */}
+        <div className="grid gap-6 lg:grid-cols-12">
+          {/* 左侧：个人信息和成就 */}
+          <div className="space-y-5 lg:col-span-4">
+            {/* 个人信息卡片 */}
             <Card className="card-base">
-              <CardContent className="p-6 text-center">
+              <CardContent className="p-6">
                 <div className="relative mb-4 inline-block">
                   <Avatar className="size-24">
                     <AvatarImage src={userInfo.avatar || '/placeholder.svg'} />
@@ -80,15 +88,22 @@ export default function ProfilePage() {
                     <h2 className="mb-1 text-2xl font-bold">{userInfo.name}</h2>
                     <p className="text-muted-foreground mb-3">{userInfo.email}</p>
                     <p className="text-muted-foreground mb-4 text-sm">加入于 {userInfo.joinDate}</p>
-                    <Button
-                      onClick={() => setIsEditing(true)}
-                      variant="outline"
-                      size="sm"
-                      className="border-gray-600/50 bg-gray-700/60 text-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.2)] transition-all duration-300 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
-                    >
-                      <Edit3 className="mr-2 size-4" />
-                      编辑资料
-                    </Button>
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        onClick={() => setIsEditing(true)}
+                        className="btn-primary flex items-center gap-2 rounded-lg px-5 py-2 text-base font-medium shadow-md"
+                      >
+                        <Edit3 className="size-4" />
+                        编辑资料
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        className="btn-secondary flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-2 text-base font-medium shadow-sm dark:border-gray-600"
+                      >
+                        <CreditCard className="size-4" />
+                        账单
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   <div className="space-y-4 text-left">
@@ -141,7 +156,7 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            {/* 套餐信息 */}
+            {/* 套餐信息卡片 */}
             <Card className="card-base">
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -167,11 +182,7 @@ export default function ProfilePage() {
                   </div>
                   <Progress value={(stats.usageThisMonth / stats.planLimit) * 100} className="h-2" />
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full border-gray-600/50 bg-gray-700/60 text-gray-200 transition-all duration-300 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white"
-                >
+                <Button className="btn-primary w-full rounded-lg px-5 py-2 text-base font-medium shadow-md">
                   升级套餐
                 </Button>
               </CardContent>
@@ -179,141 +190,103 @@ export default function ProfilePage() {
           </div>
 
           {/* 右侧：统计和活动 */}
-          <div className="space-y-5 lg:col-span-2">
-            {/* 统计卡片 */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Card className="card-base group overflow-hidden border-0 bg-gradient-to-br from-blue-600 to-blue-500 text-white transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
-                <CardContent className="p-4 sm:p-5">
-                  <div className="flex items-start justify-between">
+          <div className="space-y-8 lg:col-span-8">
+            {/* 统计卡片分组 */}
+            <div className="dark:bg-card/80 grid gap-6 md:grid-cols-2">
+              <Card className="card-base">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-blue-100/90">总作品数</p>
-                      <p className="mt-1 text-2xl font-bold">{stats.totalWorks}</p>
-                      <p className="mt-1 text-xs text-blue-100/80">+12% 较上月</p>
+                      <p className="text-muted-foreground text-sm">总作品数</p>
+                      <p className="text-3xl font-bold">{stats.totalWorks}</p>
                     </div>
-                    <div className="ml-4 flex size-10 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30 sm:size-12">
-                      <BarChart3 className="size-5 sm:size-6" />
+                    <div className="flex size-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                      <BarChart3 className="size-6 text-blue-500" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="card-base group overflow-hidden border-0 bg-gradient-to-br from-green-600 to-green-500 text-white transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20">
-                <CardContent className="p-4 sm:p-5">
-                  <div className="flex items-start justify-between">
+              <Card className="card-base">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-green-100/90">本月作品</p>
-                      <p className="mt-1 text-2xl font-bold">{stats.thisMonthWorks}</p>
-                      <p className="mt-1 text-xs text-green-100/80">+5 较上周</p>
+                      <p className="text-muted-foreground text-sm">本月作品</p>
+                      <p className="text-3xl font-bold">{stats.thisMonthWorks}</p>
                     </div>
-                    <div className="ml-4 flex size-10 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30 sm:size-12">
-                      <Zap className="size-5 sm:size-6" />
+                    <div className="flex size-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+                      <Zap className="size-6 text-green-500" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="card-base group overflow-hidden border-0 bg-gradient-to-br from-purple-600 to-purple-500 text-white transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
-                <CardContent className="p-4 sm:p-5">
-                  <div className="flex items-start justify-between">
+              <Card className="card-base">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-purple-100/90">处理时长</p>
-                      <p className="mt-1 text-2xl font-bold">{stats.totalProcessingTime}</p>
-                      <p className="mt-1 text-xs text-purple-100/80">平均 4.8 分钟/作品</p>
+                      <p className="text-muted-foreground text-sm">处理时长</p>
+                      <p className="text-3xl font-bold">{stats.totalProcessingTime}</p>
                     </div>
-                    <div className="ml-4 flex size-10 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30 sm:size-12">
-                      <Calendar className="size-5 sm:size-6" />
+                    <div className="flex size-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                      <Calendar className="size-6 text-purple-500" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="card-base group overflow-hidden border-0 bg-gradient-to-br from-amber-600 to-amber-500 text-white transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/20">
-                <CardContent className="p-4 sm:p-5">
-                  <div className="flex items-start justify-between">
+              <Card className="card-base">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-amber-100/90">作品类型分布</p>
-                      <p className="mt-1 text-2xl font-bold">4 种</p>
-                      <p className="mt-1 text-xs text-amber-100/80">
-                        风格转换 {stats.workTypes['style-transfer'].percentage}%
-                      </p>
+                      <p className="text-muted-foreground text-sm">作品类型</p>
+                      <p className="text-3xl font-bold">4 种</p>
                     </div>
-                    <div className="ml-4 flex size-10 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30 sm:size-12">
-                      <User className="size-5 sm:size-6" />
+                    <div className="flex size-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                      <User className="size-6 text-amber-500" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            <div className="grid gap-5 lg:grid-cols-2">
-              {/* 作品类型统计 */}
-              <Card className="card-base h-full transition-all duration-300 hover:shadow-md">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base font-semibold md:text-lg">作品类型统计</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="space-y-3">
-                    {Object.entries(stats.workTypes).map(([type, data]) => (
-                      <div key={type} className="space-y-1">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-foreground/90 font-medium capitalize">{type.replace('-', ' ')}</span>
-                          <span className="text-muted-foreground text-sm">
-                            {data.count} 作品 ({data.percentage}%)
-                          </span>
-                        </div>
-                        <Progress value={data.percentage} className="h-1.5" />
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* 最近活动 */}
-              <Card className="card-base h-full transition-all duration-300 hover:shadow-md">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-semibold md:text-lg">最近活动</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {[
-                      { action: '完成风格转换', target: '风景照片', time: '2小时前', type: 'success' },
-                      { action: '生成专业头像', target: '商务形象', time: '5小时前', type: 'success' },
-                      { action: '背景替换', target: '人像照片', time: '1天前', type: 'success' },
-                      { action: '升级到专业版', target: '套餐升级', time: '3天前', type: 'info' },
-                    ].map((activity, index) => (
+            {/* 最近活动单独分组放底部 */}
+            <Card className="card-base">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-semibold">最近活动</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {stats.recentActivity.map((activity, index) => (
+                    <div
+                      key={index}
+                      className={`group flex items-start space-x-3 rounded-lg p-3 transition-all duration-200 ${
+                        activity.type === 'success'
+                          ? 'bg-green-50/80 hover:bg-green-100/60 dark:bg-green-900/20 dark:hover:bg-green-900/30'
+                          : 'bg-blue-50/80 hover:bg-blue-100/60 dark:bg-blue-900/20 dark:hover:bg-blue-900/30'
+                      }`}
+                    >
                       <div
-                        key={index}
-                        className={`group flex items-start space-x-2.5 rounded-lg p-2.5 transition-all duration-200 ${
+                        className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-all duration-200 group-hover:scale-110 ${
                           activity.type === 'success'
-                            ? 'bg-green-50/80 hover:bg-green-100/60 dark:bg-green-900/20 dark:hover:bg-green-900/30'
-                            : 'bg-blue-50/80 hover:bg-blue-100/60 dark:bg-blue-900/20 dark:hover:bg-blue-900/30'
+                            ? 'bg-green-100 text-green-600 dark:bg-green-800/50'
+                            : 'bg-blue-100 text-blue-600 dark:bg-blue-800/50'
                         }`}
                       >
-                        <div
-                          className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full transition-all duration-200 group-hover:scale-110 ${
-                            activity.type === 'success'
-                              ? 'bg-green-100 text-green-600 dark:bg-green-800/50'
-                              : 'bg-blue-100 text-blue-600 dark:bg-blue-800/50'
-                          }`}
-                        >
-                          {activity.type === 'success' ? <Check className="size-3.5" /> : <Info className="size-3.5" />}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                            <p className="text-foreground/90 truncate text-sm font-medium">
-                              {activity.action} <span className="text-muted-foreground">{activity.target}</span>
-                            </p>
-                            <span className="text-muted-foreground mt-0.5 text-xs sm:ml-2 sm:mt-0 sm:whitespace-nowrap">
-                              {activity.time}
-                            </span>
-                          </div>
+                        {activity.type === 'success' ? <Check className="size-4" /> : <Info className="size-4" />}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                          <p className="truncate text-sm font-medium">
+                            {activity.action} <span className="text-muted-foreground">{activity.target}</span>
+                          </p>
+                          <span className="text-muted-foreground mt-1 text-xs sm:ml-2 sm:mt-0 sm:whitespace-nowrap">
+                            {activity.time}
+                          </span>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
