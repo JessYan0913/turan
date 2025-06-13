@@ -9,6 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 
+import { ImageViewerDialog } from '@/components/image-viewer-dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,13 +25,10 @@ import { Button } from '@/components/ui/button';
 import { WorksFilter } from '@/components/works-filter';
 import { type Work } from '@/lib/db/schema';
 
-// 扩展 Work 类型，添加前端需要的额外字段
-export interface WorkInfo extends Omit<Work, 'createdAt'> {
+// Use the Work type directly from schema, with createdAt as string for frontend
+export type WorkWithStringDates = Omit<Work, 'createdAt'> & {
   createdAt: string;
-  status: string;
-  originalImage: string;
-  processedImage: string;
-}
+};
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -47,9 +45,11 @@ export default function MyWorksPage() {
   const type = searchParams.get('type') || 'all';
   const [workToDelete, setWorkToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
+  const [viewingImageTitle, setViewingImageTitle] = useState<string | null>(null);
 
   // Use SWR to fetch data
-  const { data, error, mutate } = useSWR<{ works: WorkInfo[] }>(
+  const { data, error, mutate } = useSWR<{ works: WorkWithStringDates[] }>(
     `/api/works?search=${encodeURIComponent(search)}&type=${encodeURIComponent(type)}`,
     fetcher,
     {
@@ -130,12 +130,19 @@ export default function MyWorksPage() {
                     {work.type}
                   </Badge>
                 </div>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  Created on {new Date(work.createdAt).toLocaleDateString()}
-                </p>
+                <p className="text-muted-foreground mt-1 text-sm">{new Date(work.createdAt).toLocaleDateString()}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex space-x-2">
-                    <Button variant="ghost" size="icon" className="size-8">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setViewingImage(work.processedImage || work.originalImage || '');
+                        setViewingImageTitle(work.title);
+                      }}
+                    >
                       <Eye className="size-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="size-8">
@@ -180,6 +187,19 @@ export default function MyWorksPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Image Viewer Dialog */}
+      <ImageViewerDialog
+        imageURL={viewingImage || ''}
+        title={viewingImageTitle || ''}
+        open={!!viewingImage}
+        onOpenChange={(open) => {
+          if (!open) {
+            setViewingImage(null);
+            setViewingImageTitle(null);
+          }
+        }}
+      />
     </div>
   );
 }
