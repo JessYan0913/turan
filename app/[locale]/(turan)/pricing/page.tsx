@@ -84,7 +84,7 @@ export default function PricingPage() {
           {plans.map((plan, index) => (
             <div key={plan.name} className="relative">
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
+                <div className="absolute -top-4 left-1/2 z-10 -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-1 text-xs font-medium text-white shadow-lg">
                     {t('popularBadge')}
                   </Badge>
@@ -92,7 +92,9 @@ export default function PricingPage() {
               )}
               <Card
                 className={`card-base h-full transition-all duration-300 hover:shadow-lg ${
-                  plan.popular ? 'ring-2 ring-blue-500' : ''
+                  plan.popular
+                    ? 'ring-offset-background ring-2 ring-blue-500 ring-offset-2 dark:shadow-[0_0_0_4px_#38bdf8] dark:ring-blue-500'
+                    : ''
                 }`}
               >
                 <CardHeader className="pb-4 text-center">
