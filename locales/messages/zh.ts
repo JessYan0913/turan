@@ -188,6 +188,17 @@ export default {
   },
   works: {
     title: '我的作品',
+    filter: {
+      inputPlaceholder: '搜索作品标题或风格...',
+      selectPlaceholder: '筛选类型',
+      type: {
+        all: '全部类型',
+        'style-transfer': '风格转换',
+        avatar: '头像生成',
+        edit: '图像编辑',
+        generate: '图像生成',
+      },
+    },
     empty: {
       title: '还没有作品',
       subtitle: '创建您的第一个作品',

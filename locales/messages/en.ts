@@ -194,6 +194,17 @@ export default {
   },
   works: {
     title: 'My Creations',
+    filter: {
+      inputPlaceholder: 'Search by title or style...',
+      selectPlaceholder: 'Filter by type',
+      type: {
+        all: 'All Works',
+        'style-transfer': 'Style Transfer',
+        avatar: 'Avatar',
+        edit: 'Photo Edit',
+        generate: 'Generate',
+      },
+    },
     empty: {
       title: 'No Creations Yet',
       subtitle: 'Create your first masterpiece',

@@ -195,6 +195,17 @@ export default {
   },
   works: {
     title: '作品集',
+    filter: {
+      inputPlaceholder: '作品のタイトルまたはスタイルで検索...',
+      selectPlaceholder: 'タイプで絞り込む',
+      type: {
+        all: 'すべてのタイプ',
+        'style-transfer': 'スタイル変換',
+        avatar: 'アバター生成',
+        edit: '画像編集',
+        generate: '画像生成',
+      },
+    },
     empty: {
       title: '作品がまだございません',
       subtitle: '最初の作品を作成して、素晴らしい作品集を始めましょう',

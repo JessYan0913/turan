@@ -139,8 +139,10 @@ export default function MyWorksPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">My Works</h1>
-        <WorksFilter searchTerm={search} filterType={type} />
+        <h1 className="my-auto text-3xl font-bold">{t('title')}</h1>
+        <div className="flex items-center">
+          <WorksFilter searchTerm={search} filterType={type} />
+        </div>
       </div>
 
       {gridItems.length === 0 ? (
