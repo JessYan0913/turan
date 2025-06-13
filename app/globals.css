@@ -104,25 +104,45 @@
 @layer components {
   /* 自定义组件样式 */
   .card-base {
-    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl;
+    @apply bg-card/90 backdrop-blur-sm border border-border/60 rounded-xl;
     box-shadow: var(--shadow-card);
     transition: all 0.3s ease;
   }
 
+  .dark .card-base {
+    @apply bg-card/95 border-border/40;
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+  }
+
   .card-base:hover {
-    @apply border-border/60;
+    @apply border-border/70;
     box-shadow: var(--shadow-card-hover);
   }
 
+  .dark .card-base:hover {
+    @apply border-border/60;
+    box-shadow: 0 6px 25px -3px rgba(0, 0, 0, 0.6);
+  }
+
   .card-large {
-    @apply bg-card/90 backdrop-blur-sm border border-border/50 rounded-xl;
+    @apply bg-card/95 backdrop-blur-sm border border-border/60 rounded-xl;
     box-shadow: var(--shadow-card-large);
     transition: all 0.3s ease;
+  }
+
+  .dark .card-large {
+    @apply bg-card/100 border-border/50;
+    box-shadow: 0 6px 25px -5px rgba(0, 0, 0, 0.5);
   }
 
   .card-large:hover {
     @apply border-border/70;
     box-shadow: var(--shadow-card-large-hover);
+  }
+
+  .dark .card-large:hover {
+    @apply border-border/60;
+    box-shadow: 0 8px 30px -3px rgba(0, 0, 0, 0.7);
   }
 
   .btn-primary {

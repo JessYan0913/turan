@@ -19,6 +19,12 @@ const config = {
       },
     },
     extend: {
+      lineHeight: {
+        // Responsive line heights
+        'heading-sm': '1.5',
+        heading: '1.4',
+        'heading-lg': '1.3',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

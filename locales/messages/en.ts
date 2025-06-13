@@ -218,4 +218,49 @@ export default {
       deleting: 'Deleting...',
     },
   },
+  pricing: {
+    title: 'Pricing Plans',
+    subtitle: 'Choose the perfect plan for your creative needs',
+    popularBadge: 'Most Popular',
+    features: 'Features',
+    limitations: 'Limitations',
+    plans: {
+      free: {
+        name: 'Free',
+        description: 'Perfect for individual users',
+        buttonText: 'Get Started Free',
+      },
+      pro: {
+        name: 'Pro',
+        description: 'Ideal for business users',
+        buttonText: 'Upgrade Now',
+      },
+      enterprise: {
+        name: 'Enterprise',
+        description: 'For teams and businesses',
+        buttonText: 'Contact Sales',
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      cancelSubscription: {
+        question: 'Can I cancel my subscription anytime?',
+        answer:
+          'Yes, you can cancel your subscription at any time. Your subscription will remain active until the end of the current billing period.',
+      },
+      paymentMethods: {
+        question: 'What payment methods do you accept?',
+        answer: 'We accept all major credit cards, PayPal, and bank transfers.',
+      },
+      imageStorage: {
+        question: 'How long are my processed images stored?',
+        answer: 'Your privacy is important to us. Processed images are automatically deleted after 30 days.',
+      },
+      enterpriseFeatures: {
+        question: 'What features are included in the Enterprise plan?',
+        answer:
+          'The Enterprise plan includes dedicated support, custom model training, priority processing, and team collaboration features.',
+      },
+    },
+  },
 } as const;

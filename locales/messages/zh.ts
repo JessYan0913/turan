@@ -189,14 +189,14 @@ export default {
   works: {
     title: '我的作品',
     filter: {
-      inputPlaceholder: '搜索作品标题或风格...',
-      selectPlaceholder: '筛选类型',
+      inputPlaceholder: '按标题或风格搜索...',
+      selectPlaceholder: '按类型筛选',
       type: {
-        all: '全部类型',
+        all: '全部作品',
         'style-transfer': '风格转换',
         avatar: '头像生成',
-        edit: '图像编辑',
-        generate: '图像生成',
+        edit: '图片编辑',
+        generate: '图片生成',
       },
     },
     empty: {
@@ -210,6 +210,49 @@ export default {
       cancel: '取消',
       confirm: '删除',
       deleting: '删除中...',
+    },
+  },
+  pricing: {
+    title: '价格套餐',
+    subtitle: '选择适合您创意需求的完美套餐',
+    popularBadge: '热门推荐',
+    features: '功能特点',
+    limitations: '使用限制',
+    plans: {
+      free: {
+        name: '免费版',
+        description: '适合个人用户体验',
+        buttonText: '免费开始',
+      },
+      pro: {
+        name: '专业版',
+        description: '适合企业用户使用',
+        buttonText: '立即升级',
+      },
+      enterprise: {
+        name: '企业版',
+        description: '适合团队和企业',
+        buttonText: '联系销售',
+      },
+    },
+    faq: {
+      title: '常见问题',
+      cancelSubscription: {
+        question: '可以随时取消订阅吗？',
+        answer: '是的，您可以随时取消订阅。您的订阅将在当前计费周期结束前保持有效。',
+      },
+      paymentMethods: {
+        question: '支持哪些支付方式？',
+        answer: '我们支持所有主流信用卡、PayPal 和银行转账。',
+      },
+      imageStorage: {
+        question: '处理后的图片会保存多久？',
+        answer: '为保护您的隐私，处理后的图片将在30天后自动删除。',
+      },
+      enterpriseFeatures: {
+        question: '企业版包含哪些功能？',
+        answer: '企业版包含专属支持、定制模型训练、优先处理队列和团队协作功能。',
+      },
     },
   },
 } as const;

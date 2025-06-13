@@ -194,16 +194,16 @@ export default {
     altText: 'アップロードされた画像',
   },
   works: {
-    title: '作品集',
+    title: 'マイ作品',
     filter: {
-      inputPlaceholder: '作品のタイトルまたはスタイルで検索...',
-      selectPlaceholder: 'タイプで絞り込む',
+      inputPlaceholder: 'タイトルやスタイルで検索...',
+      selectPlaceholder: 'タイプでフィルター',
       type: {
-        all: 'すべてのタイプ',
-        'style-transfer': 'スタイル変換',
-        avatar: 'アバター生成',
-        edit: '画像編集',
-        generate: '画像生成',
+        all: 'すべての作品',
+        'style-transfer': 'スタイル転送',
+        avatar: 'アバター',
+        edit: '写真編集',
+        generate: '生成',
       },
     },
     empty: {
@@ -217,6 +217,49 @@ export default {
       cancel: 'キャンセル',
       confirm: '削除する',
       deleting: '削除中...',
+    },
+  },
+  pricing: {
+    title: '料金プラン',
+    subtitle: 'あなたのクリエイティブなニーズに合ったプランをお選びください',
+    popularBadge: '人気',
+    features: '主な機能',
+    limitations: '制限事項',
+    plans: {
+      free: {
+        name: 'フリープラン',
+        description: '個人ユーザー向け',
+        buttonText: '無料ではじめる',
+      },
+      pro: {
+        name: 'プロプラン',
+        description: 'ビジネスユーザー向け',
+        buttonText: '今すぐアップグレード',
+      },
+      enterprise: {
+        name: 'エンタープライズ',
+        description: 'チーム・企業向け',
+        buttonText: '営業に問い合わせ',
+      },
+    },
+    faq: {
+      title: 'よくある質問',
+      cancelSubscription: {
+        question: 'サブスクリプションはいつでも解約できますか？',
+        answer: 'はい、いつでも解約可能です。解約後も現在の支払い期間が終了するまではご利用いただけます。',
+      },
+      paymentMethods: {
+        question: 'どのようなお支払い方法が利用できますか？',
+        answer: '主要なクレジットカード、PayPal、銀行振込がご利用いただけます。',
+      },
+      imageStorage: {
+        question: '処理された画像はどのくらいの期間保存されますか？',
+        answer: 'プライバシー保護のため、処理された画像は30日後に自動的に削除されます。',
+      },
+      enterpriseFeatures: {
+        question: 'エンタープライズプランにはどのような機能が含まれますか？',
+        answer: '専任サポート、カスタムモデルトレーニング、優先処理、チームコラボレーション機能などが含まれます。',
+      },
     },
   },
 } as const;
