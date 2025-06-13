@@ -1,7 +1,3 @@
-'use client';
-
-import { useState } from 'react';
-
 import {
   BarChart3,
   Camera,
@@ -17,6 +13,7 @@ import {
   X,
   Zap,
 } from 'lucide-react';
+import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -25,30 +22,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { useScopedI18n } from '@/locales/client';
+import { auth } from '@/lib/auth';
+import { getUser } from '@/lib/db/queries';
+import { getScopedI18n } from '@/locales/server';
 
-export default function ProfilePage() {
-  const t = useScopedI18n('profile');
-  const [isEditing, setIsEditing] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    name: '张三',
-    email: 'zhangsan@example.com',
-    phone: '138****8888',
-    joinDate: '2023-06-15',
-    avatar: '/placeholder.svg?height=120&width=120',
-  });
-
-  const [editForm, setEditForm] = useState(userInfo);
-
-  const handleSave = () => {
-    setUserInfo(editForm);
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setEditForm(userInfo);
-    setIsEditing(false);
-  };
+export default async function ProfilePage() {
+  const t = await getScopedI18n('profile');
+  // 服务端获取当前用户
+  const session = await auth();
+  if (!session || !session.user?.email) {
+    return <div className="flex min-h-screen items-center justify-center text-red-500">未登录或未找到用户信息</div>;
+  }
+  const users = await getUser(session.user.email);
+  if (!users.length) {
+    return <div className="flex min-h-screen items-center justify-center text-red-500">未找到用户信息</div>;
+  }
+  const userInfo = users[0];
 
   // 扩展用户统计数据
   const stats = {
@@ -91,86 +80,41 @@ export default function ProfilePage() {
                       <User className="size-12" />
                     </AvatarFallback>
                   </Avatar>
-                  <Button
-                    size="sm"
-                    className="absolute -bottom-2 -right-2 size-8 rounded-full bg-blue-600 shadow-[0_4px_16px_rgba(59,130,246,0.4)] transition-all duration-300 hover:bg-blue-700 hover:shadow-[0_6px_24px_rgba(59,130,246,0.5)]"
+                  <Link
+                    href="/profile/edit"
+                    className="absolute -bottom-2 -right-2 flex size-8 items-center justify-center rounded-full bg-blue-600 shadow-[0_4px_16px_rgba(59,130,246,0.4)] transition-all duration-300 hover:bg-blue-700 hover:shadow-[0_6px_24px_rgba(59,130,246,0.5)]"
                   >
                     <Camera className="size-4" />
-                  </Button>
+                  </Link>
                 </div>
-
-                {!isEditing ? (
-                  <>
-                    <h2 className="mb-1 text-2xl font-bold">{userInfo.name}</h2>
-                    <p className="text-muted-foreground mb-3">{userInfo.email}</p>
-                    <p className="text-muted-foreground mb-4 text-sm">
-                      {t('stats.joinDate')} {userInfo.joinDate}
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      <Button
-                        onClick={() => setIsEditing(true)}
-                        className="btn-primary flex items-center gap-2 rounded-lg px-5 py-2 text-base font-medium shadow-md"
-                      >
-                        <Edit3 className="size-4" />
-                        {t('edit')}
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        className="btn-secondary flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-2 text-base font-medium shadow-sm dark:border-gray-600"
-                      >
-                        <CreditCard className="size-4" />
-                        {t('bill')}
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="space-y-4 text-left">
-                    <div>
-                      <Label className="text">姓名</Label>
-                      <Input
-                        value={editForm.name}
-                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                        className="textarea"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text">邮箱</Label>
-                      <Input
-                        value={editForm.email}
-                        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                        className="textarea"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text">手机</Label>
-                      <Input
-                        value={editForm.phone}
-                        onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                        className="textarea"
-                      />
-                    </div>
-
-                    <div className="flex space-x-2">
-                      <Button
-                        onClick={handleSave}
-                        size="sm"
-                        className="flex-1 bg-gradient-to-r from-blue-600 to-purple-700 shadow-[0_4px_24px_rgba(59,130,246,0.4)] transition-all duration-300 hover:from-blue-700 hover:to-purple-800 hover:shadow-[0_8px_32px_rgba(59,130,246,0.5)]"
-                      >
-                        <Save className="mr-2 size-4" />
-                        {t('save')}
-                      </Button>
-                      <Button
-                        onClick={handleCancel}
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 border-gray-600/50 bg-gray-700/60 text-gray-200 transition-all duration-300 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white"
-                      >
-                        <X className="mr-2 size-4" />
-                        {t('cancel')}
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                <h2 className="mb-1 text-2xl font-bold">{userInfo.name}</h2>
+                <p className="text-muted-foreground mb-3">{userInfo.email}</p>
+                <p className="text-muted-foreground mb-4 text-sm">
+                  {t('stats.joinDate')}{' '}
+                  {(() => {
+                    const d: unknown = userInfo.joinDate ?? userInfo.createdAt;
+                    if (!d) return '';
+                    if (typeof d === 'string') return d.slice(0, 10);
+                    if (d instanceof Date && typeof d.toISOString === 'function') return d.toISOString().slice(0, 10);
+                    return '';
+                  })()}
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/profile/edit"
+                    className="btn-primary flex items-center gap-2 rounded-lg px-5 py-2 text-base font-medium shadow-md"
+                  >
+                    <Edit3 className="size-4" />
+                    {t('edit')}
+                  </Link>
+                  <Link
+                    href="/profile/billing"
+                    className="btn-secondary flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-2 text-base font-medium shadow-sm dark:border-gray-600"
+                  >
+                    <CreditCard className="size-4" />
+                    {t('bill')}
+                  </Link>
+                </div>
               </CardContent>
             </Card>
 
@@ -201,7 +145,9 @@ export default function ProfilePage() {
                   <Progress value={(stats.usageThisMonth / stats.planLimit) * 100} className="h-2" />
                 </div>
                 <Button className="btn-primary w-full rounded-lg px-5 py-2 text-base font-medium shadow-md">
-                  {t('plan.upgrade')}
+                  <Link href="/profile/upgrade" className="block size-full">
+                    {t('plan.upgrade')}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
