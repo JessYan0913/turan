@@ -41,11 +41,11 @@ const fetcher = async (url: string) => {
 };
 
 // Helper function to convert works to grid items format required by MasonryInfiniteGrid
-const getGridItems = (works: WorkWithStringDates[], page: number) => {
-  return works.map((work, index) => ({
+const getGridItems = (works: WorkWithStringDates[], groupKey: number) => {
+  return works.map((work) => ({
     ...work,
-    groupKey: page,
-    key: work.id,
+    groupKey,
+    key: `${work.id}-${groupKey}`,
   }));
 };
 
@@ -86,7 +86,6 @@ export default function MyWorksPage() {
 
   const isLoading = initialLoading || loadingMore;
 
-  // Reset grid items when search or type changes
   useEffect(() => {
     setGridItems([]);
     setPage(1);
@@ -104,7 +103,6 @@ export default function MyWorksPage() {
   }, [data, page]);
 
   const hasMore = data?.hasMore || false;
-  const isInitialLoading = isLoading && gridItems.length === 0;
 
   const handleDeleteClick = useCallback((workId: string) => {
     setWorkToDelete(workId);
@@ -127,9 +125,7 @@ export default function MyWorksPage() {
         throw new Error('Failed to delete work');
       }
 
-      // Invalidate the cache with the current query parameters and refetch
       await mutate();
-      // Also update the grid items to remove the deleted item
       setGridItems((prev) => prev.filter((item) => item.id !== workToDelete));
       toast.success('Work deleted successfully');
     } catch (error) {
@@ -150,12 +146,7 @@ export default function MyWorksPage() {
         <WorksFilter searchTerm={search} filterType={type} />
       </div>
 
-      {isInitialLoading ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="border-t-primary mb-4 size-12 animate-spin rounded-full border-4 border-gray-300"></div>
-          <p>Loading works...</p>
-        </div>
-      ) : gridItems.length === 0 ? (
+      {gridItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <ImageIcon className="mb-4 size-12 text-gray-400" />
           <h3 className="mb-2 text-lg font-medium">No works yet</h3>
@@ -173,17 +164,26 @@ export default function MyWorksPage() {
             maxStretchColumnSize={300}
             resizeDebounce={0}
             threshold={100}
+            placeholder={
+              <div className="masonry-item bg-card animate-pulse overflow-hidden rounded-lg border shadow-sm">
+                <div className="aspect-square w-full bg-gray-200"></div>
+              </div>
+            }
             onRequestAppend={async (e) => {
               if (hasMore && !isLoading) {
+                const nextGroupKey = (page || 0) + 1;
+
                 e.wait();
+                // 添加占位符
+                e.currentTarget.appendPlaceholders(5, nextGroupKey);
+
                 setLoadingMore(true);
-                await new Promise((resolve) => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 300));
                 setPage((prevPage) => prevPage + 1);
-                // e.ready() 会在 useEffect 中数据加载完成后自动调用
               }
             }}
           >
-            {gridItems.map((item) => (
+            {gridItems.map((item: any) => (
               <div
                 key={item.key}
                 data-grid-groupkey={item.groupKey}
