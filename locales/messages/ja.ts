@@ -262,4 +262,27 @@ export default {
       },
     },
   },
+  profile: {
+    title: 'マイページ',
+    edit: 'プロフィール編集',
+    bill: '請求',
+    save: '保存',
+    cancel: 'キャンセル',
+    plan: {
+      current: '現在のプラン',
+      type: 'プランタイプ',
+      expiry: '有効期限',
+      usage: '今月の利用量',
+      upgrade: 'プランをアップグレード',
+    },
+    stats: {
+      totalWorks: '総作品数',
+      thisMonthWorks: '今月の作品',
+      totalProcessingTime: '処理時間',
+      workTypes: '作品タイプ',
+      joinDate: '参加日',
+      distribution: '作品タイプ分布',
+      recentActivity: '最近の活動',
+    },
+  },
 } as const;

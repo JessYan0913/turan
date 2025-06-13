@@ -255,4 +255,27 @@ export default {
       },
     },
   },
+  profile: {
+    title: '个人中心',
+    edit: '编辑资料',
+    bill: '账单',
+    save: '保存',
+    cancel: '取消',
+    plan: {
+      current: '当前套餐',
+      type: '套餐类型',
+      expiry: '到期时间',
+      usage: '本月使用量',
+      upgrade: '升级套餐',
+    },
+    stats: {
+      totalWorks: '总作品数',
+      thisMonthWorks: '本月作品',
+      totalProcessingTime: '处理时长',
+      workTypes: '作品类型',
+      joinDate: '加入于',
+      distribution: '作品类型统计',
+      recentActivity: '最近活动',
+    },
+  },
 } as const;

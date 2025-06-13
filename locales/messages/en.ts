@@ -263,4 +263,27 @@ export default {
       },
     },
   },
+  profile: {
+    title: 'Profile Center',
+    edit: 'Edit Profile',
+    bill: 'Billing',
+    save: 'Save',
+    cancel: 'Cancel',
+    plan: {
+      current: 'Current Plan',
+      type: 'Plan Type',
+      expiry: 'Expiry Date',
+      usage: 'Usage This Month',
+      upgrade: 'Upgrade Plan',
+    },
+    stats: {
+      totalWorks: 'Total Works',
+      thisMonthWorks: 'Works This Month',
+      totalProcessingTime: 'Processing Time',
+      workTypes: 'Work Types',
+      joinDate: 'Joined on',
+      distribution: 'Work Type Distribution',
+      recentActivity: 'Recent Activity',
+    },
+  },
 } as const;

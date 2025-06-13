@@ -25,8 +25,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { useScopedI18n } from '@/locales/client';
 
 export default function ProfilePage() {
+  const t = useScopedI18n('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     name: '张三',
@@ -52,7 +54,7 @@ export default function ProfilePage() {
   const stats = {
     totalWorks: 156,
     thisMonthWorks: 23,
-    totalProcessingTime: '12.5小时',
+    totalProcessingTime: '12.5 h',
     workTypes: {
       'style-transfer': { count: 68, percentage: 43.6 },
       avatar: { count: 42, percentage: 26.9 },
@@ -101,21 +103,23 @@ export default function ProfilePage() {
                   <>
                     <h2 className="mb-1 text-2xl font-bold">{userInfo.name}</h2>
                     <p className="text-muted-foreground mb-3">{userInfo.email}</p>
-                    <p className="text-muted-foreground mb-4 text-sm">加入于 {userInfo.joinDate}</p>
+                    <p className="text-muted-foreground mb-4 text-sm">
+                      {t('stats.joinDate')} {userInfo.joinDate}
+                    </p>
                     <div className="flex flex-wrap gap-3">
                       <Button
                         onClick={() => setIsEditing(true)}
                         className="btn-primary flex items-center gap-2 rounded-lg px-5 py-2 text-base font-medium shadow-md"
                       >
                         <Edit3 className="size-4" />
-                        编辑资料
+                        {t('edit')}
                       </Button>
                       <Button
                         variant="secondary"
                         className="btn-secondary flex items-center gap-2 rounded-lg border border-gray-300 px-5 py-2 text-base font-medium shadow-sm dark:border-gray-600"
                       >
                         <CreditCard className="size-4" />
-                        账单
+                        {t('bill')}
                       </Button>
                     </div>
                   </>
@@ -153,7 +157,7 @@ export default function ProfilePage() {
                         className="flex-1 bg-gradient-to-r from-blue-600 to-purple-700 shadow-[0_4px_24px_rgba(59,130,246,0.4)] transition-all duration-300 hover:from-blue-700 hover:to-purple-800 hover:shadow-[0_8px_32px_rgba(59,130,246,0.5)]"
                       >
                         <Save className="mr-2 size-4" />
-                        保存
+                        {t('save')}
                       </Button>
                       <Button
                         onClick={handleCancel}
@@ -162,7 +166,7 @@ export default function ProfilePage() {
                         className="flex-1 border-gray-600/50 bg-gray-700/60 text-gray-200 transition-all duration-300 hover:border-gray-500/70 hover:bg-gray-600/80 hover:text-white"
                       >
                         <X className="mr-2 size-4" />
-                        取消
+                        {t('cancel')}
                       </Button>
                     </div>
                   </div>
@@ -175,21 +179,21 @@ export default function ProfilePage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Crown className="mr-2 size-5 text-yellow-500" />
-                  当前套餐
+                  {t('plan.current')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="textSecondary">套餐类型</span>
+                  <span className="textSecondary">{t('plan.type')}</span>
                   <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">{stats.plan}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="textSecondary">到期时间</span>
+                  <span className="textSecondary">{t('plan.expiry')}</span>
                   <span className="text-sm">{stats.planExpiry}</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="textSecondary">本月使用量</span>
+                    <span className="textSecondary">{t('plan.usage')}</span>
                     <span className="text-sm">
                       {stats.usageThisMonth}/{stats.planLimit}
                     </span>
@@ -197,7 +201,7 @@ export default function ProfilePage() {
                   <Progress value={(stats.usageThisMonth / stats.planLimit) * 100} className="h-2" />
                 </div>
                 <Button className="btn-primary w-full rounded-lg px-5 py-2 text-base font-medium shadow-md">
-                  升级套餐
+                  {t('plan.upgrade')}
                 </Button>
               </CardContent>
             </Card>
@@ -211,7 +215,7 @@ export default function ProfilePage() {
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-muted-foreground text-sm">总作品数</p>
+                      <p className="text-muted-foreground text-sm">{t('stats.totalWorks')}</p>
                       <p className="text-3xl font-bold">{stats.totalWorks}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
@@ -224,7 +228,7 @@ export default function ProfilePage() {
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-muted-foreground text-sm">本月作品</p>
+                      <p className="text-muted-foreground text-sm">{t('stats.thisMonthWorks')}</p>
                       <p className="text-3xl font-bold">{stats.thisMonthWorks}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
@@ -237,7 +241,7 @@ export default function ProfilePage() {
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-muted-foreground text-sm">处理时长</p>
+                      <p className="text-muted-foreground text-sm">{t('stats.totalProcessingTime')}</p>
                       <p className="text-3xl font-bold">{stats.totalProcessingTime}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
@@ -250,8 +254,8 @@ export default function ProfilePage() {
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-muted-foreground text-sm">作品类型</p>
-                      <p className="text-3xl font-bold">4 种</p>
+                      <p className="text-muted-foreground text-sm">{t('stats.workTypes')}</p>
+                      <p className="text-3xl font-bold">4</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
                       <Layers className="size-6 text-amber-500" />
@@ -264,7 +268,7 @@ export default function ProfilePage() {
             {/* 最近活动单独分组放底部 */}
             <Card className="card-base">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold">最近活动</CardTitle>
+                <CardTitle className="text-base font-semibold">{t('stats.recentActivity')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
