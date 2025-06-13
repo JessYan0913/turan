@@ -25,11 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { WorksFilter } from '@/components/works-filter';
 import { type Work } from '@/lib/db/schema';
-
-// Use the Work type directly from schema, with createdAt as string for frontend
-export type WorkWithStringDates = Omit<Work, 'createdAt'> & {
-  createdAt: string;
-};
+import { downloadImage } from '@/lib/utils';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -41,7 +37,7 @@ const fetcher = async (url: string) => {
 };
 
 // Helper function to convert works to grid items format required by MasonryInfiniteGrid
-const getGridItems = (works: WorkWithStringDates[], groupKey: number) => {
+const getGridItems = (works: Work[], groupKey: number) => {
   return works.map((work) => ({
     ...work,
     groupKey,
@@ -55,13 +51,12 @@ export default function MyWorksPage() {
   const type = searchParams.get('type') || 'all';
   const [workToDelete, setWorkToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [viewingImage, setViewingImage] = useState<string | null>(null);
-  const [viewingImageTitle, setViewingImageTitle] = useState<string | null>(null);
+  const [viewingWork, setViewingWork] = useState<Work | null>(null);
 
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 12;
 
-  const [gridItems, setGridItems] = useState<(WorkWithStringDates & { groupKey: number; key: string })[]>([]);
+  const [gridItems, setGridItems] = useState<(Work & { groupKey: number; key: string })[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const {
@@ -70,7 +65,7 @@ export default function MyWorksPage() {
     isLoading: initialLoading,
     mutate,
   } = useSWR<{
-    works: WorkWithStringDates[];
+    works: Work[];
     total: number;
     hasMore: boolean;
     page: number;
@@ -191,7 +186,7 @@ export default function MyWorksPage() {
               >
                 <div className="relative w-full overflow-hidden">
                   <Image
-                    src={item.processedImage || item.originalImage || '/placeholder.svg'}
+                    src={item.processedImage}
                     alt={item.title}
                     width={0}
                     height={0}
@@ -218,8 +213,7 @@ export default function MyWorksPage() {
                             className="size-8 border-gray-500 bg-black/50 text-white hover:bg-black/70 hover:text-white"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setViewingImage(item.processedImage || item.originalImage || '');
-                              setViewingImageTitle(item.title);
+                              setViewingWork(item);
                             }}
                           >
                             <Eye className="size-4" />
@@ -228,6 +222,10 @@ export default function MyWorksPage() {
                             variant="outline"
                             size="icon"
                             className="size-8 border-gray-500 bg-black/50 text-white hover:bg-black/70 hover:text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              downloadImage(item.processedImage);
+                            }}
                           >
                             <Download className="size-4" />
                           </Button>
@@ -279,17 +277,17 @@ export default function MyWorksPage() {
       </AlertDialog>
 
       {/* Image Viewer Dialog */}
-      <ImageViewerDialog
-        imageURL={viewingImage || ''}
-        title={viewingImageTitle || ''}
-        open={!!viewingImage}
-        onOpenChange={(open) => {
-          if (!open) {
-            setViewingImage(null);
-            setViewingImageTitle(null);
-          }
-        }}
-      />
+      {viewingWork && (
+        <ImageViewerDialog
+          work={viewingWork}
+          open={!!viewingWork}
+          onOpenChange={(open) => {
+            if (!open) {
+              setViewingWork(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
