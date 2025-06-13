@@ -6,11 +6,11 @@ export default {
     password: '密码',
   },
   login: {
-    title: '登录您的账户',
-    subtitle: '使用您的电子邮箱和密码登录',
+    title: '欢迎回来',
+    subtitle: '登录 Turan 继续使用',
     noAccount: '还没有账号？',
     signUpLink: '注册',
-    signUpSuffix: '免费使用',
+    signUpSuffix: '立即免费体验',
     errors: {
       invalidCredentials: '邮箱或密码错误',
       validationFailed: '请检查您的输入后重试',
@@ -32,8 +32,8 @@ export default {
   },
   form: {
     submit: {
-      loading: '加载中',
-      default: '提交表单',
+      loading: '处理中...',
+      default: '继续',
     },
   },
   navigation: {
@@ -56,8 +56,8 @@ export default {
       generate: '图像生成',
     },
     examples: {
-      title: '精彩示例展示',
-      subtitle: '看看我们的AI能为您创造什么样的惊喜',
+      title: '灵感案例',
+      subtitle: '探索 AI 的无限可能',
       imageEdit: '图像编辑',
       styleTransfer: '风格转换',
       avatarGeneration: '头像生成',
@@ -82,33 +82,33 @@ export default {
   },
   imageEdit: {
     title: '图片编辑',
-    description: '上传图片并描述您想要实现的效果',
+    description: '上传图片并描述您想要的修改',
     upload: {
       label: '上传图片',
     },
     prompt: {
       label: '编辑要求',
-      description: '请描述您希望如何修改图片',
-      placeholder: '例如：将背景改为蓝天白云、将发型改为短发、调整图片亮度等...',
+      description: '您希望如何修改这张图片？',
+      placeholder: '例如："将背景改为海滩日落" 或 "把头发变长"',
     },
     button: {
-      processing: '处理中...',
-      generate: '开始编辑',
+      processing: '正在处理您的图片...',
+      generate: '应用修改',
     },
     result: {
-      title: '效果预览',
-      description: '编辑后的图片效果',
-      success: '编辑完成',
-      error: '编辑失败',
-      timeout: '处理超时',
-      checkFailed: '状态检查失败',
+      title: '编辑效果预览',
+      description: '查看修改后的效果',
+      success: '编辑完成！',
+      error: '无法处理您的图片',
+      timeout: '请求超时',
+      checkFailed: '无法验证状态',
     },
   },
   styleTransform: {
-    title: '风格转换',
-    description: '上传图片并选择您想要转换的艺术风格',
+    title: '艺术风格转换',
+    description: '为您的照片应用艺术风格',
     upload: {
-      label: '上传图片',
+      label: '上传照片',
     },
     prompt: {
       label: '风格要求',
@@ -116,21 +116,21 @@ export default {
       placeholder: '选择艺术风格',
     },
     button: {
-      processing: '生成中...',
-      generate: '生成图片',
+      processing: '正在应用风格...',
+      generate: '应用风格',
     },
     result: {
       title: '风格转换效果',
       description: '风格转换后的图片预览',
       success: '风格转换成功',
-      error: '图片生成失败',
-      timeout: '图片生成超时',
-      checkFailed: '检查状态失败',
+      error: '无法应用风格',
+      timeout: '请求超时',
+      checkFailed: '无法验证状态',
     },
   },
   avatarGeneration: {
-    title: '头像生成',
-    description: '上传照片并选择风格来创建您的专属头像',
+    title: 'AI 头像创作',
+    description: '将照片转换为独特头像',
     upload: {
       label: '上传照片',
     },
@@ -153,19 +153,19 @@ export default {
     },
   },
   imageGeneration: {
-    title: '生成图片',
-    description: '描述您想要生成的图片',
+    title: 'AI 图片生成',
+    description: '用 AI 将您的想象变为现实',
     prompt: {
-      label: '您的提示词',
-      description: '详细描述您想要生成的图片',
-      placeholder: '描述您想要生成的图片，例如"一只在草地上奔跑的金毛犬"、"夕阳下的海滩风景"...',
+      label: '描述您想要的图片',
+      description: '请尽可能详细描述',
+      placeholder: '例如："雪夜森林中的温馨小屋，窗内透出温暖灯光，数字艺术风格"',
     },
     button: {
       processing: '生成中...',
       generate: '生成图片',
     },
     result: {
-      title: '生成图片',
+      title: 'AI 生成图片',
       description: '图片生成结果',
       success: '图片生成成功',
       error: '图片生成失败',
@@ -185,5 +185,20 @@ export default {
     uploadImage: '上传图片',
     supportedFormats: '支持 JPG、PNG、WebP 格式',
     altText: '已上传的图片',
+  },
+  works: {
+    title: '我的作品',
+    empty: {
+      title: '还没有作品',
+      subtitle: '创建您的第一个作品',
+      button: '开始创作',
+    },
+    alert: {
+      title: '确认删除',
+      description: '此操作不可撤销，作品将被永久删除。',
+      cancel: '取消',
+      confirm: '删除',
+      deleting: '删除中...',
+    },
   },
 } as const;

@@ -1,4 +1,3 @@
-// File: e:\turan\app\[locale]\(turan)\works\page.tsx
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -6,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { MasonryInfiniteGrid } from '@egjs/react-infinitegrid';
 import { Download, Eye, ImageIcon, Share2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import useSWR from 'swr';
@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { WorksFilter } from '@/components/works-filter';
 import { type Work } from '@/lib/db/schema';
 import { downloadImage } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -46,6 +47,7 @@ const getGridItems = (works: Work[], groupKey: number) => {
 };
 
 export default function MyWorksPage() {
+  const t = useScopedI18n('works');
   const searchParams = useSearchParams();
   const search = searchParams.get('search') || '';
   const type = searchParams.get('type') || 'all';
@@ -144,9 +146,11 @@ export default function MyWorksPage() {
       {gridItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <ImageIcon className="mb-4 size-12 text-gray-400" />
-          <h3 className="mb-2 text-lg font-medium">No works yet</h3>
-          <p className="mb-4 text-gray-500">Get started by creating your first work</p>
-          <Button>Create New Work</Button>
+          <h3 className="mb-2 text-lg font-medium">{t('empty.title')}</h3>
+          <p className="mb-4 text-gray-500">{t('empty.subtitle')}</p>
+          <Button asChild>
+            <Link href="/">{t('empty.button')}</Link>
+          </Button>
         </div>
       ) : (
         <div className="masonry-grid-container">
@@ -262,15 +266,13 @@ export default function MyWorksPage() {
       <AlertDialog open={!!workToDelete} onOpenChange={(open) => !open && setWorkToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this work and remove the data from our servers.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('alert.title')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('alert.description')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{t('alert.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmDelete} disabled={isDeleting}>
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? t('alert.deleting') : t('alert.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
