@@ -58,15 +58,24 @@ export default function MyWorksPage() {
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const [viewingImageTitle, setViewingImageTitle] = useState<string | null>(null);
 
-  // State for pagination
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 12;
 
-  // State for grid items
   const [gridItems, setGridItems] = useState<(WorkWithStringDates & { groupKey: number; key: string })[]>([]);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  // Use SWR to fetch data
-  const { data, error, mutate, isLoading } = useSWR<{ works: WorkWithStringDates[]; total: number }>(
+  const {
+    data,
+    error,
+    isLoading: initialLoading,
+    mutate,
+  } = useSWR<{
+    works: WorkWithStringDates[];
+    total: number;
+    hasMore: boolean;
+    page: number;
+    limit: number;
+  }>(
     `/api/works?search=${encodeURIComponent(search)}&type=${encodeURIComponent(type)}&page=${page}&limit=${ITEMS_PER_PAGE}`,
     fetcher,
     {
@@ -75,28 +84,26 @@ export default function MyWorksPage() {
     }
   );
 
+  const isLoading = initialLoading || loadingMore;
+
   // Reset grid items when search or type changes
   useEffect(() => {
     setGridItems([]);
     setPage(1);
   }, [search, type]);
 
-  // Update grid items when data changes
   useEffect(() => {
     if (data?.works) {
-      // If it's the first page, replace all items, otherwise append
       if (page === 1) {
         setGridItems(getGridItems(data.works, page));
       } else {
         setGridItems((prev) => [...prev, ...getGridItems(data.works, page)]);
       }
+      setLoadingMore(false);
     }
   }, [data, page]);
 
-  const totalWorks = data?.total || 0;
-  // Check if there are more items to load
-  const hasMore = totalWorks > gridItems.length;
-  // Show loading state when no items are loaded yet
+  const hasMore = data?.hasMore || false;
   const isInitialLoading = isLoading && gridItems.length === 0;
 
   const handleDeleteClick = useCallback((workId: string) => {
@@ -138,36 +145,6 @@ export default function MyWorksPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <style jsx global>{`
-        .masonry-grid-container {
-          width: 100%;
-        }
-        .masonry-container {
-          width: 100%;
-          position: relative;
-        }
-        .masonry-item {
-          width: 100%;
-          max-width: 100%;
-          box-sizing: border-box;
-          break-inside: avoid;
-        }
-        @media (min-width: 640px) {
-          .masonry-item {
-            width: calc(50% - 8px);
-          }
-        }
-        @media (min-width: 1024px) {
-          .masonry-item {
-            width: calc(33.333% - 11px);
-          }
-        }
-        @media (min-width: 1280px) {
-          .masonry-item {
-            width: calc(25% - 12px);
-          }
-        }
-      `}</style>
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">My Works</h1>
         <WorksFilter searchTerm={search} filterType={type} />
@@ -195,9 +172,14 @@ export default function MyWorksPage() {
             align="stretch"
             maxStretchColumnSize={300}
             resizeDebounce={0}
-            onRequestAppend={() => {
+            threshold={100}
+            onRequestAppend={async (e) => {
               if (hasMore && !isLoading) {
+                e.wait();
+                setLoadingMore(true);
+                await new Promise((resolve) => setTimeout(resolve, 100));
                 setPage((prevPage) => prevPage + 1);
+                // e.ready() 会在 useEffect 中数据加载完成后自动调用
               }
             }}
           >

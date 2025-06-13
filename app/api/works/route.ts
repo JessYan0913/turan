@@ -10,6 +10,11 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
     const type = searchParams.get('type') || 'all';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '12', 10);
+
+    // Calculate offset based on page and limit
+    const offset = (page - 1) * limit;
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -22,8 +27,8 @@ export async function GET(request: Request) {
       userId,
       searchTerm: search,
       ...(type !== 'all' ? { type: type as WorkType } : {}),
-      limit: 50,
-      offset: 0,
+      limit,
+      offset,
     });
 
     // Format the works data
@@ -34,7 +39,16 @@ export async function GET(request: Request) {
       processedImage: work.processedImage || '',
     }));
 
-    return NextResponse.json({ works }, { status: 200 });
+    return NextResponse.json(
+      {
+        works,
+        total: result.total,
+        hasMore: result.hasMore,
+        page,
+        limit,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Error fetching works:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

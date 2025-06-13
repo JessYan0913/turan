@@ -70,6 +70,35 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .masonry-grid-container {
+    width: 100%;
+  }
+  .masonry-container {
+    width: 100%;
+    position: relative;
+  }
+  .masonry-item {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    break-inside: avoid;
+  }
+  @media (min-width: 640px) {
+    .masonry-item {
+      width: calc(50% - 8px);
+    }
+  }
+  @media (min-width: 1024px) {
+    .masonry-item {
+      width: calc(33.333% - 11px);
+    }
+  }
+  @media (min-width: 1280px) {
+    .masonry-item {
+      width: calc(25% - 12px);
+    }
+  }
 }
 
 @layer components {
