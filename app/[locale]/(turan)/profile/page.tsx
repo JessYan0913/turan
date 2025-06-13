@@ -2,7 +2,21 @@
 
 import { useState } from 'react';
 
-import { BarChart3, Calendar, Camera, Check, CreditCard, Crown, Edit3, Info, Save, User, X, Zap } from 'lucide-react';
+import {
+  BarChart3,
+  Camera,
+  Check,
+  Clock,
+  CreditCard,
+  Crown,
+  Edit3,
+  Info,
+  Layers,
+  Save,
+  User,
+  X,
+  Zap,
+} from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -192,7 +206,7 @@ export default function ProfilePage() {
           {/* 右侧：统计和活动 */}
           <div className="space-y-8 lg:col-span-8">
             {/* 统计卡片分组 */}
-            <div className="dark:bg-card/80 grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <Card className="card-base">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
@@ -227,7 +241,7 @@ export default function ProfilePage() {
                       <p className="text-3xl font-bold">{stats.totalProcessingTime}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                      <Calendar className="size-6 text-purple-500" />
+                      <Clock className="size-6 text-purple-500" />
                     </div>
                   </div>
                 </CardContent>
@@ -240,7 +254,7 @@ export default function ProfilePage() {
                       <p className="text-3xl font-bold">4 种</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
-                      <User className="size-6 text-amber-500" />
+                      <Layers className="size-6 text-amber-500" />
                     </div>
                   </div>
                 </CardContent>
