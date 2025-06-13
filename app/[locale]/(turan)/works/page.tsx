@@ -145,46 +145,43 @@ export default function MyWorksPage() {
         </div>
       </div>
 
-      {gridItems.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <ImageIcon className="mb-4 size-12 text-gray-400" />
-          <h3 className="mb-2 text-lg font-medium">{t('empty.title')}</h3>
-          <p className="mb-4 text-gray-500">{t('empty.subtitle')}</p>
-          <Button asChild>
-            <Link href="/">{t('empty.button')}</Link>
-          </Button>
-        </div>
-      ) : (
-        <div className="masonry-grid-container">
-          <MasonryInfiniteGrid
-            className="masonry-container"
-            gap={5}
-            autoResize={true}
-            observeChildren={true}
-            align="stretch"
-            maxStretchColumnSize={300}
-            resizeDebounce={0}
-            threshold={100}
-            placeholder={
-              <div className="masonry-item bg-card animate-pulse overflow-hidden rounded-lg border shadow-sm">
-                <div className="aspect-square w-full bg-gray-200"></div>
-              </div>
+      <div className="masonry-grid-container">
+        <MasonryInfiniteGrid
+          className="masonry-container"
+          gap={5}
+          autoResize={true}
+          observeChildren={true}
+          align="stretch"
+          maxStretchColumnSize={300}
+          resizeDebounce={0}
+          threshold={100}
+          placeholder={
+            <div className="masonry-item bg-card animate-pulse overflow-hidden rounded-lg border shadow-sm">
+              <div className="aspect-square w-full bg-gray-200"></div>
+            </div>
+          }
+          onRequestAppend={async (e) => {
+            if (hasMore && !isLoading) {
+              const nextGroupKey = (page || 0) + 1;
+              e.wait();
+              e.currentTarget.appendPlaceholders(5, nextGroupKey);
+              setLoadingMore(true);
+              await new Promise((resolve) => setTimeout(resolve, 300));
+              setPage((prevPage) => prevPage + 1);
             }
-            onRequestAppend={async (e) => {
-              if (hasMore && !isLoading) {
-                const nextGroupKey = (page || 0) + 1;
-
-                e.wait();
-                // 添加占位符
-                e.currentTarget.appendPlaceholders(5, nextGroupKey);
-
-                setLoadingMore(true);
-                await new Promise((resolve) => setTimeout(resolve, 300));
-                setPage((prevPage) => prevPage + 1);
-              }
-            }}
-          >
-            {gridItems.map((item: any) => (
+          }}
+        >
+          {!isLoading && gridItems.length === 0 ? (
+            <div className="flex w-full flex-col items-center justify-center py-12 text-center">
+              <ImageIcon className="mb-4 size-12 text-gray-400" />
+              <h3 className="mb-2 text-lg font-medium">{t('empty.title')}</h3>
+              <p className="mb-4 text-gray-500">{t('empty.subtitle')}</p>
+              <Button asChild>
+                <Link href="/">{t('empty.button')}</Link>
+              </Button>
+            </div>
+          ) : (
+            gridItems.map((item: any) => (
               <div
                 key={item.key}
                 data-grid-groupkey={item.groupKey}
@@ -260,10 +257,10 @@ export default function MyWorksPage() {
                   </div>
                 </div>
               </div>
-            ))}
-          </MasonryInfiniteGrid>
-        </div>
-      )}
+            ))
+          )}
+        </MasonryInfiniteGrid>
+      </div>
 
       <AlertDialog open={!!workToDelete} onOpenChange={(open) => !open && setWorkToDelete(null)}>
         <AlertDialogContent>
