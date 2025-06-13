@@ -172,11 +172,7 @@ export async function updateWork(
 
 export async function deleteWork(id: string, userId: string): Promise<void> {
   try {
-    const result = await db.delete(work).where(and(eq(work.id, id), eq(work.userId, userId)));
-
-    if (!result || (Array.isArray(result) && result.length === 0)) {
-      throw new Error('Work not found or access denied');
-    }
+    await db.delete(work).where(and(eq(work.id, id), eq(work.userId, userId)));
   } catch (error) {
     console.error('Failed to delete work:', error);
     throw error instanceof Error ? error : new Error('Failed to delete work');

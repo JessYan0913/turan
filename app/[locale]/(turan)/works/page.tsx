@@ -1,11 +1,24 @@
 // File: e:\turan\app\[locale]\(turan)\works\page.tsx
 'use client';
 
+import { useCallback, useState } from 'react';
+
 import { Calendar, Download, Eye, ImageIcon, Share2, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 import useSWR from 'swr';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { WorksFilter } from '@/components/works-filter';
@@ -32,9 +45,11 @@ export default function MyWorksPage() {
   const searchParams = useSearchParams();
   const search = searchParams.get('search') || '';
   const type = searchParams.get('type') || 'all';
+  const [workToDelete, setWorkToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Use SWR to fetch data
-  const { data, error } = useSWR<{ works: WorkInfo[] }>(
+  const { data, error, mutate } = useSWR<{ works: WorkInfo[] }>(
     `/api/works?search=${encodeURIComponent(search)}&type=${encodeURIComponent(type)}`,
     fetcher,
     {
@@ -43,6 +58,39 @@ export default function MyWorksPage() {
   );
 
   const works = data?.works || [];
+
+  const handleDeleteClick = useCallback((workId: string) => {
+    setWorkToDelete(workId);
+  }, []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!workToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch('/api/works', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ workId: workToDelete }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete work');
+      }
+
+      // Invalidate the cache with the current query parameters and refetch
+      await mutate();
+      toast.success('Work deleted successfully');
+    } catch (error) {
+      console.error('Error deleting work:', error);
+      toast.error('Failed to delete work');
+    } finally {
+      setIsDeleting(false);
+      setWorkToDelete(null);
+    }
+  }, [workToDelete, mutate]);
 
   if (error) return <div>Failed to load works</div>;
 
@@ -97,7 +145,16 @@ export default function MyWorksPage() {
                       <Share2 className="size-4" />
                     </Button>
                   </div>
-                  <Button variant="ghost" size="icon" className="text-destructive size-8">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive size-8"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteClick(work.id);
+                    }}
+                    disabled={isDeleting}
+                  >
                     <Trash2 className="size-4" />
                   </Button>
                 </div>
@@ -106,6 +163,23 @@ export default function MyWorksPage() {
           ))}
         </div>
       )}
+
+      <AlertDialog open={!!workToDelete} onOpenChange={(open) => !open && setWorkToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this work and remove the data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} disabled={isDeleting}>
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 
 import { auth } from '@/lib/auth';
-import { getWorks } from '@/lib/db/queries';
+import { deleteWork, getWorks } from '@/lib/db/queries';
 import { type WorkType } from '@/lib/db/schema';
 
 export async function GET(request: Request) {
@@ -34,9 +34,33 @@ export async function GET(request: Request) {
       processedImage: work.processedImage || '',
     }));
 
-    return NextResponse.json({ works });
+    return NextResponse.json({ works }, { status: 200 });
   } catch (error) {
     console.error('Error fetching works:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { workId } = await request.json();
+
+    if (!workId) {
+      return NextResponse.json({ error: 'Work ID is required' }, { status: 400 });
+    }
+
+    await deleteWork(workId, userId);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting work:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
