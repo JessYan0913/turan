@@ -3,9 +3,12 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
 import EditProfileForm from '@/components/edit-profile-form';
-import { Separator } from '@/components/ui/separator';
+import { buttonVariants } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/lib/auth';
 import { getUser } from '@/lib/db/queries';
+import { cn } from '@/lib/utils';
+import { getScopedI18n } from '@/locales/server';
 
 export default async function ProfileEditPage() {
   const session = await auth();
@@ -17,33 +20,34 @@ export default async function ProfileEditPage() {
     notFound();
   }
   const userInfo = users[0];
+  const t = await getScopedI18n('profileEdit');
 
   return (
-    <div className="from-background to-muted/30 min-h-screen bg-gradient-to-b pb-12 pt-8 transition-colors duration-300">
-      <div className="container mx-auto max-w-3xl px-4">
-        {/* 页面头部 */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/profile"
-              className="text-muted-foreground bg-background hover:bg-muted/80 hover:text-foreground flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all"
-            >
-              <ArrowLeft className="size-4" />
-              个人中心
-            </Link>
-          </div>
-          <div className="mt-6 text-center">
-            <h1 className="text-3xl font-bold tracking-tight">编辑个人信息</h1>
-            <p className="text-muted-foreground mt-2">更新您的个人资料和联系方式</p>
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="space-y-6">
+        {/* Back button and header */}
+        <div className="flex items-center justify-between">
+          <Link href="/profile" className={cn(buttonVariants({ variant: 'ghost' }), 'flex items-center gap-2')}>
+            <ArrowLeft className="size-4" />
+            {t('profile')}
+          </Link>
         </div>
-        <Separator className="my-6 opacity-50" />
-        {/* 表单卡片 */}
-        <div className="overflow-hidden rounded-xl transition-all duration-300">
-          <div className="p-6">
+
+        {/* Page header */}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground mt-2">{t('description')}</p>
+        </div>
+
+        {/* Form card */}
+        <Card className="mx-auto max-w-2xl">
+          <CardHeader>
+            <CardTitle>{t('form.title')}</CardTitle>
+          </CardHeader>
+          <CardContent>
             <EditProfileForm userInfo={userInfo} />
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
