@@ -1,72 +1,108 @@
-'use client';
-
 import { Check, Crown, Star, Zap } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useScopedI18n } from '@/locales/client';
+import { getScopedI18n } from '@/locales/server';
 
-export default function PricingPage() {
-  const t = useScopedI18n('pricing');
-  const plans = [
-    {
-      name: t('plans.free.name'),
-      price: '¥0',
-      period: '/Month',
-      description: t('plans.free.description'),
-      icon: <Zap className="size-6" />,
-      features: [
-        '10 times image processing per month',
-        'Basic style transfer',
-        'Standard quality output',
-        'Community support',
-        'Watermark output',
-      ],
-      limitations: ['Long processing time', 'Limited features'],
-      buttonText: t('plans.free.buttonText'),
-      popular: false,
-    },
-    {
-      name: t('plans.pro.name'),
-      price: '¥29',
-      period: '/Month',
-      description: t('plans.pro.description'),
-      icon: <Crown className="size-6" />,
-      features: [
-        '500 times image processing per month',
-        'All style transfer',
-        'High quality output',
-        'Priority processing queue',
-        'Watermark output',
-        'Batch processing',
-        'API access',
-        'Email support',
-      ],
-      buttonText: t('plans.pro.buttonText'),
-      popular: true,
-    },
-    {
-      name: t('plans.enterprise.name'),
-      price: '¥99',
-      period: '/Month',
-      description: t('plans.enterprise.description'),
-      icon: <Star className="size-6" />,
-      features: [
-        'Unlimited image processing',
-        'All advanced features',
-        '4K ultra HD output',
-        'Exclusive processing server',
-        'Custom style training',
-        'Team collaboration features',
-        'Complete API suite',
-        'Exclusive customer support',
-        'SLA guarantee',
-      ],
-      buttonText: t('plans.enterprise.buttonText'),
-      popular: false,
-    },
-  ];
+type PlanId = 'free' | 'pro' | 'enterprise';
+
+interface Plan {
+  id: PlanId;
+  price: string;
+  period: string;
+  features: string[];
+  limitations?: string[];
+  popular: boolean;
+}
+
+const PLANS: Plan[] = [
+  {
+    id: 'free',
+    price: '¥0',
+    period: '/Month',
+    features: [
+      '10 times image processing per month',
+      'Basic style transfer',
+      'Standard quality output',
+      'Community support',
+      'Watermark output',
+    ],
+    limitations: ['Long processing time', 'Limited features'],
+    popular: false,
+  },
+  {
+    id: 'pro',
+    price: '¥29',
+    period: '/Month',
+    features: [
+      '500 times image processing per month',
+      'All style transfer',
+      'High quality output',
+      'Priority processing queue',
+      'Watermark output',
+      'Batch processing',
+      'API access',
+      'Email support',
+    ],
+    popular: true,
+  },
+  {
+    id: 'enterprise',
+    price: '¥99',
+    period: '/Month',
+    features: [
+      'Unlimited image processing',
+      'All advanced features',
+      '4K ultra HD output',
+      'Exclusive processing server',
+      'Custom style training',
+      'Team collaboration features',
+      'Complete API suite',
+      'Exclusive customer support',
+      'SLA guarantee',
+    ],
+    popular: false,
+  },
+];
+
+const getPlanIcon = (id: string) => {
+  switch (id) {
+    case 'free':
+      return <Zap className="size-6" />;
+    case 'pro':
+      return <Crown className="size-6" />;
+    case 'enterprise':
+      return <Star className="size-6" />;
+    default:
+      return null;
+  }
+};
+
+interface PlanWithTranslations extends Plan {
+  name: string;
+  description: string;
+  buttonText: string;
+  icon: React.ReactNode;
+}
+
+export default async function PricingPage() {
+  const t = await getScopedI18n('pricing');
+
+  const plans = PLANS.map((plan) => {
+    const name = t(`plans.${plan.id}.name`);
+    const description = t(`plans.${plan.id}.description`);
+    const buttonText = t(`plans.${plan.id}.buttonText`);
+    const icon = getPlanIcon(plan.id);
+
+    return {
+      ...plan,
+      name,
+      description,
+      buttonText,
+      icon,
+    } as PlanWithTranslations;
+  });
 
   return (
     <div className="min-h-screen py-8 transition-colors duration-300 md:py-12 lg:py-16">
