@@ -7,7 +7,17 @@ import { and, count, desc, eq, gte, sql, sum } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import { type User, user, type Work, work, type WorkType } from './schema';
+import {
+  type OperationLog,
+  operationLog,
+  type OperationStatus,
+  type OperationType,
+  type User,
+  user,
+  type Work,
+  work,
+  type WorkType,
+} from './schema';
 
 type NewWork = Omit<Work, 'id' | 'createdAt' | 'updatedAt'>;
 
@@ -246,6 +256,233 @@ export async function deleteWork(id: string, userId: string): Promise<void> {
   } catch (error) {
     console.error('Failed to delete work:', error);
     throw error instanceof Error ? error : new Error('Failed to delete work');
+  }
+}
+
+// Operation Log related queries
+export interface ListOperationLogsOptions {
+  userId?: string;
+  operationType?: OperationType;
+  status?: OperationStatus;
+  startDate?: Date;
+  endDate?: Date;
+  searchTerm?: string;
+  limit?: number;
+  offset?: number;
+  orderBy?: 'asc' | 'desc';
+}
+
+export interface PaginatedOperationLogs {
+  items: OperationLog[];
+  total: number;
+  hasMore: boolean;
+}
+
+export async function createOperationLog(
+  data: Omit<OperationLog, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<OperationLog> {
+  try {
+    const [newLog] = await db
+      .insert(operationLog)
+      .values({
+        ...data,
+        id: undefined, // Let the database generate the ID
+      })
+      .returning();
+    return newLog;
+  } catch (error) {
+    console.error('Failed to create operation log:', error);
+    throw new Error('Failed to create operation log');
+  }
+}
+
+export async function getOperationLog(id: string): Promise<OperationLog | undefined> {
+  try {
+    const [log] = await db.select().from(operationLog).where(eq(operationLog.id, id));
+    return log;
+  } catch (error) {
+    console.error('Failed to get operation log:', error);
+    throw new Error('Failed to get operation log');
+  }
+}
+
+export async function listOperationLogs({
+  userId,
+  operationType,
+  status,
+  startDate,
+  endDate,
+  searchTerm,
+  limit = 20,
+  offset = 0,
+  orderBy = 'desc',
+}: ListOperationLogsOptions = {}): Promise<PaginatedOperationLogs> {
+  try {
+    const conditions = [];
+    if (userId) {
+      conditions.push(eq(operationLog.userId, userId));
+    }
+    if (operationType) {
+      conditions.push(eq(operationLog.operationType, operationType));
+    }
+    if (status) {
+      conditions.push(eq(operationLog.status, status));
+    }
+    if (startDate) {
+      conditions.push(gte(operationLog.startTime, startDate));
+    }
+    if (endDate) {
+      conditions.push(sql`${operationLog.startTime} <= ${endDate}`);
+    }
+
+    if (searchTerm) {
+      conditions.push(
+        sql`LOWER(${operationLog.operationName}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
+            LOWER(${operationLog.operationModule || ''}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR
+            LOWER(${operationLog.username || ''}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
+      );
+    }
+
+    // Get the logs
+    const logs = await db
+      .select()
+      .from(operationLog)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(orderBy === 'desc' ? desc(operationLog.startTime) : operationLog.startTime)
+      .limit(limit + 1) // Fetch one extra to check if there are more
+      .offset(offset);
+
+    const hasMore = logs.length > limit;
+    const items = hasMore ? logs.slice(0, -1) : logs;
+
+    // Get total count for pagination
+    const countResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(operationLog)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .then((rows) => rows[0]?.count || 0);
+
+    return {
+      items,
+      total: Number(countResult),
+      hasMore,
+    };
+  } catch (error) {
+    console.error('Failed to list operation logs:', error);
+    throw new Error('Failed to list operation logs');
+  }
+}
+
+export async function updateOperationLog(
+  id: string,
+  data: Partial<Omit<OperationLog, 'id' | 'createdAt' | 'updatedAt'>>
+): Promise<OperationLog> {
+  try {
+    const [updatedLog] = await db
+      .update(operationLog)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(operationLog.id, id))
+      .returning();
+
+    if (!updatedLog) {
+      throw new Error('Operation log not found');
+    }
+
+    return updatedLog;
+  } catch (error) {
+    console.error('Failed to update operation log:', error);
+    throw new Error('Failed to update operation log');
+  }
+}
+
+export interface OperationStats {
+  total: number;
+  byType: Record<string, number>;
+  byStatus: Record<string, number>;
+  byDay: Array<{ date: string; count: number }>;
+}
+
+export async function getOperationStats({
+  userId,
+  days = 30,
+}: {
+  userId?: string;
+  days?: number;
+} = {}): Promise<OperationStats> {
+  try {
+    const conditions = [];
+
+    if (userId) {
+      conditions.push(eq(operationLog.userId, userId));
+    }
+
+    // Get total count
+    const totalResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(operationLog)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+    // Get count by operation type
+    const byTypeResult = await db
+      .select({
+        type: operationLog.operationType,
+        count: sql<number>`count(*)`,
+      })
+      .from(operationLog)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .groupBy(operationLog.operationType);
+
+    // Get count by status
+    const byStatusResult = await db
+      .select({
+        status: operationLog.status,
+        count: sql<number>`count(*)`,
+      })
+      .from(operationLog)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .groupBy(operationLog.status);
+
+    // Get daily counts for the last N days
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const byDayResult = await db
+      .select({
+        date: sql<string>`to_char(${operationLog.startTime}, 'YYYY-MM-DD')`,
+        count: sql<number>`count(*)`,
+      })
+      .from(operationLog)
+      .where(and(conditions.length > 0 ? and(...conditions) : undefined, gte(operationLog.startTime, startDate)))
+      .groupBy(sql`to_char(${operationLog.startTime}, 'YYYY-MM-DD')`)
+      .orderBy(sql`to_char(${operationLog.startTime}, 'YYYY-MM-DD')`);
+
+    return {
+      total: Number(totalResult[0]?.count || 0),
+      byType: byTypeResult.reduce(
+        (acc, { type, count }) => ({
+          ...acc,
+          [type]: Number(count),
+        }),
+        {}
+      ),
+      byStatus: byStatusResult.reduce(
+        (acc, { status, count }) => ({
+          ...acc,
+          [status]: Number(count),
+        }),
+        {}
+      ),
+      byDay: byDayResult.map(({ date, count }) => ({
+        date,
+        count: Number(count),
+      })),
+    };
+  } catch (error) {
+    console.error('Failed to get operation stats:', error);
+    throw new Error('Failed to get operation stats');
   }
 }
 
