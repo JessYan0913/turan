@@ -114,22 +114,18 @@ export const operationLog = pgTable(
 
     // 响应信息
     status: varchar('status', { length: 20 }).notNull().$type<OperationStatus>().default('PENDING'),
-    response: jsonb('response'),
-    error: jsonb('error'),
+    response: jsonb('response').default({}),
+    error: jsonb('error').default({}),
 
-    // 用户信息
-    userId: uuid('user_id').references(() => user.id, { onDelete: 'set null' }),
-    username: varchar('username', { length: 100 }),
-    userRole: varchar('user_role', { length: 50 }),
+    // 用户信息 - 不使用外键约束，允许记录不存在的用户ID（如已删除用户）
+    userId: uuid('user_id'),
 
     // 系统信息
     ip: varchar('ip', { length: 45 }),
-    userAgent: text('user_agent'),
 
     // 时间信息
     startTime: timestamp('start_time', { withTimezone: true }).notNull(),
     endTime: timestamp('end_time', { withTimezone: true }),
-    duration: integer('duration'),
 
     // 元数据
     metadata: jsonb('metadata').default({}),

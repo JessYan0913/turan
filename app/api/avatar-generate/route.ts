@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     const blobData = await uploadFileToBlobStorage(imageFile);
 
-    const prediction = await replicate.predictions.create({
+    const { id, input } = await replicate.predictions.create({
       model: 'flux-kontext-apps/professional-headshot',
       input: {
         userId,
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       webhook_events_filter: ['completed', 'logs', 'start'],
     });
 
-    return NextResponse.json(prediction, { status: 201 });
+    return NextResponse.json({ id, input }, { status: 201 });
   } catch (error) {
     console.error('Error processing avatar generate:', error);
     return NextResponse.json(

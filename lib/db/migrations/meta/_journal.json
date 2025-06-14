@@ -64,6 +64,27 @@
       "when": 1749917524035,
       "tag": "0008_warm_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1749926474252,
+      "tag": "0009_lethal_masked_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1749928209332,
+      "tag": "0010_regular_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1749928368688,
+      "tag": "0011_first_rhodey",
+      "breakpoints": true
     }
   ]
 }

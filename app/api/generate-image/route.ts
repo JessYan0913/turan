@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Prompt is required' }, { status: 400 });
     }
 
-    const prediction = await replicate.predictions.create({
+    const { id, input } = await replicate.predictions.create({
       model: 'black-forest-labs/flux-schnell',
       input: {
         userId,
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       webhook_events_filter: ['completed', 'logs', 'start'],
     });
 
-    return NextResponse.json(prediction, { status: 201 });
+    return NextResponse.json({ id, input }, { status: 201 });
   } catch (error) {
     console.error('Error processing image generation:', error);
     return NextResponse.json(

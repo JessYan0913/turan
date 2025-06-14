@@ -278,21 +278,45 @@ export interface PaginatedOperationLogs {
   hasMore: boolean;
 }
 
-export async function createOperationLog(
-  data: Omit<OperationLog, 'id' | 'createdAt' | 'updatedAt'>
-): Promise<OperationLog> {
+export async function createOperationLog(data: Omit<OperationLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
   try {
-    const [newLog] = await db
-      .insert(operationLog)
-      .values({
-        ...data,
-        id: undefined, // Let the database generate the ID
-      })
-      .returning();
-    return newLog;
+    const insertData = {
+      operationName: data.operationName,
+      operationType: data.operationType,
+      operationModule: data.operationModule,
+      operationDesc: data.operationDesc,
+      method: data.method,
+      path: data.path,
+      query: data.query,
+      params: data.params,
+      body: data.body,
+      status: data.status,
+      response: data.response,
+      error: data.error,
+      userId: data.userId,
+      ip: data.ip,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      metadata: data.metadata,
+    };
+
+    await db.insert(operationLog).values(insertData);
   } catch (error) {
-    console.error('Failed to create operation log:', error);
-    throw new Error('Failed to create operation log');
+    console.error('🧨 Failed to insert operation log');
+    console.error('Raw error:', error);
+
+    const cause = (error as any)?.cause ?? (error as any)?.originalError;
+
+    if (cause) {
+      console.error('💥 Cause.message:', cause.message);
+      console.error('💥 Cause.code:', cause.code);
+      console.error('💥 Cause.detail:', cause.detail);
+      console.error('💥 Cause.hint:', cause.hint);
+    } else {
+      console.warn('⚠️ No cause info found');
+    }
+
+    throw error;
   }
 }
 
@@ -338,8 +362,7 @@ export async function listOperationLogs({
     if (searchTerm) {
       conditions.push(
         sql`LOWER(${operationLog.operationName}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
-            LOWER(${operationLog.operationModule || ''}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR
-            LOWER(${operationLog.username || ''}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
+            LOWER(${operationLog.operationModule || ''}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
       );
     }
 
