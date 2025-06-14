@@ -4,6 +4,7 @@ import { type Prediction } from 'replicate';
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
 import { createWork } from '@/lib/db/queries';
+import { logOperation } from '@/lib/logger';
 
 export async function POST(request: Request) {
   try {
@@ -30,6 +31,26 @@ export async function POST(request: Request) {
         },
         userId
       );
+
+      logOperation({
+        userId,
+        operationName: 'generate-image',
+        operationType: 'CREATE',
+        operationModule: 'image',
+        operationDesc: 'Generate image',
+        method: 'POST',
+        path: '/api/generate-image',
+        query: JSON.stringify(prediction.input),
+        params: JSON.stringify(prediction.input),
+        body: JSON.stringify(prediction.input),
+        status: 'SUCCESS',
+        response: JSON.stringify(prediction.output),
+        error: null,
+        ip: '127.0.0.1',
+        startTime: new Date(),
+        endTime: new Date(),
+        metadata: JSON.stringify(prediction),
+      });
     }
 
     return NextResponse.json({ received: true });
