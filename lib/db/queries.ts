@@ -1,8 +1,9 @@
 'use server';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
+import { startOfMonth } from 'date-fns';
 import type { InferInsertModel } from 'drizzle-orm';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, count, desc, eq, gte, sql, sum } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -19,9 +20,10 @@ type NewUser = Omit<InferInsertModel<typeof user>, 'id' | 'createdAt' | 'updated
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUser(email: string): Promise<Array<User>> {
+export async function getUser(email: string): Promise<User | null> {
   try {
-    return await db.select().from(user).where(eq(user.email, email));
+    const users = await db.select().from(user).where(eq(user.email, email));
+    return users[0] || null;
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
@@ -112,6 +114,74 @@ export async function getWorkById(id: string, userId: string): Promise<Work | un
   } catch (error) {
     console.error('Failed to get work by id:', error);
     throw new Error('Failed to get work');
+  }
+}
+
+export async function getUserWorksCount(userId: string): Promise<number> {
+  try {
+    const result = await db.select({ count: count() }).from(work).where(eq(work.userId, userId));
+
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error('Failed to get user works count', error);
+    throw error;
+  }
+}
+
+export async function getUserWorksThisMonthCount(userId: string): Promise<number> {
+  try {
+    const startOfCurrentMonth = startOfMonth(new Date());
+
+    const result = await db
+      .select({ count: count() })
+      .from(work)
+      .where(and(eq(work.userId, userId), gte(work.createdAt, startOfCurrentMonth)));
+
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error('Failed to get user works this month count', error);
+    throw error;
+  }
+}
+
+export async function getUserTotalProcessingTime(userId: string): Promise<string> {
+  try {
+    const result = await db
+      .select({ total: sum(work.predictTime) })
+      .from(work)
+      .where(eq(work.userId, userId));
+
+    const totalSeconds = Number(result[0]?.total || 0);
+    if (totalSeconds < 60) {
+      return `${Math.round(totalSeconds)}s`; // Show seconds if less than a minute
+    }
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    if (hours === 0) {
+      return `${minutes}m`;
+    }
+
+    return `${hours}h ${minutes}m`;
+  } catch (error) {
+    console.error('Failed to get user total processing time', error);
+    throw error;
+  }
+}
+
+export async function getUserUsedWorkTypesCount(userId: string): Promise<number> {
+  try {
+    const result = await db
+      .select({
+        count: sql<number>`count(distinct ${work.type})::int`,
+      })
+      .from(work)
+      .where(eq(work.userId, userId));
+
+    return result[0]?.count || 0;
+  } catch (error) {
+    console.error('Failed to get user used work types count', error);
+    throw error;
   }
 }
 

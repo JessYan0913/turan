@@ -1,5 +1,6 @@
 import { BarChart3, Camera, Check, Clock, CreditCard, Crown, Edit3, Info, Layers, User, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -7,33 +8,35 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { auth } from '@/lib/auth';
-import { getUser } from '@/lib/db/queries';
+import {
+  getUser,
+  getUserTotalProcessingTime,
+  getUserUsedWorkTypesCount,
+  getUserWorksCount,
+  getUserWorksThisMonthCount,
+} from '@/lib/db/queries';
 import { getScopedI18n } from '@/locales/server';
 
 export default async function ProfilePage() {
   const t = await getScopedI18n('profile');
-  // 服务端获取当前用户
   const session = await auth();
   if (!session || !session.user?.email) {
-    return <div className="flex min-h-screen items-center justify-center text-red-500">未登录或未找到用户信息</div>;
+    redirect('/login');
   }
-  const users = await getUser(session.user.email);
-  if (!users.length) {
-    return <div className="flex min-h-screen items-center justify-center text-red-500">未找到用户信息</div>;
+  const userInfo = await getUser(session.user.email);
+  if (!userInfo) {
+    redirect('/login');
   }
-  const userInfo = users[0];
+
+  const [totalWorks, thisMonthWorks, totalProcessingTime, usedWorkTypesCount] = await Promise.all([
+    getUserWorksCount(userInfo.id),
+    getUserWorksThisMonthCount(userInfo.id),
+    getUserTotalProcessingTime(userInfo.id),
+    getUserUsedWorkTypesCount(userInfo.id),
+  ]);
 
   // 扩展用户统计数据
   const stats = {
-    totalWorks: 156,
-    thisMonthWorks: 23,
-    totalProcessingTime: '12.5 h',
-    workTypes: {
-      'style-transfer': { count: 68, percentage: 43.6 },
-      avatar: { count: 42, percentage: 26.9 },
-      edit: { count: 28, percentage: 17.9 },
-      generate: { count: 18, percentage: 11.5 },
-    },
     plan: '专业版',
     planExpiry: '2024-03-15',
     usageThisMonth: 234,
@@ -146,7 +149,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-muted-foreground text-sm">{t('stats.totalWorks')}</p>
-                      <p className="text-3xl font-bold">{stats.totalWorks}</p>
+                      <p className="text-3xl font-bold">{totalWorks}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
                       <BarChart3 className="size-6 text-blue-500" />
@@ -159,7 +162,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-muted-foreground text-sm">{t('stats.thisMonthWorks')}</p>
-                      <p className="text-3xl font-bold">{stats.thisMonthWorks}</p>
+                      <p className="text-3xl font-bold">{thisMonthWorks}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
                       <Zap className="size-6 text-green-500" />
@@ -172,7 +175,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-muted-foreground text-sm">{t('stats.totalProcessingTime')}</p>
-                      <p className="text-3xl font-bold">{stats.totalProcessingTime}</p>
+                      <p className="text-3xl font-bold">{totalProcessingTime}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
                       <Clock className="size-6 text-purple-500" />
@@ -185,7 +188,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-muted-foreground text-sm">{t('stats.workTypes')}</p>
-                      <p className="text-3xl font-bold">4</p>
+                      <p className="text-3xl font-bold">{usedWorkTypesCount}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
                       <Layers className="size-6 text-amber-500" />

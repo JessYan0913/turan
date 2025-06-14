@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 import EditProfileForm from '@/components/edit-profile-form';
 import { buttonVariants } from '@/components/ui/button';
@@ -15,11 +15,10 @@ export default async function ProfileEditPage() {
   if (!session || !session.user?.email) {
     redirect('/login');
   }
-  const users = await getUser(session.user.email);
-  if (!users.length) {
-    notFound();
+  const userInfo = await getUser(session.user.email);
+  if (!userInfo) {
+    redirect('/login');
   }
-  const userInfo = users[0];
   const t = await getScopedI18n('profileEdit');
 
   return (
