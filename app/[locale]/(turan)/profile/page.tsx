@@ -51,20 +51,6 @@ export default async function ProfilePage() {
     planLimit: 500,
   };
 
-  // Format operation logs for display
-  const formatOperationType = (type: string) => {
-    switch (type) {
-      case 'STYLE_TRANSFORM':
-        return '风格转换';
-      case 'AVATAR_GENERATE':
-        return '生成头像';
-      case 'IMAGE_EDIT':
-        return '图片编辑';
-      default:
-        return type;
-    }
-  };
-
   return (
     <div className="bg-muted/20 min-h-screen pb-8 pt-16 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
