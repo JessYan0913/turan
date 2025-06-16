@@ -3,7 +3,7 @@
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 import { startOfMonth } from 'date-fns';
 import type { InferInsertModel } from 'drizzle-orm';
-import { and, count, desc, eq, gte, sql, sum } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt, gte, ilike, inArray, lt, lte, ne, or, sql, sum } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -12,6 +12,15 @@ import {
   operationLog,
   type OperationStatus,
   type OperationType,
+  type RedeemBatch,
+  redeemBatch,
+  type RedeemCode,
+  redeemCode,
+  type RedeemCodeStatus,
+  type RedeemCodeType,
+  type RedeemCodeUsage,
+  redeemCodeUsage,
+  type RedeemResultType,
   type User,
   user,
   type Work,
@@ -506,6 +515,528 @@ export async function getOperationStats({
   } catch (error) {
     console.error('Failed to get operation stats:', error);
     throw new Error('Failed to get operation stats');
+  }
+}
+
+// 兑换码相关查询
+
+export interface ListRedeemCodesOptions {
+  code?: string;
+  type?: RedeemCodeType;
+  status?: RedeemCodeStatus;
+  batchId?: string;
+  limit?: number;
+  offset?: number;
+  orderBy?: 'asc' | 'desc';
+}
+
+export interface PaginatedRedeemCodes {
+  items: RedeemCode[];
+  total: number;
+  hasMore: boolean;
+}
+
+export async function createRedeemCode(data: {
+  code: string;
+  type: RedeemCodeType;
+  reward: Record<string, any>;
+  usageLimit?: number;
+  expireAt?: Date;
+  batchId?: string;
+  createdBy?: string;
+}): Promise<RedeemCode> {
+  try {
+    // 检查兑换码是否已存在
+    const existingCode = await db
+      .select()
+      .from(redeemCode)
+      .where(eq(redeemCode.code, data.code))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (existingCode) {
+      throw new Error('兑换码已存在');
+    }
+
+    // 创建兑换码
+    const [newCode] = await db
+      .insert(redeemCode)
+      .values({
+        code: data.code,
+        type: data.type,
+        reward: data.reward,
+        usageLimit: data.usageLimit ?? 1,
+        usedCount: 0,
+        expireAt: data.expireAt,
+        status: 'active',
+        batchId: data.batchId,
+        createdBy: data.createdBy,
+      })
+      .returning();
+
+    return newCode;
+  } catch (error) {
+    console.error('创建兑换码失败:', error);
+    throw error instanceof Error ? error : new Error('创建兑换码失败');
+  }
+}
+
+export async function getRedeemCode(code: string): Promise<RedeemCode | undefined> {
+  try {
+    const [result] = await db.select().from(redeemCode).where(eq(redeemCode.code, code)).limit(1);
+    return result;
+  } catch (error) {
+    console.error('获取兑换码失败:', error);
+    throw new Error('获取兑换码失败');
+  }
+}
+
+export async function listRedeemCodes({
+  code,
+  type,
+  status,
+  batchId,
+  limit = 20,
+  offset = 0,
+  orderBy = 'desc',
+}: ListRedeemCodesOptions = {}): Promise<PaginatedRedeemCodes> {
+  try {
+    const conditions = [];
+
+    if (code) {
+      conditions.push(sql`LOWER(${redeemCode.code}) LIKE ${`%${code.toLowerCase()}%`}`);
+    }
+
+    if (type) {
+      conditions.push(eq(redeemCode.type, type));
+    }
+
+    if (status) {
+      conditions.push(eq(redeemCode.status, status));
+    }
+
+    if (batchId) {
+      conditions.push(eq(redeemCode.batchId, batchId));
+    }
+
+    const query = db
+      .select()
+      .from(redeemCode)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(orderBy === 'desc' ? desc(redeemCode.createdAt) : redeemCode.createdAt)
+      .limit(limit + 1)
+      .offset(offset);
+
+    const codes = await query;
+
+    const hasMore = codes.length > limit;
+    const items = hasMore ? codes.slice(0, -1) : codes;
+
+    // 获取总数
+    const countQuery = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(redeemCode)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .then((rows) => rows[0]?.count || 0);
+
+    return {
+      items,
+      total: Number(countQuery),
+      hasMore,
+    };
+  } catch (error) {
+    console.error('获取兑换码列表失败:', error);
+    throw new Error('获取兑换码列表失败');
+  }
+}
+
+export async function updateRedeemCode(
+  code: string,
+  data: Partial<{
+    reward: Record<string, any>;
+    usageLimit: number;
+    expireAt: Date | null;
+    status: RedeemCodeStatus;
+  }>
+): Promise<RedeemCode> {
+  try {
+    const [updated] = await db.update(redeemCode).set(data).where(eq(redeemCode.code, code)).returning();
+
+    if (!updated) {
+      throw new Error('兑换码不存在');
+    }
+
+    return updated;
+  } catch (error) {
+    console.error('更新兑换码失败:', error);
+    throw error instanceof Error ? error : new Error('更新兑换码失败');
+  }
+}
+
+export async function createRedeemBatch(data: {
+  name: string;
+  channel?: string;
+  note?: string;
+  createdBy?: string;
+}): Promise<RedeemBatch> {
+  try {
+    const [newBatch] = await db
+      .insert(redeemBatch)
+      .values({
+        name: data.name,
+        channel: data.channel,
+        note: data.note,
+        createdBy: data.createdBy,
+      })
+      .returning();
+
+    return newBatch;
+  } catch (error) {
+    console.error('创建兑换码批次失败:', error);
+    throw error instanceof Error ? error : new Error('创建兑换码批次失败');
+  }
+}
+
+export async function listRedeemBatches({
+  limit = 20,
+  offset = 0,
+  orderBy = 'desc',
+}: {
+  limit?: number;
+  offset?: number;
+  orderBy?: 'asc' | 'desc';
+} = {}): Promise<{ items: RedeemBatch[]; total: number; hasMore: boolean }> {
+  try {
+    const query = db
+      .select()
+      .from(redeemBatch)
+      .orderBy(orderBy === 'desc' ? desc(redeemBatch.createdAt) : redeemBatch.createdAt)
+      .limit(limit + 1)
+      .offset(offset);
+
+    const batches = await query;
+
+    const hasMore = batches.length > limit;
+    const items = hasMore ? batches.slice(0, -1) : batches;
+
+    // 获取总数
+    const countQuery = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(redeemBatch)
+      .then((rows) => rows[0]?.count || 0);
+
+    return {
+      items,
+      total: Number(countQuery),
+      hasMore,
+    };
+  } catch (error) {
+    console.error('获取兑换码批次列表失败:', error);
+    throw new Error('获取兑换码批次列表失败');
+  }
+}
+
+export async function redeemCodeForUser({
+  code: codeString,
+  userId,
+  ipAddress,
+  userAgent,
+}: {
+  code: string;
+  userId: string;
+  ipAddress?: string;
+  userAgent?: string;
+}): Promise<{
+  success: boolean;
+  result: RedeemResultType;
+  message: string;
+  reward?: Record<string, any>;
+}> {
+  try {
+    // 获取兑换码
+    const code = await getRedeemCode(codeString);
+
+    if (!code) {
+      await logRedeemAttempt({
+        code: codeString,
+        userId,
+        ipAddress,
+        userAgent,
+        result: 'invalid',
+        message: '兑换码不存在',
+      });
+      return { success: false, result: 'invalid', message: '兑换码不存在' };
+    }
+
+    // 检查兑换码状态
+    if (code.status !== 'active') {
+      await logRedeemAttempt({
+        code: codeString,
+        userId,
+        ipAddress,
+        userAgent,
+        result: 'invalid',
+        message: '兑换码已禁用',
+      });
+      return { success: false, result: 'invalid', message: '兑换码已禁用' };
+    }
+
+    // 检查兑换码是否过期
+    if (code.expireAt && new Date(code.expireAt) < new Date()) {
+      await logRedeemAttempt({
+        code: codeString,
+        userId,
+        ipAddress,
+        userAgent,
+        result: 'expired',
+        message: '兑换码已过期',
+      });
+
+      // 更新兑换码状态为过期
+      await updateRedeemCode(codeString, { status: 'expired' });
+
+      return { success: false, result: 'expired', message: '兑换码已过期' };
+    }
+
+    // 检查兑换码使用次数
+    if ((code.usedCount ?? 0) >= (code.usageLimit ?? 1)) {
+      await logRedeemAttempt({
+        code: codeString,
+        userId,
+        ipAddress,
+        userAgent,
+        result: 'used_up',
+        message: '兑换码已达到使用上限',
+      });
+      return { success: false, result: 'used_up', message: '兑换码已达到使用上限' };
+    }
+
+    // 检查用户是否已经使用过此兑换码（如果是一次性码）
+    if (code.usageLimit === 1) {
+      const usageCount = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(redeemCodeUsage)
+        .where(
+          and(
+            eq(redeemCodeUsage.code, codeString),
+            eq(redeemCodeUsage.userId, userId),
+            eq(redeemCodeUsage.result, 'success')
+          )
+        )
+        .then((rows) => Number(rows[0]?.count || 0));
+
+      if (usageCount > 0) {
+        await logRedeemAttempt({
+          code: codeString,
+          userId,
+          ipAddress,
+          userAgent,
+          result: 'used_up',
+          message: '您已使用过此兑换码',
+        });
+        return { success: false, result: 'used_up', message: '您已使用过此兑换码' };
+      }
+    }
+
+    // 应用奖励
+    // 注意：这里只记录兑换成功，实际的奖励应用逻辑应在业务层处理
+    // 例如：更新用户积分、延长会员时间等
+
+    // 更新兑换码使用次数
+    await db
+      .update(redeemCode)
+      .set({ usedCount: (code.usedCount ?? 0) + 1 })
+      .where(eq(redeemCode.code, codeString));
+
+    // 记录兑换成功
+    await logRedeemAttempt({
+      code: codeString,
+      userId,
+      ipAddress,
+      userAgent,
+      result: 'success',
+      message: '兑换成功',
+    });
+
+    return {
+      success: true,
+      result: 'success',
+      message: '兑换成功',
+      reward: code.reward as Record<string, any>,
+    };
+  } catch (error) {
+    console.error('兑换码使用失败:', error);
+    await logRedeemAttempt({
+      code: codeString,
+      userId,
+      ipAddress,
+      userAgent,
+      result: 'invalid', // 使用有效的 RedeemResultType
+      message: '系统错误',
+    });
+    throw error instanceof Error ? error : new Error('兑换码使用失败');
+  }
+}
+
+// 记录兑换码使用记录
+async function logRedeemAttempt(data: {
+  code: string;
+  userId: string;
+  ipAddress?: string;
+  userAgent?: string;
+  result: RedeemResultType;
+  message: string;
+}): Promise<void> {
+  try {
+    await db.insert(redeemCodeUsage).values({
+      code: data.code,
+      userId: data.userId,
+      ipAddress: data.ipAddress, // 修正字段名称与schema匹配
+      userAgent: data.userAgent,
+      result: data.result,
+      message: data.message,
+    });
+  } catch (error) {
+    console.error('记录兑换码使用失败:', error);
+    // 这里不抛出异常，避免影响主流程
+  }
+}
+
+// 获取兑换码使用统计
+export async function getRedeemCodeUsageStats(code: string): Promise<{
+  total: number;
+  success: number;
+  failed: number;
+  uniqueUsers: number;
+}> {
+  try {
+    // 总使用次数
+    const totalCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(redeemCodeUsage)
+      .where(eq(redeemCodeUsage.code, code))
+      .then((rows) => Number(rows[0]?.count || 0));
+
+    // 成功使用次数
+    const successCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(redeemCodeUsage)
+      .where(and(eq(redeemCodeUsage.code, code), eq(redeemCodeUsage.result, 'success')))
+      .then((rows) => Number(rows[0]?.count || 0));
+
+    // 失败使用次数
+    const failedCount = totalCount - successCount;
+
+    // 唯一用户数
+    const uniqueUsers = await db
+      .select({ count: sql<number>`count(distinct ${redeemCodeUsage.userId})` })
+      .from(redeemCodeUsage)
+      .where(eq(redeemCodeUsage.code, code))
+      .then((rows) => Number(rows[0]?.count || 0));
+
+    return {
+      total: totalCount,
+      success: successCount,
+      failed: failedCount,
+      uniqueUsers,
+    };
+  } catch (error) {
+    console.error('获取兑换码使用统计失败:', error);
+    throw new Error('获取兑换码使用统计失败');
+  }
+}
+
+// 批量生成兑换码
+export async function generateRedeemCodes({
+  count,
+  prefix = '',
+  length = 8,
+  type,
+  reward,
+  usageLimit = 1,
+  expireAt,
+  batchId,
+  createdBy,
+}: {
+  count: number;
+  prefix?: string;
+  length?: number;
+  type: RedeemCodeType;
+  reward: Record<string, any>;
+  usageLimit?: number;
+  expireAt?: Date;
+  batchId?: string;
+  createdBy?: string;
+}): Promise<{ codes: string[]; successful: number; failed: number }> {
+  const generatedCodes: string[] = [];
+  let successful = 0;
+  let failed = 0;
+
+  // 生成随机字符串的函数
+  const generateRandomString = (length: number): string => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 排除容易混淆的字符
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
+  try {
+    for (let i = 0; i < count; i++) {
+      // 生成兑换码
+      let codeString = '';
+      let attempts = 0;
+      const maxAttempts = 5;
+
+      // 尝试生成唯一的兑换码
+      while (attempts < maxAttempts) {
+        codeString = `${prefix}${generateRandomString(length)}`;
+
+        // 检查兑换码是否已存在
+        const existingCode = await db
+          .select()
+          .from(redeemCode)
+          .where(eq(redeemCode.code, codeString))
+          .limit(1)
+          .then((rows) => rows[0]);
+
+        if (!existingCode) {
+          break;
+        }
+
+        attempts++;
+      }
+
+      if (attempts >= maxAttempts) {
+        failed++;
+        continue;
+      }
+
+      try {
+        // 创建兑换码
+        await createRedeemCode({
+          code: codeString,
+          type,
+          reward,
+          usageLimit,
+          expireAt,
+          batchId,
+          createdBy,
+        });
+
+        generatedCodes.push(codeString);
+        successful++;
+      } catch (error) {
+        console.error(`创建兑换码 ${codeString} 失败:`, error);
+        failed++;
+      }
+    }
+
+    return { codes: generatedCodes, successful, failed };
+  } catch (error) {
+    console.error('批量生成兑换码失败:', error);
+    throw error instanceof Error ? error : new Error('批量生成兑换码失败');
   }
 }
 
