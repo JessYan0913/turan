@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
-import { WEBHOOK_HOST } from '@/lib/utils';
+import { getClientIp, WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
         userId,
         prompt,
         output_format: 'png',
+        ip: getClientIp(request),
       },
       webhook: `${WEBHOOK_HOST}/api/generate-image/webhook`,
       webhook_events_filter: ['completed', 'logs', 'start'],

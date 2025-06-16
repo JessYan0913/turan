@@ -14,6 +14,7 @@ import {
   getUserUsedWorkTypesCount,
   getUserWorksCount,
   getUserWorksThisMonthCount,
+  listOperationLogs,
 } from '@/lib/db/queries';
 import { getScopedI18n } from '@/locales/server';
 
@@ -28,27 +29,40 @@ export default async function ProfilePage() {
     redirect('/login');
   }
 
-  const [totalWorks, thisMonthWorks, totalProcessingTime, usedWorkTypesCount] = await Promise.all([
-    getUserWorksCount(userInfo.id),
-    getUserWorksThisMonthCount(userInfo.id),
-    getUserTotalProcessingTime(userInfo.id),
-    getUserUsedWorkTypesCount(userInfo.id),
-  ]);
+  const [totalWorks, thisMonthWorks, totalProcessingTime, usedWorkTypesCount, { items: recentActivity }] =
+    await Promise.all([
+      getUserWorksCount(userInfo.id),
+      getUserWorksThisMonthCount(userInfo.id),
+      getUserTotalProcessingTime(userInfo.id),
+      getUserUsedWorkTypesCount(userInfo.id),
+      listOperationLogs({
+        userId: userInfo.id,
+        limit: 20,
+        orderBy: 'desc',
+        status: 'SUCCESS', // Only show successful operations
+      }),
+    ]);
 
-  // 扩展用户统计数据
+  // 用户统计数据
   const stats = {
     plan: '专业版',
     planExpiry: '2024-03-15',
     usageThisMonth: 234,
     planLimit: 500,
-    recentActivity: [
-      { action: '完成风格转换', target: '风景照片', time: '2小时前', type: 'success' },
-      { action: '生成专业头像', target: '商务形象', time: '5小时前', type: 'success' },
-      { action: '背景替换', target: '人像照片', time: '1天前', type: 'success' },
-      { action: '升级到专业版', target: '套餐升级', time: '3天前', type: 'info' },
-      { action: '获得新成就', target: '创作达人', time: '4天前', type: 'success' },
-      { action: '分享作品', target: '社交媒体', time: '5天前', type: 'info' },
-    ],
+  };
+
+  // Format operation logs for display
+  const formatOperationType = (type: string) => {
+    switch (type) {
+      case 'STYLE_TRANSFORM':
+        return '风格转换';
+      case 'AVATAR_GENERATE':
+        return '生成头像';
+      case 'IMAGE_EDIT':
+        return '图片编辑';
+      default:
+        return type;
+    }
   };
 
   return (
@@ -203,39 +217,43 @@ export default async function ProfilePage() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-base font-semibold">{t('stats.recentActivity')}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {stats.recentActivity.map((activity, index) => (
+              <CardContent className="max-h-[500px] space-y-3 overflow-y-auto">
+                {recentActivity.map((log) => {
+                  const isSuccess = log.status === 'SUCCESS';
+                  const description = log.operationDesc || '';
+                  const time = new Date(log.startTime).toLocaleString('zh-CN');
+
+                  return (
                     <div
-                      key={index}
+                      key={log.id}
                       className={`group flex items-start space-x-3 rounded-lg p-3 transition-all duration-200 ${
-                        activity.type === 'success'
+                        isSuccess
                           ? 'bg-green-50/80 hover:bg-green-100/60 dark:bg-green-900/20 dark:hover:bg-green-900/30'
                           : 'bg-blue-50/80 hover:bg-blue-100/60 dark:bg-blue-900/20 dark:hover:bg-blue-900/30'
                       }`}
                     >
                       <div
                         className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-all duration-200 group-hover:scale-110 ${
-                          activity.type === 'success'
+                          isSuccess
                             ? 'bg-green-100 text-green-600 dark:bg-green-800/50'
                             : 'bg-blue-100 text-blue-600 dark:bg-blue-800/50'
                         }`}
                       >
-                        {activity.type === 'success' ? <Check className="size-4" /> : <Info className="size-4" />}
+                        {isSuccess ? <Check className="size-4" /> : <Info className="size-4" />}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                           <p className="truncate text-sm font-medium">
-                            {activity.action} <span className="text-muted-foreground">{activity.target}</span>
+                            {description && <span className="text-muted-foreground">{description}</span>}
                           </p>
                           <span className="text-muted-foreground mt-1 text-xs sm:ml-2 sm:mt-0 sm:whitespace-nowrap">
-                            {activity.time}
+                            {time}
                           </span>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </CardContent>
             </Card>
           </div>

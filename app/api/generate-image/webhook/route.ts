@@ -3,16 +3,16 @@ import { type Prediction } from 'replicate';
 
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
-import { createWork } from '@/lib/db/queries';
-import { logOperation } from '@/lib/logger';
+import { createOperationLog, createWork } from '@/lib/db/queries';
 
 export async function POST(request: Request) {
   try {
     const prediction = (await request.json()) as Prediction;
     if (prediction.status === 'succeeded') {
-      const { prompt, userId } = prediction.input as {
+      const { prompt, userId, ip } = prediction.input as {
         prompt: string;
         userId: string;
+        ip: string;
       };
 
       const title = await generateTitle(prompt);
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         userId
       );
 
-      logOperation({
+      createOperationLog({
         userId,
         operationName: 'generate-image',
         operationType: 'CREATE',
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         status: 'SUCCESS',
         response: JSON.stringify(prediction.output),
         error: null,
-        ip: '127.0.0.1',
+        ip,
         startTime: new Date(),
         endTime: new Date(),
         metadata: JSON.stringify(prediction),

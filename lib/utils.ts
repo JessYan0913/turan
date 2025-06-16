@@ -13,6 +13,38 @@ interface ApplicationError extends Error {
   status: number;
 }
 
+export function getClientIp(request: Request): string {
+  const xRealIp = request.headers.get('x-real-ip');
+  const xForwardedFor = request.headers.get('x-forwarded-for');
+  if (xRealIp) return xRealIp;
+  if (xForwardedFor) return xForwardedFor.split(',')[0].trim();
+  return 'unknown';
+}
+
+export function formatTimeAgo(date: Date): string {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  const intervals = {
+    年: 31536000,
+    个月: 2592000,
+    周: 604800,
+    天: 86400,
+    小时: 3600,
+    分钟: 60,
+    秒: 1,
+  } as const;
+
+  for (const [unit, seconds] of Object.entries(intervals)) {
+    const interval = Math.floor(diffInSeconds / seconds);
+    if (interval >= 1) {
+      return `${interval}${unit}前`;
+    }
+  }
+
+  return '刚刚';
+}
+
 /**
  * Fetches style options from the API
  * @param url API endpoint URL

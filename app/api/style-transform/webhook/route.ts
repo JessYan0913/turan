@@ -3,17 +3,18 @@ import { type Prediction } from 'replicate';
 
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
-import { createWork } from '@/lib/db/queries';
+import { createOperationLog, createWork } from '@/lib/db/queries';
 
 export async function POST(request: Request) {
   try {
     const prediction = (await request.json()) as Prediction;
     if (prediction.status === 'succeeded') {
-      const { prompt, userId, input_image, style } = prediction.input as {
+      const { prompt, userId, input_image, style, ip } = prediction.input as {
         userId: string;
         prompt: string;
         input_image: string;
         style: string;
+        ip: string;
       };
 
       const title = await generateTitle(prompt);
@@ -34,6 +35,26 @@ export async function POST(request: Request) {
         },
         userId
       );
+
+      createOperationLog({
+        userId,
+        operationName: 'generate-image',
+        operationType: 'CREATE',
+        operationModule: 'image',
+        operationDesc: 'Generate image',
+        method: 'POST',
+        path: '/api/generate-image',
+        query: JSON.stringify(prediction.input),
+        params: JSON.stringify(prediction.input),
+        body: JSON.stringify(prediction.input),
+        status: 'SUCCESS',
+        response: JSON.stringify(prediction.output),
+        error: null,
+        ip,
+        startTime: new Date(),
+        endTime: new Date(),
+        metadata: JSON.stringify(prediction),
+      });
     }
 
     return NextResponse.json({ received: true });
