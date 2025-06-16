@@ -230,6 +230,11 @@ export default {
         description: 'Perfect for individual users',
         buttonText: 'Get Started Free',
       },
+      basic: {
+        name: 'Basic',
+        description: 'Perfect for individual users',
+        buttonText: 'Upgrade Now',
+      },
       pro: {
         name: 'Pro',
         description: 'Ideal for business users',

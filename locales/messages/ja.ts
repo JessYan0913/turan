@@ -231,6 +231,11 @@ export default {
         description: '個人ユーザー向け',
         buttonText: '無料ではじめる',
       },
+      basic: {
+        name: 'ベーシックプラン',
+        description: '個人ユーザー向け',
+        buttonText: '今すぐアップグレード',
+      },
       pro: {
         name: 'プロプラン',
         description: 'ビジネスユーザー向け',

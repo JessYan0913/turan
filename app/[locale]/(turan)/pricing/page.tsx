@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getScopedI18n } from '@/locales/server';
 
-type PlanId = 'free' | 'pro' | 'enterprise';
+type PlanId = 'free' | 'pro' | 'enterprise' | 'basic';
 
 interface Plan {
   id: PlanId;
@@ -22,44 +22,61 @@ const PLANS: Plan[] = [
     price: '¥0',
     period: '/Month',
     features: [
-      '10 times image processing per month',
-      'Basic style transfer',
+      '30 credits per month',
+      'Generate Image: 1 credit per image',
+      'Image Edit/Style Transform: 15 credits per operation',
       'Standard quality output',
       'Community support',
       'Watermark output',
     ],
-    limitations: ['Long processing time', 'Limited features'],
+    limitations: ['Limited processing speed', 'Basic features only', 'Credits expire monthly'],
     popular: false,
   },
   {
-    id: 'pro',
-    price: '¥29',
+    id: 'basic',
+    price: '¥19',
     period: '/Month',
     features: [
-      '500 times image processing per month',
-      'All style transfer',
+      '300 credits per month',
+      'Generate Image: 1 credit per image',
+      'Image Edit/Style Transform: 15 credits per operation',
       'High quality output',
-      'Priority processing queue',
-      'Watermark output',
-      'Batch processing',
-      'API access',
+      'Normal processing speed',
+      'No watermark',
       'Email support',
     ],
     popular: true,
+  },
+  {
+    id: 'pro',
+    price: '¥49',
+    period: '/Month',
+    features: [
+      '1000 credits per month',
+      'Generate Image: 1 credit per image',
+      'Image Edit/Style Transform: 15 credits per operation',
+      'High quality output',
+      'Priority processing',
+      'Batch processing (up to 10 images)',
+      'API access',
+      'Email support',
+    ],
+    popular: false,
   },
   {
     id: 'enterprise',
     price: '¥99',
     period: '/Month',
     features: [
-      'Unlimited image processing',
-      'All advanced features',
+      '2500 credits per month',
+      'Generate Image: 1 credit per image',
+      'Image Edit/Style Transform: 15 credits per operation',
       '4K ultra HD output',
       'Exclusive processing server',
-      'Custom style training',
+      'Batch processing (unlimited)',
       'Team collaboration features',
       'Complete API suite',
-      'Exclusive customer support',
+      'Dedicated customer support',
       'SLA guarantee',
     ],
     popular: false,
@@ -116,7 +133,7 @@ export default async function PricingPage() {
         </div>
 
         {/* 价格卡片 */}
-        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
+        <div className="max-w-8xl mx-auto grid gap-6 md:grid-cols-4">
           {plans.map((plan, index) => (
             <div key={plan.name} className="relative">
               {plan.popular && (

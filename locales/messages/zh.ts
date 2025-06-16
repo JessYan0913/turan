@@ -224,10 +224,15 @@ export default {
         description: '适合个人用户体验',
         buttonText: '免费开始',
       },
+      basic: {
+        name: '基础版',
+        description: '适合个人用户体验',
+        buttonText: '立即订阅',
+      },
       pro: {
         name: '专业版',
         description: '适合企业用户使用',
-        buttonText: '立即升级',
+        buttonText: '立即订阅',
       },
       enterprise: {
         name: '企业版',
