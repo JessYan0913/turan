@@ -49,6 +49,83 @@ export async function getUser(email: string): Promise<User | null> {
   }
 }
 
+// 通过ID获取用户
+export async function getUserById(userId: string): Promise<User | null> {
+  try {
+    const users = await db.select().from(user).where(eq(user.id, userId));
+    return users[0] || null;
+  } catch (error) {
+    console.error('通过ID获取用户失败', error);
+    throw error;
+  }
+}
+
+// 更新用户积分（增加积分）
+export async function addUserPoints(userId: string, points: number): Promise<User> {
+  try {
+    // 获取当前用户
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      throw new Error('用户不存在');
+    }
+
+    // 更新用户当前积分
+    const [updatedUser] = await db
+      .update(user)
+      .set({
+        usageCurrent: (currentUser.usageCurrent || 0) + points,
+      })
+      .where(eq(user.id, userId))
+      .returning();
+
+    return updatedUser;
+  } catch (error) {
+    console.error('更新用户积分失败', error);
+    throw error;
+  }
+}
+
+// 消耗用户积分
+export async function consumeUserPoints(
+  userId: string,
+  points: number
+): Promise<{
+  success: boolean;
+  message: string;
+  user?: User;
+}> {
+  try {
+    // 获取当前用户
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      return { success: false, message: '用户不存在' };
+    }
+
+    // 检查积分是否足够
+    if ((currentUser.usageCurrent || 0) < points) {
+      return { success: false, message: '积分不足' };
+    }
+
+    // 更新用户积分
+    const [updatedUser] = await db
+      .update(user)
+      .set({
+        usageCurrent: (currentUser.usageCurrent || 0) - points,
+      })
+      .where(eq(user.id, userId))
+      .returning();
+
+    return {
+      success: true,
+      message: `成功消耗${points}积分`,
+      user: updatedUser,
+    };
+  } catch (error) {
+    console.error('消耗用户积分失败', error);
+    return { success: false, message: '消耗积分失败：' + (error instanceof Error ? error.message : '未知错误') };
+  }
+}
+
 // Work related queries
 export interface GetWorksOptions {
   userId: string;
