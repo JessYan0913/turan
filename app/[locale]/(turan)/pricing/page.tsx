@@ -1,4 +1,4 @@
-import { Check, Crown, Star, Zap } from 'lucide-react';
+import { Building2, Check, Crown, Star, Zap } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,12 +8,14 @@ import { getScopedI18n } from '@/locales/server';
 
 const getPlanIcon = (id: Plan['id']) => {
   switch (id) {
+    case 'basic':
+      return <Star className="size-6" />;
     case 'free':
       return <Zap className="size-6" />;
     case 'pro':
       return <Crown className="size-6" />;
     case 'enterprise':
-      return <Star className="size-6" />;
+      return <Building2 className="size-6" />;
     default:
       return null;
   }
