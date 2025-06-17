@@ -323,7 +323,7 @@ export default {
     redeem: 'コードを適用する',
     redeeming: 'コードを適用しています...',
     cancel: 'キャンセル',
-    days: '日',
+    credits: 'クレジット',
     code: 'コード',
     expiresAt: '有効期限',
     profile: 'プロフィール',

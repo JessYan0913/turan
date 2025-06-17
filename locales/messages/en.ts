@@ -324,7 +324,7 @@ export default {
     redeem: 'Redeem Now',
     redeeming: 'Activating...',
     cancel: 'Cancel',
-    days: 'days',
+    credits: 'Credits',
     code: 'Code',
     expiresAt: 'Expires at',
     profile: 'Profile Center',

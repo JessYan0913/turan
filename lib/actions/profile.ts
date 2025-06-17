@@ -1,9 +1,13 @@
 'use server';
 
 import { and, count, desc, eq, gte, sql } from 'drizzle-orm';
+import { redirect } from 'next/navigation';
 
+import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { type OperationLog, operationLog, type OperationStatus, type Work, work } from '@/lib/db/schema';
+import { user } from '@/lib/db/schema';
+import { validateRedeemCode } from '@/lib/pricing';
 
 /**
  * 获取用户作品总数
@@ -126,4 +130,28 @@ export async function listOperationLogs({
     console.error('获取用户操作日志失败:', error);
     return { items: [], total: 0, hasMore: false };
   }
+}
+
+export async function upgrade(redeemCode: string) {
+  const session = await auth();
+  if (!session?.user) {
+    redirect('/login');
+  }
+  const userId = session.user.id;
+  if (!userId) {
+    redirect('/login');
+  }
+  const plan = await validateRedeemCode(redeemCode);
+  const [currentUser] = await db.select().from(user).where(eq(user.id, userId));
+  const [updatedUser] = await db
+    .update(user)
+    .set({
+      usageLimit: (currentUser.usageLimit || 0) + plan.amount,
+      plan: plan.id,
+      planExpiry: plan.expiresAt,
+      updatedAt: new Date(),
+    })
+    .where(eq(user.id, userId))
+    .returning();
+  return { success: true, plan, user: updatedUser };
 }

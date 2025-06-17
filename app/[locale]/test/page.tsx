@@ -28,16 +28,16 @@ export default function TestPage() {
   const handleGenerateCode = async () => {
     try {
       setIsGenerating(true);
-      const { success, code, error } = await generateRedeemCode(selectedPlan);
+      const code = await generateRedeemCode(selectedPlan);
 
-      if (success && code) {
+      if (code) {
         setGeneratedCodes([code]);
         toast({
           title: 'Success',
           description: 'Redeem code generated successfully',
         });
       } else {
-        throw new Error(error || 'Failed to generate codes');
+        throw new Error('Failed to generate codes');
       }
     } catch (error: any) {
       toast({
@@ -56,16 +56,16 @@ export default function TestPage() {
 
     try {
       setIsValidating(true);
-      const { success, result, error } = await validateRedeemCode(codeToValidate);
+      const plan = await validateRedeemCode(codeToValidate);
 
-      if (success) {
-        setValidationResult(result);
+      if (plan) {
+        setValidationResult(plan);
         toast({
           title: 'Success',
           description: 'Code validated successfully',
         });
       } else {
-        throw new Error(error || 'Invalid or expired code');
+        throw new Error('Invalid or expired code');
       }
     } catch (error: any) {
       setValidationResult(null);

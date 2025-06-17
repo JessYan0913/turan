@@ -6,6 +6,7 @@ import { setStaticParamsLocale } from 'next-international/server';
 import type React from 'react';
 
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
 import { I18nProviderClient } from '@/locales/client';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -31,6 +32,7 @@ export default async function RootLayout({
         <I18nProviderClient locale={locale}>
           <ThemeProvider>
             <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+            <Toaster />
           </ThemeProvider>
         </I18nProviderClient>
       </body>

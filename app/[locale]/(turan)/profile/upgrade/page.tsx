@@ -13,43 +13,17 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import { upgrade } from '@/lib/actions/profile';
+import { validateRedeemCode } from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
 // Define the schema for the form validation
 const redeemCodeSchema = z.object({
-  code: z.string().min(6, { message: 'Redeem code must be at least 6 characters' }),
+  code: z.string().min(22, { message: 'Redeem code must be at least 22 characters' }),
 });
 
 type RedeemCodeFormValues = z.infer<typeof redeemCodeSchema>;
-
-// Mock function to simulate API call
-const verifyRedeemCode = async (code: string) => {
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  // Mock response - replace with actual API call
-  if (code === 'INVALID') {
-    throw new Error('Invalid redeem code');
-  }
-
-  return {
-    success: true,
-    data: {
-      code,
-      planName: 'Pro Monthly',
-      value: 30, // days
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-  };
-};
-
-// Mock function to redeem the code
-const redeemCode = async (code: string) => {
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  return { success: true };
-};
 
 export default function UpgradePage() {
   const router = useRouter();
@@ -74,9 +48,16 @@ export default function UpgradePage() {
   const handleVerify = async (data: RedeemCodeFormValues) => {
     try {
       setIsVerifying(true);
-      const response = await verifyRedeemCode(data.code);
-      setVerificationResult(response.data);
+      const response = await validateRedeemCode(data.code);
+      setVerificationResult({
+        code: data.code,
+        planName: response.id || '',
+        value: response.amount || 0,
+        expiresAt: response.expiresAt.toISOString() || '',
+      });
     } catch (error) {
+      console.log('====> error');
+
       toast({
         title: 'Verification failed',
         description: error instanceof Error ? error.message : 'Failed to verify code',
@@ -92,7 +73,7 @@ export default function UpgradePage() {
 
     try {
       setIsRedeeming(true);
-      const response = await redeemCode(verificationResult.code);
+      const response = await upgrade(verificationResult.code);
 
       if (response.success) {
         toast({
@@ -171,7 +152,7 @@ export default function UpgradePage() {
                     <div>
                       <h3 className="font-medium">{verificationResult.planName}</h3>
                       <p className="text-muted-foreground text-sm">
-                        {verificationResult.value} {t('days')}
+                        {verificationResult.value} {t('credits')}
                       </p>
                     </div>
                     <CheckCircle className="size-6 text-green-500" />

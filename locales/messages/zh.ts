@@ -316,7 +316,7 @@ export default {
     redeem: '升级',
     redeeming: '升级中...',
     cancel: '取消',
-    days: '天',
+    credits: '积分',
     code: 'Code',
     expiresAt: '到期时间',
     profile: '个人中心',
