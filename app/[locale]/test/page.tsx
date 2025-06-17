@@ -20,31 +20,20 @@ export default function TestPage() {
   const [isValidating, setIsValidating] = useState(false);
   const { toast } = useToast();
 
-  // Form state for code generation
-  const [codePayload, setCodePayload] = useState({
-    type: 's' as const,
-    plan: 'p' as const,
-    amount: 1,
-    validDays: 30,
-  });
+  // Form state for plan selection
+  const [selectedPlan, setSelectedPlan] = useState<0 | 1>(0);
 
-  // Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setCodePayload((prev) => ({
-      ...prev,
-      [name]: name === 'amount' || name === 'validDays' ? parseInt(value) || 0 : value,
-    }));
-  };
+  // Available plans from redeem.ts
+  const plans = [
+    { id: 0 as const, name: 'Pro Plan', description: '1000 points, valid for 30 days' },
+    { id: 1 as const, name: 'Enterprise Plan', description: '5000 points, valid for 365 days' },
+  ];
 
   // Handle code generation
   const handleGenerateCode = async () => {
     try {
       setIsGenerating(true);
-      const { success, code, error } = await generateRedeemCode({
-        ...codePayload,
-        validUntil: codePayload.validDays,
-      });
+      const { success, code, error } = await generateRedeemCode(selectedPlan);
 
       if (success && code) {
         setGeneratedCodes([code]);
@@ -101,62 +90,33 @@ export default function TestPage() {
       <Card>
         <CardHeader>
           <CardTitle>Generate Redeem Code</CardTitle>
-          <CardDescription>Configure and generate a new redeem code</CardDescription>
+          <CardDescription>Select a plan to generate a redeem code</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
-              <select
-                id="type"
-                name="type"
-                value={codePayload.type}
-                onChange={handleInputChange}
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="subscription">Subscription</option>
-                <option value="points">Points</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="plan">Plan</Label>
+              <Label htmlFor="plan">Select Plan</Label>
               <select
                 id="plan"
-                name="plan"
-                value={codePayload.plan}
-                onChange={handleInputChange}
+                value={selectedPlan}
+                onChange={(e) => setSelectedPlan(parseInt(e.target.value) as 0 | 1)}
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <option value="pro">Pro</option>
-                <option value="enterprise">Enterprise</option>
+                {plans.map((plan) => (
+                  <option key={plan.id} value={plan.id}>
+                    {plan.name} - {plan.description}
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="amount">Amount</Label>
-              <Input
-                id="amount"
-                name="amount"
-                type="number"
-                min="1"
-                value={codePayload.amount}
-                onChange={handleInputChange}
-                placeholder="Enter amount"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="validDays">Valid for (days)</Label>
-              <Input
-                id="validDays"
-                name="validDays"
-                type="number"
-                min="1"
-                value={codePayload.validDays}
-                onChange={handleInputChange}
-                placeholder="Enter validity in days"
-              />
+            <div className="bg-muted rounded-md p-4">
+              <h4 className="mb-2 font-medium">Plan Details:</h4>
+              <div className="space-y-1 text-sm">
+                <p>Name: {plans[selectedPlan].name}</p>
+                <p>Points: {plans[selectedPlan].id === 0 ? '1000' : '5000'}</p>
+                <p>Validity: {plans[selectedPlan].id === 0 ? '30' : '365'} days</p>
+              </div>
             </div>
           </div>
 
