@@ -40,7 +40,7 @@ export function CreateRedeemCodeForm({ batchId, onCodeCreated }: CreateRedeemCod
           type: 'points' as const,
           value: points.toString(),
         };
-      } else if (type === 'plan_basic' || type === 'plan_pro' || type === 'plan_enterprise') {
+      } else if (type === 'plan_pro' || type === 'plan_enterprise') {
         // 提取套餐名称（去掉plan_前缀）
         const planName = type.replace('plan_', '');
         reward = {
