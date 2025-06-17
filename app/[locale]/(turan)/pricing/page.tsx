@@ -3,87 +3,10 @@ import { Check, Crown, Star, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { type Plan, PLANS } from '@/lib/pricing/config';
 import { getScopedI18n } from '@/locales/server';
 
-type PlanId = 'free' | 'pro' | 'enterprise' | 'basic';
-
-interface Plan {
-  id: PlanId;
-  price: string;
-  period: string;
-  features: string[];
-  limitations?: string[];
-  popular: boolean;
-}
-
-const PLANS: Plan[] = [
-  {
-    id: 'free',
-    price: '¥0',
-    period: '/Month',
-    features: [
-      '30 credits per month',
-      'Generate Image: 1 credit per image',
-      'Image Edit/Style Transform: 15 credits per operation',
-      'Standard quality output',
-      'Community support',
-      'Watermark output',
-    ],
-    limitations: ['Limited processing speed', 'Basic features only', 'Credits expire monthly'],
-    popular: false,
-  },
-  {
-    id: 'basic',
-    price: '¥19',
-    period: '/Month',
-    features: [
-      '300 credits per month',
-      'Generate Image: 1 credit per image',
-      'Image Edit/Style Transform: 15 credits per operation',
-      'High quality output',
-      'Normal processing speed',
-      'No watermark',
-      'Email support',
-    ],
-    popular: true,
-  },
-  {
-    id: 'pro',
-    price: '¥49',
-    period: '/Month',
-    features: [
-      '1000 credits per month',
-      'Generate Image: 1 credit per image',
-      'Image Edit/Style Transform: 15 credits per operation',
-      'High quality output',
-      'Priority processing',
-      'Batch processing (up to 10 images)',
-      'API access',
-      'Email support',
-    ],
-    popular: false,
-  },
-  {
-    id: 'enterprise',
-    price: '¥99',
-    period: '/Month',
-    features: [
-      '2500 credits per month',
-      'Generate Image: 1 credit per image',
-      'Image Edit/Style Transform: 15 credits per operation',
-      '4K ultra HD output',
-      'Exclusive processing server',
-      'Batch processing (unlimited)',
-      'Team collaboration features',
-      'Complete API suite',
-      'Dedicated customer support',
-      'SLA guarantee',
-    ],
-    popular: false,
-  },
-];
-
-const getPlanIcon = (id: string) => {
+const getPlanIcon = (id: Plan['id']) => {
   switch (id) {
     case 'free':
       return <Zap className="size-6" />;
@@ -166,6 +89,7 @@ export default async function PricingPage() {
                   <p className="text-muted-foreground text-sm">{plan.description}</p>
                   <div className="mt-4">
                     <span className="text-4xl font-bold">{plan.price}</span>
+                    <span>/</span>
                     <span className="text-muted-foreground text-lg">{plan.period}</span>
                   </div>
                 </CardHeader>

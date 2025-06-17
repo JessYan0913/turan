@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { generateRedeemCode, validateRedeemCode } from '@/lib/actions/redeem';
+import { generateRedeemCode, validateRedeemCode } from '@/lib/pricing';
+import { type PlanId, PLANS } from '@/lib/pricing/config';
 
 export default function TestPage() {
   // Redeem Code State
@@ -21,13 +22,7 @@ export default function TestPage() {
   const { toast } = useToast();
 
   // Form state for plan selection
-  const [selectedPlan, setSelectedPlan] = useState<0 | 1>(0);
-
-  // Available plans from redeem.ts
-  const plans = [
-    { id: 0 as const, name: 'Pro Plan', description: '1000 points, valid for 30 days' },
-    { id: 1 as const, name: 'Enterprise Plan', description: '5000 points, valid for 365 days' },
-  ];
+  const [selectedPlan, setSelectedPlan] = useState<PlanId>('pro');
 
   // Handle code generation
   const handleGenerateCode = async () => {
@@ -99,12 +94,12 @@ export default function TestPage() {
               <select
                 id="plan"
                 value={selectedPlan}
-                onChange={(e) => setSelectedPlan(parseInt(e.target.value) as 0 | 1)}
+                onChange={(e) => setSelectedPlan(e.target.value as PlanId)}
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {plans.map((plan) => (
+                {PLANS.map((plan) => (
                   <option key={plan.id} value={plan.id}>
-                    {plan.name} - {plan.description}
+                    {plan.id} - {plan.amount}
                   </option>
                 ))}
               </select>
@@ -113,9 +108,9 @@ export default function TestPage() {
             <div className="bg-muted rounded-md p-4">
               <h4 className="mb-2 font-medium">Plan Details:</h4>
               <div className="space-y-1 text-sm">
-                <p>Name: {plans[selectedPlan].name}</p>
-                <p>Points: {plans[selectedPlan].id === 0 ? '1000' : '5000'}</p>
-                <p>Validity: {plans[selectedPlan].id === 0 ? '30' : '365'} days</p>
+                <p>Name: {PLANS.find((plan) => plan.id === selectedPlan)?.id}</p>
+                <p>Points: {PLANS.find((plan) => plan.id === selectedPlan)?.amount}</p>
+                <p>Period: {PLANS.find((plan) => plan.id === selectedPlan)?.period}</p>
               </div>
             </div>
           </div>
