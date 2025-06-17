@@ -57,6 +57,7 @@
     "@vercel/blob": "^1.1.1",
     "ai": "^4.3.16",
     "autoprefixer": "^10.4.20",
+    "base-x": "^5.0.1",
     "bcrypt-ts": "^7.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -88,6 +89,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
+    "@types/base-x": "^3.0.10",
     "@types/node": "^22.15.30",
     "@types/react": "^19",
     "@types/react-dom": "^19",

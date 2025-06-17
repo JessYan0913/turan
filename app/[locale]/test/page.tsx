@@ -3,118 +3,213 @@
 import { useState } from 'react';
 
 import { Loader2 } from 'lucide-react';
-import Image from 'next/image';
-import { type Prediction } from 'replicate';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { usePollingRequest } from '@/hooks/usePollingRequest';
+import { generateRedeemCode, validateRedeemCode } from '@/lib/actions/redeem';
 
-export default function ImageGenerationTest() {
-  const [prompt, setPrompt] = useState('');
-
-  const {
-    execute: generateImage,
-    data: generatedImage,
-    status,
-  } = usePollingRequest<{ prompt: string }, Prediction>({
-    // 发起生成图片的请求
-    request: async (data) => {
-      const response = await fetch('/api/generate-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        throw new Error(error.message || '生成图片失败');
-      }
-      return response.json();
-    },
-    // 检查生成状态
-    checkStatus: async (id) => {
-      const response = await fetch(`/api/prediction/${id}`);
-      if (!response.ok) {
-        throw new Error('检查状态失败');
-      }
-      return response.json();
-    },
-    // 判断是否完成
-    isComplete: (data: Prediction) => data.status === 'succeeded' || data.status === 'failed',
-    // 提取结果
-    getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output[0] : null),
-
-    // 自定义消息
-    successMessage: '图片生成成功',
-    errorMessage: '生成图片失败',
-    timeoutMessage: '图片生成时间过长，请稍后刷新页面查看结果',
-  });
-
+export default function TestPage() {
+  // Redeem Code State
+  const [generatedCodes, setGeneratedCodes] = useState<string[]>([]);
+  const [codeToValidate, setCodeToValidate] = useState('');
+  const [validationResult, setValidationResult] = useState<any>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Form state for code generation
+  const [codePayload, setCodePayload] = useState({
+    type: 's' as const,
+    plan: 'p' as const,
+    amount: 1,
+    validDays: 30,
+  });
 
-    if (!prompt) {
-      toast({
-        title: '提示词不能为空',
-        description: '请输入提示词以生成图片',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    generateImage({ prompt });
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCodePayload((prev) => ({
+      ...prev,
+      [name]: name === 'amount' || name === 'validDays' ? parseInt(value) || 0 : value,
+    }));
   };
 
-  // 组件卸载时的清理工作
+  // Handle code generation
+  const handleGenerateCode = async () => {
+    try {
+      setIsGenerating(true);
+      const { success, code, error } = await generateRedeemCode({
+        ...codePayload,
+        validUntil: codePayload.validDays,
+      });
+
+      if (success && code) {
+        setGeneratedCodes([code]);
+        toast({
+          title: 'Success',
+          description: 'Redeem code generated successfully',
+        });
+      } else {
+        throw new Error(error || 'Failed to generate codes');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to generate codes',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Handle code validation
+  const handleValidateCode = async () => {
+    if (!codeToValidate.trim()) return;
+
+    try {
+      setIsValidating(true);
+      const { success, result, error } = await validateRedeemCode(codeToValidate);
+
+      if (success) {
+        setValidationResult(result);
+        toast({
+          title: 'Success',
+          description: 'Code validated successfully',
+        });
+      } else {
+        throw new Error(error || 'Invalid or expired code');
+      }
+    } catch (error: any) {
+      setValidationResult(null);
+      toast({
+        title: 'Error',
+        description: error.message || 'Invalid or expired code',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
   return (
-    <div className="container mx-auto py-8">
-      <Card className="mx-auto max-w-2xl">
+    <div className="container mx-auto max-w-3xl space-y-8 p-4">
+      <h1 className="text-2xl font-bold">Redeem Code Test</h1>
+      <Card>
         <CardHeader>
-          <CardTitle>图片生成测试</CardTitle>
-          <CardDescription>输入提示词生成图片</CardDescription>
+          <CardTitle>Generate Redeem Code</CardTitle>
+          <CardDescription>Configure and generate a new redeem code</CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="prompt">提示词</Label>
-              <Textarea
-                id="prompt"
-                placeholder="请输入图片描述..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                disabled={status === 'loading' || status === 'polling'}
-                rows={4}
+              <Label htmlFor="type">Type</Label>
+              <select
+                id="type"
+                name="type"
+                value={codePayload.type}
+                onChange={handleInputChange}
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="subscription">Subscription</option>
+                <option value="points">Points</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="plan">Plan</Label>
+              <select
+                id="plan"
+                name="plan"
+                value={codePayload.plan}
+                onChange={handleInputChange}
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="pro">Pro</option>
+                <option value="enterprise">Enterprise</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="amount">Amount</Label>
+              <Input
+                id="amount"
+                name="amount"
+                type="number"
+                min="1"
+                value={codePayload.amount}
+                onChange={handleInputChange}
+                placeholder="Enter amount"
               />
             </div>
 
-            {generatedImage && (
-              <div className="space-y-2">
-                <Label>生成结果</Label>
-                <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
-                  <Image src={generatedImage} alt="Generated" fill className="object-cover" priority />
-                </div>
-              </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex justify-end">
-            <Button type="submit" disabled={status === 'loading' || status === 'polling' || !prompt}>
-              {status === 'loading' || status === 'polling' ? (
+            <div className="space-y-2">
+              <Label htmlFor="validDays">Valid for (days)</Label>
+              <Input
+                id="validDays"
+                name="validDays"
+                type="number"
+                min="1"
+                value={codePayload.validDays}
+                onChange={handleInputChange}
+                placeholder="Enter validity in days"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button onClick={handleGenerateCode} disabled={isGenerating} className="w-full sm:w-auto">
+              {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
-                  生成中...
+                  Generating...
                 </>
               ) : (
-                '生成图片'
+                'Generate Code'
               )}
             </Button>
-          </CardFooter>
-        </form>
+          </div>
+
+          {generatedCodes.length > 0 && (
+            <div className="mt-4">
+              <Label>Generated Codes:</Label>
+              <div className="mt-2 space-y-2">
+                {generatedCodes.map((code, index) => (
+                  <div key={index} className="bg-muted rounded-md p-2 font-mono text-sm">
+                    {code}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-4 border-t pt-4">
+            <Label htmlFor="code-to-validate">Validate Code</Label>
+            <div className="mt-1 flex space-x-2">
+              <Input
+                id="code-to-validate"
+                placeholder="Paste code to validate"
+                value={codeToValidate}
+                onChange={(e) => setCodeToValidate(e.target.value)}
+              />
+              <Button onClick={handleValidateCode} disabled={!codeToValidate.trim() || isValidating}>
+                {isValidating ? <Loader2 className="size-4 animate-spin" /> : 'Validate'}
+              </Button>
+            </div>
+
+            {validationResult && (
+              <div className="mt-4 rounded-md bg-green-50 p-4 dark:bg-green-900/20">
+                <h4 className="mb-2 font-medium">Validation Result:</h4>
+                <pre className="overflow-auto rounded bg-white p-2 text-xs dark:bg-gray-900">
+                  {JSON.stringify(validationResult, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

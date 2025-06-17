@@ -3,20 +3,12 @@
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 import type { InferInsertModel } from 'drizzle-orm';
 import { and, eq, gte, sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 
-import * as schema from './schema';
+import { db } from './client';
 import { type OperationLog, operationLog, type User, user, type Work, work } from './schema';
 
 type NewWork = Omit<Work, 'id' | 'createdAt' | 'updatedAt'>;
-
 type NewUser = Omit<InferInsertModel<typeof user>, 'id' | 'createdAt' | 'updatedAt'>;
-
-const client = postgres(process.env.POSTGRES_URL!);
-
-// Create a properly typed database instance
-export const db = drizzle(client, { schema });
 
 export async function getUser(email: string): Promise<User | null> {
   try {
