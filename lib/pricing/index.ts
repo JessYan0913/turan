@@ -10,7 +10,7 @@ const base62 = baseX(BASE62);
 
 const SECRET = crypto.scryptSync(process.env.REDEEM_CODE_SECRET as string, 'turan', 32);
 
-export const generateRedeemCode = async (plan: Omit<PlanId, 'free'>): Promise<string> => {
+export const encryptionRedeemCode = async (plan: Omit<PlanId, 'free'>): Promise<string> => {
   try {
     const planIndex = PLANS.findIndex((p) => p.id === plan);
     if (planIndex === -1) {
@@ -28,7 +28,7 @@ export const generateRedeemCode = async (plan: Omit<PlanId, 'free'>): Promise<st
   }
 };
 
-export const validateRedeemCode = async (code: string): Promise<Plan & { expiresAt: Date }> => {
+export const decryptionRedeemCode = async (code: string): Promise<Plan & { expiresAt: Date }> => {
   try {
     const encrypted = base62.decode(code);
 

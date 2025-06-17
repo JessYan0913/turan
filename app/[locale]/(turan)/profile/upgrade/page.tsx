@@ -13,8 +13,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { upgrade } from '@/lib/actions/profile';
-import { validateRedeemCode } from '@/lib/pricing';
+import { upgrade, validationRedeemCode } from '@/lib/actions/profile';
 import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
@@ -48,7 +47,7 @@ export default function UpgradePage() {
   const handleVerify = async (data: RedeemCodeFormValues) => {
     try {
       setIsVerifying(true);
-      const response = await validateRedeemCode(data.code);
+      const response = await validationRedeemCode(data.code);
       setVerificationResult({
         code: data.code,
         planName: response.id || '',

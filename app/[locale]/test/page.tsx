@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { generateRedeemCode, validateRedeemCode } from '@/lib/pricing';
+import { encryptionRedeemCode, decryptionRedeemCode } from '@/lib/pricing';
 import { type PlanId, PLANS } from '@/lib/pricing/config';
 
 export default function TestPage() {
@@ -28,7 +28,7 @@ export default function TestPage() {
   const handleGenerateCode = async () => {
     try {
       setIsGenerating(true);
-      const code = await generateRedeemCode(selectedPlan);
+      const code = await encryptionRedeemCode(selectedPlan);
 
       if (code) {
         setGeneratedCodes([code]);
@@ -56,7 +56,7 @@ export default function TestPage() {
 
     try {
       setIsValidating(true);
-      const plan = await validateRedeemCode(codeToValidate);
+      const plan = await decryptionRedeemCode(codeToValidate);
 
       if (plan) {
         setValidationResult(plan);

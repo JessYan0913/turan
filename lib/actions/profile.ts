@@ -7,7 +7,8 @@ import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { type OperationLog, operationLog, type OperationStatus, type Work, work } from '@/lib/db/schema';
 import { redemptionRecord, transaction, user } from '@/lib/db/schema';
-import { validateRedeemCode } from '@/lib/pricing';
+import { decryptionRedeemCode } from '@/lib/pricing';
+import { type Plan } from '@/lib/pricing/config';
 
 /**
  * 获取用户作品总数
@@ -132,6 +133,15 @@ export async function listOperationLogs({
   }
 }
 
+export async function validationRedeemCode(redeemCode: string): Promise<Plan & { expiresAt: Date }> {
+  const plan = await decryptionRedeemCode(redeemCode);
+  const [record] = await db.select().from(redemptionRecord).where(eq(redemptionRecord.code, redeemCode));
+  if (record) {
+    throw new Error('兑换码已使用');
+  }
+  return plan;
+}
+
 export async function upgrade(redeemCode: string) {
   const session = await auth();
   if (!session?.user) {
@@ -141,7 +151,7 @@ export async function upgrade(redeemCode: string) {
   if (!userId) {
     redirect('/login');
   }
-  const plan = await validateRedeemCode(redeemCode);
+  const plan = await decryptionRedeemCode(redeemCode);
   const [currentUser] = await db.select().from(user).where(eq(user.id, userId));
   return await db.transaction(async (tx) => {
     // Update user's plan and usage limit
