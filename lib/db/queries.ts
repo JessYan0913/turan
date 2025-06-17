@@ -124,8 +124,6 @@ export async function consumeUserPoints(userId: string, points: number): Promise
   }
 }
 
-// ...
-
 export async function updateWork(
   id: string,
   userId: string,
@@ -151,8 +149,6 @@ export async function updateWork(
     throw error instanceof Error ? error : new Error('Failed to update work');
   }
 }
-
-// ...
 
 export async function updateOperationLog(
   id: string,

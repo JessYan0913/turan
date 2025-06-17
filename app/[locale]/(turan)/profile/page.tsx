@@ -7,15 +7,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { auth } from '@/lib/auth';
 import {
-  getUser,
   getUserTotalProcessingTime,
   getUserUsedWorkTypesCount,
   getUserWorksCount,
   getUserWorksThisMonthCount,
   listOperationLogs,
-} from '@/lib/db/queries';
+} from '@/lib/actions/profile';
+import { auth } from '@/lib/auth';
+import { getUser } from '@/lib/db/queries';
 import { getScopedI18n } from '@/locales/server';
 
 export default async function ProfilePage() {
@@ -45,10 +45,21 @@ export default async function ProfilePage() {
 
   // 用户统计数据
   const stats = {
-    plan: '专业版',
-    planExpiry: '2024-03-15',
-    usageThisMonth: 234,
-    planLimit: 500,
+    plan: (() => {
+      if (userInfo.plan === 'pro') return '专业版';
+      if (userInfo.plan === 'enterprise') return '企业版';
+      if (userInfo.plan === 'basic') return '基础版';
+      return '免费版';
+    })(),
+    planExpiry: (() => {
+      if (!userInfo.planExpiry) return '无限期';
+      if (userInfo.planExpiry instanceof Date) {
+        return userInfo.planExpiry.toISOString().slice(0, 10);
+      }
+      return String(userInfo.planExpiry).slice(0, 10);
+    })(),
+    usageThisMonth: userInfo.usageCurrent || 0,
+    planLimit: userInfo.usageLimit || 100,
   };
 
   return (
