@@ -54,7 +54,7 @@ export const register = async (_: RegisterActionState, formData: FormData): Prom
       password: formData.get('password'),
     });
 
-    const [user] = await getUser(validatedData.email);
+    const user = await getUser(validatedData.email);
 
     if (user) {
       return { status: 'user_exists' } as RegisterActionState;

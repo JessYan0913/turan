@@ -99,6 +99,13 @@
       "when": 1750127017761,
       "tag": "0013_solid_gwen_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1750149739650,
+      "tag": "0014_magenta_sersi",
+      "breakpoints": true
     }
   ]
 }

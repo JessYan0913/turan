@@ -13,22 +13,28 @@ export const user = pgTable(
     phone: varchar('phone', { length: 20 }),
     bio: text(),
     avatar: text(),
-    joinDate: timestamp('join_date').notNull().defaultNow(),
+    points: integer('points').default(0).notNull(),
     plan: varchar('plan', { length: 20 }).default('free'),
     planExpiry: timestamp('plan_expiry'),
+    subscriptionId: varchar('subscription_id', { length: 128 }),
     usageLimit: integer('usage_limit').default(100),
     usageCurrent: integer('usage_current').default(0),
     favoriteStyle: varchar('favorite_style', { length: 50 }),
     lastActive: timestamp('last_active'),
     emailVerified: boolean('email_verified').default(false),
-    metadata: text('metadata'),
+    metadata: jsonb('metadata').default({}),
+    joinDate: timestamp('join_date').notNull().defaultNow(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .notNull()
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (table) => [index('user_email_idx').on(table.email), index('user_plan_idx').on(table.plan)]
+  (table) => [
+    index('user_email_idx').on(table.email),
+    index('user_plan_idx').on(table.plan),
+    index('user_points_idx').on(table.points),
+  ]
 );
 
 export type User = InferSelectModel<typeof user> & {
@@ -158,101 +164,60 @@ export const operationLog = pgTable(
 
 export type OperationLog = InferSelectModel<typeof operationLog>;
 
-// 定义兑换码类型
-export type RedeemCodeType = 'points' | 'subscription' | 'combo' | 'plan_basic' | 'plan_pro' | 'plan_enterprise';
+// 定义交易类型
+export type TransactionType = 'redeem_code' | 'payment' | 'refund' | 'adjustment';
 
-// 定义兑换码状态
-export type RedeemCodeStatus = 'active' | 'expired' | 'disabled';
+// 定义交易状态
+export type TransactionStatus = 'pending' | 'completed' | 'failed' | 'refunded';
 
-// 定义兑换结果
-export type RedeemResultType = 'success' | 'expired' | 'invalid' | 'used_up';
-
-// 兑换码批次表
-export const redeemBatch = pgTable(
-  'redeem_batch',
+// 交易记录表
+export const transaction = pgTable(
+  'transaction',
   {
-    // 基础信息
     id: uuid('id').primaryKey().notNull().defaultRandom(),
-    name: varchar('name', { length: 128 }).notNull(),
-    channel: varchar('channel', { length: 64 }),
-    note: text('note'),
-
-    // 审计字段
-    createdBy: varchar('created_by', { length: 64 }),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  },
-  (table) => [
-    index('redeem_batch_channel_idx').on(table.channel),
-    index('redeem_batch_created_at_idx').on(table.createdAt),
-  ]
-);
-
-export type RedeemBatch = InferSelectModel<typeof redeemBatch>;
-
-// 兑换码表
-export const redeemCode = pgTable(
-  'redeem_code',
-  {
-    // 基础信息
-    id: uuid('id').primaryKey().notNull().defaultRandom(),
-    code: varchar('code', { length: 32 }).notNull().unique(),
-
-    // 奖励信息
-    type: varchar('type', { length: 32 }).notNull().$type<RedeemCodeType>(),
-    reward: jsonb('reward').notNull(), // 奖励详情，结构见文档
-
-    // 使用限制
-    usageLimit: integer('usage_limit').default(1),
-    usedCount: integer('used_count').default(0),
-    expireAt: timestamp('expire_at'),
-    status: varchar('status', { length: 16 }).notNull().$type<RedeemCodeStatus>().default('active'),
-
-    // 关联信息
-    batchId: uuid('batch_id').references(() => redeemBatch.id),
-
-    // 审计字段
-    createdBy: varchar('created_by', { length: 64 }),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  },
-  (table) => [
-    index('redeem_code_code_idx').on(table.code),
-    index('redeem_code_type_idx').on(table.type),
-    index('redeem_code_status_idx').on(table.status),
-    index('redeem_code_batch_id_idx').on(table.batchId),
-    index('redeem_code_expire_at_idx').on(table.expireAt),
-  ]
-);
-
-export type RedeemCode = InferSelectModel<typeof redeemCode>;
-
-// 兑换码使用记录表
-export const redeemCodeUsage = pgTable(
-  'redeem_code_usage',
-  {
-    // 基础信息
-    id: uuid('id').primaryKey().notNull().defaultRandom(),
-    code: varchar('code', { length: 32 })
-      .notNull()
-      .references(() => redeemCode.code),
-
-    // 使用信息
     userId: uuid('user_id')
       .notNull()
-      .references(() => user.id),
-    usedAt: timestamp('used_at', { withTimezone: true }).notNull().defaultNow(),
-    ipAddress: varchar('ip_address', { length: 64 }),
-    userAgent: text('user_agent'),
-
-    // 结果信息
-    result: varchar('result', { length: 16 }).notNull().$type<RedeemResultType>(),
-    message: text('message'),
+      .references(() => user.id, { onDelete: 'cascade' }),
+    type: varchar('type', { length: 32 }).notNull().$type<TransactionType>(),
+    amount: integer('amount').notNull(), // 正数表示收入，负数表示支出
+    status: varchar('status', { length: 32 }).notNull().$type<TransactionStatus>().default('completed'),
+    metadata: jsonb('metadata').default({}), // 存储额外信息，如JWT内容、支付信息等
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
-    index('redeem_code_usage_code_idx').on(table.code),
-    index('redeem_code_usage_user_id_idx').on(table.userId),
-    index('redeem_code_usage_used_at_idx').on(table.usedAt),
-    index('redeem_code_usage_result_idx').on(table.result),
+    index('transaction_user_id_idx').on(table.userId),
+    index('transaction_type_idx').on(table.type),
+    index('transaction_status_idx').on(table.status),
+    index('transaction_created_at_idx').on(table.createdAt),
   ]
 );
 
-export type RedeemCodeUsage = InferSelectModel<typeof redeemCodeUsage>;
+export type Transaction = InferSelectModel<typeof transaction>;
+
+// 兑换记录表（替换原有的redeemCodeUsage）
+export const redemptionRecord = pgTable(
+  'redemption_record',
+  {
+    id: uuid('id').primaryKey().notNull().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    code: varchar('code', { length: 255 }).notNull(), // 原始兑换码
+    type: varchar('type', { length: 32 }).notNull(), // 兑换类型
+    reward: jsonb('reward').notNull(), // 奖励详情
+    transactionId: uuid('transaction_id').references(() => transaction.id),
+    metadata: jsonb('metadata').default({}), // 存储JWT payload等原始数据
+    redeemedAt: timestamp('redeemed_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('redemption_user_id_idx').on(table.userId),
+    index('redemption_code_idx').on(table.code),
+    index('redemption_redeemed_at_idx').on(table.redeemedAt),
+  ]
+);
+
+export type RedemptionRecord = InferSelectModel<typeof redemptionRecord>;
