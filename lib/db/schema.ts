@@ -21,6 +21,7 @@ export const user = pgTable(
     favoriteStyle: varchar('favorite_style', { length: 50 }),
     lastActive: timestamp('last_active'),
     emailVerified: boolean('email_verified').default(false),
+    metadata: text('metadata'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .notNull()
@@ -37,6 +38,15 @@ export type User = InferSelectModel<typeof user> & {
     limit: number;
     used: number;
     expiry?: Date;
+  };
+  // 套餐订阅信息
+  planSubscription?: {
+    plan: 'basic' | 'pro' | 'enterprise';
+    monthlyPoints: number;
+    startDate: string;
+    endDate: string;
+    redeemCode: string;
+    nextResetDate: string;
   };
 };
 
@@ -149,7 +159,7 @@ export const operationLog = pgTable(
 export type OperationLog = InferSelectModel<typeof operationLog>;
 
 // 定义兑换码类型
-export type RedeemCodeType = 'points' | 'subscription' | 'combo';
+export type RedeemCodeType = 'points' | 'subscription' | 'combo' | 'plan_basic' | 'plan_pro' | 'plan_enterprise';
 
 // 定义兑换码状态
 export type RedeemCodeStatus = 'active' | 'expired' | 'disabled';

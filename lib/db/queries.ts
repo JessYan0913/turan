@@ -60,8 +60,13 @@ export async function getUserById(userId: string): Promise<User | null> {
   }
 }
 
-// 更新用户积分（增加积分）
-export async function addUserPoints(userId: string, points: number): Promise<User> {
+/**
+ * 为用户添加积分（增加总积分额度）
+ * @param userId 用户ID
+ * @param points 要添加的积分数
+ * @returns 更新后的用户信息
+ */
+export async function addUserPoints(userId: string, points: number, plan?: string): Promise<User> {
   try {
     // 获取当前用户
     const currentUser = await getUserById(userId);
@@ -69,246 +74,86 @@ export async function addUserPoints(userId: string, points: number): Promise<Use
       throw new Error('用户不存在');
     }
 
-    // 更新用户当前积分
+    // 更新用户总积分额度
     const [updatedUser] = await db
       .update(user)
       .set({
-        usageCurrent: (currentUser.usageCurrent || 0) + points,
+        usageLimit: (currentUser.usageLimit || 0) + points,
+        plan: plan || currentUser.plan,
+        updatedAt: new Date(),
       })
       .where(eq(user.id, userId))
       .returning();
 
     return updatedUser;
   } catch (error) {
-    console.error('更新用户积分失败', error);
+    console.error('添加用户积分失败', error);
     throw error;
   }
 }
 
-// 消耗用户积分
-export async function consumeUserPoints(
-  userId: string,
-  points: number
-): Promise<{
-  success: boolean;
-  message: string;
-  user?: User;
-}> {
+/**
+ * 获取用户可用积分
+ * @param userId 用户ID
+ * @returns 用户可用积分数量
+ * @throws 当用户不存在时抛出错误
+ */
+export async function getAvailablePoints(userId: string): Promise<number> {
+  try {
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      return 0;
+    }
+
+    // 计算可用积分 = 总额度 - 已使用积分
+    const totalPoints = currentUser.usageLimit || 0;
+    const usedPoints = currentUser.usageCurrent || 0;
+    return Math.max(0, totalPoints - usedPoints);
+  } catch (error) {
+    console.error('获取用户可用积分失败:', error);
+    return 0;
+  }
+}
+
+/**
+ * 消耗用户积分
+ * @param userId 用户ID
+ * @param points 要消耗的积分数
+ * @returns 更新后的用户信息
+ * @throws 当用户不存在或积分不足时抛出错误
+ */
+export async function consumeUserPoints(userId: string, points: number): Promise<User> {
   try {
     // 获取当前用户
     const currentUser = await getUserById(userId);
     if (!currentUser) {
-      return { success: false, message: '用户不存在' };
+      throw new Error('用户不存在');
     }
 
-    // 检查积分是否足够
-    if ((currentUser.usageCurrent || 0) < points) {
-      return { success: false, message: '积分不足' };
+    // 检查可用积分是否足够
+    const availablePoints = await getAvailablePoints(userId);
+    if (availablePoints < points) {
+      throw new Error('积分不足');
     }
 
-    // 更新用户积分
+    // 更新已使用积分
     const [updatedUser] = await db
       .update(user)
       .set({
-        usageCurrent: (currentUser.usageCurrent || 0) - points,
+        usageCurrent: (currentUser.usageCurrent || 0) + points,
+        updatedAt: new Date(),
       })
       .where(eq(user.id, userId))
       .returning();
 
-    return {
-      success: true,
-      message: `成功消耗${points}积分`,
-      user: updatedUser,
-    };
+    return updatedUser;
   } catch (error) {
     console.error('消耗用户积分失败', error);
-    return { success: false, message: '消耗积分失败：' + (error instanceof Error ? error.message : '未知错误') };
-  }
-}
-
-// Work related queries
-export interface GetWorksOptions {
-  userId: string;
-  searchTerm?: string;
-  type?: WorkType;
-  limit?: number;
-  offset?: number;
-}
-
-export interface PaginatedWorks {
-  items: Work[];
-  total: number;
-  hasMore: boolean;
-}
-
-export async function getWorks({
-  userId,
-  searchTerm = '',
-  type,
-  limit = 10,
-  offset = 0,
-}: GetWorksOptions): Promise<PaginatedWorks> {
-  try {
-    const query = db
-      .select()
-      .from(work)
-      .where(
-        and(
-          eq(work.userId, userId),
-          searchTerm
-            ? sql`LOWER(${work.title}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
-               LOWER(${work.style}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
-            : undefined,
-          type ? eq(work.type, type) : undefined
-        )
-      )
-      .orderBy(desc(work.createdAt))
-      .limit(limit + 1) // Fetch one extra to check if there are more
-      .offset(offset);
-
-    const works = await query;
-
-    const hasMore = works.length > limit;
-    const items = hasMore ? works.slice(0, -1) : works;
-
-    // Get total count for pagination
-    const countQuery = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(work)
-      .where(
-        and(
-          eq(work.userId, userId),
-          searchTerm
-            ? sql`LOWER(${work.title}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
-               LOWER(${work.style}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
-            : undefined,
-          type ? eq(work.type, type) : undefined
-        )
-      )
-      .then((rows) => rows[0]?.count || 0);
-
-    return {
-      items,
-      total: Number(countQuery),
-      hasMore,
-    };
-  } catch (error) {
-    console.error('Failed to fetch works:', error);
-    throw new Error('Failed to fetch works');
-  }
-}
-
-export async function getWorkById(id: string, userId: string): Promise<Work | undefined> {
-  try {
-    const [result] = await db
-      .select()
-      .from(work)
-      .where(and(eq(work.id, id), eq(work.userId, userId)))
-      .limit(1);
-
-    return result;
-  } catch (error) {
-    console.error('Failed to get work by id:', error);
-    throw new Error('Failed to get work');
-  }
-}
-
-export async function getUserWorksCount(userId: string): Promise<number> {
-  try {
-    const result = await db.select({ count: count() }).from(work).where(eq(work.userId, userId));
-
-    return result[0]?.count || 0;
-  } catch (error) {
-    console.error('Failed to get user works count', error);
     throw error;
   }
 }
 
-export async function getUserWorksThisMonthCount(userId: string): Promise<number> {
-  try {
-    const startOfCurrentMonth = startOfMonth(new Date());
-
-    const result = await db
-      .select({ count: count() })
-      .from(work)
-      .where(and(eq(work.userId, userId), gte(work.createdAt, startOfCurrentMonth)));
-
-    return result[0]?.count || 0;
-  } catch (error) {
-    console.error('Failed to get user works this month count', error);
-    throw error;
-  }
-}
-
-export async function getUserTotalProcessingTime(userId: string): Promise<string> {
-  try {
-    const result = await db
-      .select({ total: sum(work.predictTime) })
-      .from(work)
-      .where(eq(work.userId, userId));
-
-    const totalSeconds = Number(result[0]?.total || 0);
-    if (totalSeconds < 60) {
-      return `${Math.round(totalSeconds)}s`; // Show seconds if less than a minute
-    }
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-    if (hours === 0) {
-      return `${minutes}m`;
-    }
-
-    return `${hours}h ${minutes}m`;
-  } catch (error) {
-    console.error('Failed to get user total processing time', error);
-    throw error;
-  }
-}
-
-export async function getUserUsedWorkTypesCount(userId: string): Promise<number> {
-  try {
-    const result = await db
-      .select({
-        count: sql<number>`count(distinct ${work.type})::int`,
-      })
-      .from(work)
-      .where(eq(work.userId, userId));
-
-    return result[0]?.count || 0;
-  } catch (error) {
-    console.error('Failed to get user used work types count', error);
-    throw error;
-  }
-}
-
-export interface CreateWorkInput {
-  title: string;
-  type: WorkType;
-  prompt: string;
-  originalImage?: string;
-  processedImage?: string;
-  style?: string;
-  metadata?: Record<string, unknown> | Array<Record<string, unknown>>;
-  createdAt?: Date;
-  completedAt?: Date;
-  predictTime?: string;
-}
-
-export async function createWork(data: CreateWorkInput, userId: string): Promise<Work> {
-  try {
-    const newWorkData = {
-      ...data,
-      userId,
-    };
-
-    const [newWork] = await db.insert(work).values(newWorkData).returning();
-
-    return newWork;
-  } catch (error) {
-    console.error('Failed to create work:', error);
-    throw new Error('Failed to create work');
-  }
-}
+// ...
 
 export async function updateWork(
   id: string,
@@ -336,151 +181,7 @@ export async function updateWork(
   }
 }
 
-export async function deleteWork(id: string, userId: string): Promise<void> {
-  try {
-    await db.delete(work).where(and(eq(work.id, id), eq(work.userId, userId)));
-  } catch (error) {
-    console.error('Failed to delete work:', error);
-    throw error instanceof Error ? error : new Error('Failed to delete work');
-  }
-}
-
-// Operation Log related queries
-export interface ListOperationLogsOptions {
-  userId?: string;
-  operationType?: OperationType;
-  status?: OperationStatus;
-  startDate?: Date;
-  endDate?: Date;
-  searchTerm?: string;
-  limit?: number;
-  offset?: number;
-  orderBy?: 'asc' | 'desc';
-}
-
-export interface PaginatedOperationLogs {
-  items: OperationLog[];
-  total: number;
-  hasMore: boolean;
-}
-
-export async function createOperationLog(data: Omit<OperationLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
-  try {
-    const insertData = {
-      operationName: data.operationName,
-      operationType: data.operationType,
-      operationModule: data.operationModule,
-      operationDesc: data.operationDesc,
-      method: data.method,
-      path: data.path,
-      query: data.query,
-      params: data.params,
-      body: data.body,
-      status: data.status,
-      response: data.response,
-      error: data.error,
-      userId: data.userId,
-      ip: data.ip,
-      startTime: data.startTime,
-      endTime: data.endTime,
-      metadata: data.metadata,
-    };
-
-    await db.insert(operationLog).values(insertData);
-  } catch (error) {
-    console.error('🧨 Failed to insert operation log');
-    console.error('Raw error:', error);
-
-    const cause = (error as any)?.cause ?? (error as any)?.originalError;
-
-    if (cause) {
-      console.error('💥 Cause.message:', cause.message);
-      console.error('💥 Cause.code:', cause.code);
-      console.error('💥 Cause.detail:', cause.detail);
-      console.error('💥 Cause.hint:', cause.hint);
-    } else {
-      console.warn('⚠️ No cause info found');
-    }
-
-    throw error;
-  }
-}
-
-export async function getOperationLog(id: string): Promise<OperationLog | undefined> {
-  try {
-    const [log] = await db.select().from(operationLog).where(eq(operationLog.id, id));
-    return log;
-  } catch (error) {
-    console.error('Failed to get operation log:', error);
-    throw new Error('Failed to get operation log');
-  }
-}
-
-export async function listOperationLogs({
-  userId,
-  operationType,
-  status,
-  startDate,
-  endDate,
-  searchTerm,
-  limit = 20,
-  offset = 0,
-  orderBy = 'desc',
-}: ListOperationLogsOptions = {}): Promise<PaginatedOperationLogs> {
-  try {
-    const conditions = [];
-    if (userId) {
-      conditions.push(eq(operationLog.userId, userId));
-    }
-    if (operationType) {
-      conditions.push(eq(operationLog.operationType, operationType));
-    }
-    if (status) {
-      conditions.push(eq(operationLog.status, status));
-    }
-    if (startDate) {
-      conditions.push(gte(operationLog.startTime, startDate));
-    }
-    if (endDate) {
-      conditions.push(sql`${operationLog.startTime} <= ${endDate}`);
-    }
-
-    if (searchTerm) {
-      conditions.push(
-        sql`LOWER(${operationLog.operationName}) LIKE ${`%${searchTerm.toLowerCase()}%`} OR 
-            LOWER(${operationLog.operationModule || ''}) LIKE ${`%${searchTerm.toLowerCase()}%`}`
-      );
-    }
-
-    // Get the logs
-    const logs = await db
-      .select()
-      .from(operationLog)
-      .where(conditions.length > 0 ? and(...conditions) : undefined)
-      .orderBy(orderBy === 'desc' ? desc(operationLog.startTime) : operationLog.startTime)
-      .limit(limit + 1) // Fetch one extra to check if there are more
-      .offset(offset);
-
-    const hasMore = logs.length > limit;
-    const items = hasMore ? logs.slice(0, -1) : logs;
-
-    // Get total count for pagination
-    const countResult = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(operationLog)
-      .where(conditions.length > 0 ? and(...conditions) : undefined)
-      .then((rows) => rows[0]?.count || 0);
-
-    return {
-      items,
-      total: Number(countResult),
-      hasMore,
-    };
-  } catch (error) {
-    console.error('Failed to list operation logs:', error);
-    throw new Error('Failed to list operation logs');
-  }
-}
+// ...
 
 export async function updateOperationLog(
   id: string,
@@ -888,18 +589,12 @@ export async function redeemCodeForUser({
       return { success: false, result: 'used_up', message: '兑换码已达到使用上限' };
     }
 
-    // 检查用户是否已经使用过此兑换码（如果是一次性码）
+    // 如果是单次使用的兑换码，检查用户是否已经使用过
     if (code.usageLimit === 1) {
       const usageCount = await db
         .select({ count: sql<number>`count(*)` })
         .from(redeemCodeUsage)
-        .where(
-          and(
-            eq(redeemCodeUsage.code, codeString),
-            eq(redeemCodeUsage.userId, userId),
-            eq(redeemCodeUsage.result, 'success')
-          )
-        )
+        .where(and(eq(redeemCodeUsage.code, codeString), eq(redeemCodeUsage.userId, userId)))
         .then((rows) => Number(rows[0]?.count || 0));
 
       if (usageCount > 0) {
@@ -909,15 +604,66 @@ export async function redeemCodeForUser({
           ipAddress,
           userAgent,
           result: 'used_up',
-          message: '您已使用过此兑换码',
+          message: '您已经使用过此兑换码',
         });
-        return { success: false, result: 'used_up', message: '您已使用过此兑换码' };
+        return { success: false, result: 'used_up', message: '您已经使用过此兑换码' };
       }
     }
 
-    // 应用奖励
-    // 注意：这里只记录兑换成功，实际的奖励应用逻辑应在业务层处理
-    // 例如：更新用户积分、延长会员时间等
+    // 处理兑换码奖励
+    const reward = code.reward as Record<string, any>;
+
+    // 处理不同类型的兑换码
+    if (code.type === 'points') {
+      // 普通积分兑换码
+      const pointsToAdd = parseInt(reward.value, 10) || 0;
+      if (pointsToAdd > 0) {
+        await addUserPoints(userId, pointsToAdd);
+      }
+    } else if (code.type === 'plan_basic' || code.type === 'plan_pro' || code.type === 'plan_enterprise') {
+      // 套餐兑换码
+      const planType = code.type.replace('plan_', '') as 'basic' | 'pro' | 'enterprise';
+      const days = parseInt(reward.days, 10) || 30; // 默认30天
+
+      // 根据套餐类型确定每月积分额度
+      let monthlyPoints = 0;
+      switch (planType) {
+        case 'basic':
+          monthlyPoints = 300;
+          break;
+        case 'pro':
+          monthlyPoints = 1000;
+          break;
+        case 'enterprise':
+          monthlyPoints = 2500;
+          break;
+      }
+
+      // 计算月数（向上取整）
+      const months = Math.ceil(days / 30);
+
+      // 立即添加第一个月的积分
+      await addUserPoints(userId, monthlyPoints);
+
+      // 创建套餐订阅
+      await createPlanSubscription({
+        userId,
+        plan: planType,
+        monthlyPoints,
+        startDate: new Date(),
+        days,
+        redeemCode: codeString,
+      });
+
+      // 更新用户的计划类型
+      await db
+        .update(user)
+        .set({
+          plan: planType,
+          updatedAt: new Date(),
+        })
+        .where(eq(user.id, userId));
+    }
 
     // 更新兑换码使用次数
     await db
@@ -925,7 +671,7 @@ export async function redeemCodeForUser({
       .set({ usedCount: (code.usedCount ?? 0) + 1 })
       .where(eq(redeemCode.code, codeString));
 
-    // 记录兑换成功
+    // 记录兑换码使用
     await logRedeemAttempt({
       code: codeString,
       userId,
@@ -935,12 +681,7 @@ export async function redeemCodeForUser({
       message: '兑换成功',
     });
 
-    return {
-      success: true,
-      result: 'success',
-      message: '兑换成功',
-      reward: code.reward as Record<string, any>,
-    };
+    return { success: true, result: 'success', message: '兑换成功', reward };
   } catch (error) {
     console.error('兑换码使用失败:', error);
     await logRedeemAttempt({
@@ -948,15 +689,157 @@ export async function redeemCodeForUser({
       userId,
       ipAddress,
       userAgent,
-      result: 'invalid', // 使用有效的 RedeemResultType
+      result: 'invalid',
       message: '系统错误',
     });
     throw error instanceof Error ? error : new Error('兑换码使用失败');
   }
 }
 
+// ...
+
+// 计算下一个重置日期
+function calculateNextResetDate(startDate: Date): Date {
+  const nextDate = new Date(startDate);
+  nextDate.setMonth(nextDate.getMonth() + 1);
+  return nextDate;
+}
+
+// 重置用户的月度积分
+export async function resetMonthlyPoints(userId: string): Promise<void> {
+  try {
+    // 获取用户信息
+    const currentUser = await getUserById(userId);
+    if (!currentUser || !currentUser.metadata) {
+      return; // 用户不存在或没有元数据，无需重置
+    }
+
+    // 解析元数据
+    const metadata = JSON.parse(currentUser.metadata);
+    const subscription = metadata.planSubscription;
+
+    // 检查是否有套餐订阅
+    if (!subscription) {
+      return; // 没有套餐订阅，无需重置
+    }
+
+    // 检查订阅是否已过期
+    const endDate = new Date(subscription.endDate);
+    if (endDate < new Date()) {
+      // 订阅已过期，清除订阅信息
+      delete metadata.planSubscription;
+      await db
+        .update(user)
+        .set({
+          metadata: JSON.stringify(metadata),
+          updatedAt: new Date(),
+        })
+        .where(eq(user.id, userId));
+      return;
+    }
+
+    // 检查是否需要重置
+    const nextResetDate = new Date(subscription.nextResetDate);
+    if (nextResetDate > new Date()) {
+      return; // 还没到重置时间
+    }
+
+    // 重置积分：添加月度积分
+    const monthlyPoints = subscription.monthlyPoints;
+    await addUserPoints(userId, monthlyPoints);
+
+    // 更新下次重置时间
+    const newNextResetDate = calculateNextResetDate(nextResetDate);
+    metadata.planSubscription.nextResetDate = newNextResetDate.toISOString();
+
+    // 更新用户元数据
+    await db
+      .update(user)
+      .set({
+        metadata: JSON.stringify(metadata),
+        updatedAt: new Date(),
+      })
+      .where(eq(user.id, userId));
+
+    console.log(
+      `已为用户 ${userId} 重置${subscription.plan}套餐月度积分，添加了 ${monthlyPoints} 积分，下次重置时间：${newNextResetDate}`
+    );
+  } catch (error) {
+    console.error('重置月度积分失败:', error);
+    throw error;
+  }
+}
+
+// 创建套餐订阅
+export async function createPlanSubscription({
+  userId,
+  plan,
+  monthlyPoints,
+  startDate,
+  days,
+  redeemCode,
+}: {
+  userId: string;
+  plan: 'basic' | 'pro' | 'enterprise';
+  monthlyPoints: number;
+  startDate: Date;
+  days: number;
+  redeemCode: string;
+}): Promise<void> {
+  try {
+    // 创建套餐订阅记录
+    // 为了简化实现，我们使用现有的表结构，将信息存储在用户表的元数据字段中
+
+    const currentUser = await getUserById(userId);
+    if (!currentUser) {
+      throw new Error('用户不存在');
+    }
+
+    // 计算订阅结束日期
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + days);
+
+    // 解析现有元数据
+    const existingMetadata = currentUser.metadata ? JSON.parse(currentUser.metadata) : {};
+
+    // 创建新的元数据对象，保留现有数据并添加订阅信息
+    const newMetadata = {
+      ...existingMetadata,
+      planSubscription: {
+        plan,
+        monthlyPoints,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        redeemCode,
+        nextResetDate: calculateNextResetDate(startDate).toISOString(),
+      },
+    };
+
+    // 更新用户表，添加套餐订阅信息
+    await db
+      .update(user)
+      .set({
+        metadata: JSON.stringify(newMetadata),
+        updatedAt: new Date(),
+      })
+      .where(eq(user.id, userId));
+
+    console.log(`为用户 ${userId} 创建了${plan}套餐订阅，每月 ${monthlyPoints} 积分，有效期 ${days} 天`);
+  } catch (error) {
+    console.error('创建套餐订阅失败:', error);
+    throw error;
+  }
+}
+
 // 记录兑换码使用记录
-async function logRedeemAttempt(data: {
+export async function logRedeemAttempt({
+  code,
+  userId,
+  ipAddress,
+  userAgent,
+  result,
+  message,
+}: {
   code: string;
   userId: string;
   ipAddress?: string;
@@ -966,12 +849,12 @@ async function logRedeemAttempt(data: {
 }): Promise<void> {
   try {
     await db.insert(redeemCodeUsage).values({
-      code: data.code,
-      userId: data.userId,
-      ipAddress: data.ipAddress, // 修正字段名称与schema匹配
-      userAgent: data.userAgent,
-      result: data.result,
-      message: data.message,
+      code,
+      userId,
+      ipAddress,
+      userAgent,
+      result,
+      message,
     });
   } catch (error) {
     console.error('记录兑换码使用失败:', error);

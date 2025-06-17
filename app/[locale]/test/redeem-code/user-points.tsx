@@ -44,16 +44,22 @@ export function UserPoints({ userId, refreshTrigger = 0 }: UserPointsProps) {
     return <div className="text-yellow-500">未找到用户信息</div>;
   }
 
+  // 计算可用积分
+  const availablePoints = (user.usageLimit || 0) - (user.usageCurrent || 0);
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div className="rounded-lg bg-blue-50 p-4">
-          <h3 className="text-sm font-medium text-blue-700">当前积分</h3>
-          <p className="mt-2 text-2xl font-bold text-blue-800">{user.usageCurrent || 0}</p>
+          <h3 className="text-sm font-medium text-blue-700">总积分额度</h3>
+          <p className="mt-2 text-2xl font-bold text-blue-800">{user.usageLimit || 0}</p>
+        </div>
+        <div className="rounded-lg bg-red-50 p-4">
+          <h3 className="text-sm font-medium text-red-700">已使用积分</h3>
+          <p className="mt-2 text-2xl font-bold text-red-800">{user.usageCurrent || 0}</p>
         </div>
         <div className="rounded-lg bg-green-50 p-4">
-          <h3 className="text-sm font-medium text-green-700">积分上限</h3>
-          <p className="mt-2 text-2xl font-bold text-green-800">{user.usageLimit || 0}</p>
+          <h3 className="text-sm font-medium text-green-700">可用积分</h3>
+          <p className="mt-2 text-2xl font-bold text-green-800">{availablePoints}</p>
         </div>
       </div>
 

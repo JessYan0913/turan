@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { toast } from 'sonner';
+
 import { addUserPoints, redeemCodeForUser } from '@/lib/db/queries';
 
 interface RedeemCodeFormProps {
@@ -25,6 +27,7 @@ export function RedeemCodeForm({ userId, onRedeemSuccess }: RedeemCodeFormProps)
 
     if (!code.trim()) {
       setError('请输入兑换码');
+      toast.error('请输入兑换码');
       return;
     }
 
@@ -44,25 +47,30 @@ export function RedeemCodeForm({ userId, onRedeemSuccess }: RedeemCodeFormProps)
 
       // 如果兑换成功
       if (redeemResult.success) {
-        // 如果有积分奖励，自动更新用户积分
+        // 如果有积分奖励，自动更新用户总积分额度（usageLimit）
         if (redeemResult.reward?.type === 'points') {
           try {
             const points = parseInt(redeemResult.reward.value) || 0;
             if (points > 0) {
-              await addUserPoints(userId, points);
+              await addUserPoints(userId, points, redeemResult.reward.planName);
+              toast.success(`成功添加 ${points} 积分到您的账户总额度`);
             }
           } catch (pointsError) {
             console.error('更新积分失败:', pointsError);
+            toast.error('更新积分失败: ' + (pointsError instanceof Error ? pointsError.message : '未知错误'));
           }
         }
 
-        // 无论什么类型的奖励，都刷新用户信息
         if (onRedeemSuccess) {
           onRedeemSuccess();
         }
+      } else {
+        toast.error(redeemResult.message || '兑换失败');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '兑换失败，请稍后再试');
+      const errorMessage = err instanceof Error ? err.message : '兑换失败，请稍后再试';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
