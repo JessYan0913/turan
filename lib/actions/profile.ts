@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { type OperationLog, operationLog, type OperationStatus, type Work, work } from '@/lib/db/schema';
-import { user } from '@/lib/db/schema';
+import { redemptionRecord, transaction, user } from '@/lib/db/schema';
 import { validateRedeemCode } from '@/lib/pricing';
 
 /**
@@ -143,15 +143,56 @@ export async function upgrade(redeemCode: string) {
   }
   const plan = await validateRedeemCode(redeemCode);
   const [currentUser] = await db.select().from(user).where(eq(user.id, userId));
-  const [updatedUser] = await db
-    .update(user)
-    .set({
-      usageLimit: (currentUser.usageLimit || 0) + plan.amount,
-      plan: plan.id,
-      planExpiry: plan.expiresAt,
-      updatedAt: new Date(),
-    })
-    .where(eq(user.id, userId))
-    .returning();
-  return { success: true, plan, user: updatedUser };
+  return await db.transaction(async (tx) => {
+    // Update user's plan and usage limit
+    const [updatedUser] = await tx
+      .update(user)
+      .set({
+        usageLimit: (currentUser.usageLimit || 0) + plan.amount,
+        plan: plan.id,
+        planExpiry: plan.expiresAt,
+        updatedAt: new Date(),
+      })
+      .where(eq(user.id, userId))
+      .returning();
+
+    // Record the transaction
+    const [currentTransaction] = await tx
+      .insert(transaction)
+      .values({
+        userId,
+        amount: plan.amount,
+        type: 'redeem_code',
+        status: 'completed',
+        metadata: {
+          action: 'upgrade',
+          planId: plan.id,
+          amount: plan.amount,
+          expiresAt: plan.expiresAt?.toISOString(),
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    await tx.insert(redemptionRecord).values({
+      userId,
+      code: redeemCode,
+      type: 'plan_upgrade',
+      transactionId: currentTransaction.id,
+      reward: {
+        planId: plan.id,
+        planName: plan.id, // Using plan.id as name since plan.name isn't available
+        amount: plan.amount,
+        expiresAt: plan.expiresAt?.toISOString(),
+      },
+      metadata: {
+        action: 'upgrade',
+        source: 'redeem_code',
+      },
+      redeemedAt: new Date(),
+    });
+
+    return { success: true, plan, user: updatedUser };
+  });
 }
