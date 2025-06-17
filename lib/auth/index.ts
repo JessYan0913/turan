@@ -22,10 +22,10 @@ export const {
       credentials: {},
       async authorize({ email, password }: any) {
         const users = await getUser(email);
-        if (users.length === 0) return null;
-        const passwordsMatch = await compare(password, users[0].password!);
+        if (!users) return null;
+        const passwordsMatch = await compare(password, users.password!);
         if (!passwordsMatch) return null;
-        return users[0] as any;
+        return users;
       },
     }),
   ],
