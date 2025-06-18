@@ -171,7 +171,7 @@ export type TransactionType = 'redeem_code' | 'payment' | 'refund' | 'adjustment
 export type TransactionStatus = 'pending' | 'completed' | 'failed' | 'refunded';
 
 // 交易记录表
-export const transaction = pgTable(
+export const transactionTable = pgTable(
   'transaction',
   {
     id: uuid('id').primaryKey().notNull().defaultRandom(),
@@ -196,7 +196,7 @@ export const transaction = pgTable(
   ]
 );
 
-export type Transaction = InferSelectModel<typeof transaction>;
+export type Transaction = InferSelectModel<typeof transactionTable>;
 
 // 兑换记录表（替换原有的redeemCodeUsage）
 export const redemptionRecord = pgTable(
@@ -209,7 +209,7 @@ export const redemptionRecord = pgTable(
     code: varchar('code', { length: 255 }).notNull(), // 原始兑换码
     type: varchar('type', { length: 32 }).notNull(), // 兑换类型
     reward: jsonb('reward').notNull(), // 奖励详情
-    transactionId: uuid('transaction_id').references(() => transaction.id),
+    transactionId: uuid('transaction_id').references(() => transactionTable.id),
     metadata: jsonb('metadata').default({}), // 存储JWT payload等原始数据
     redeemedAt: timestamp('redeemed_at', { withTimezone: true }).notNull().defaultNow(),
   },

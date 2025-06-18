@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { redemptionRecord, transaction, userTable, workTable } from '@/lib/db/schema';
+import { redemptionRecord, transactionTable, userTable, workTable } from '@/lib/db/schema';
 import { decryptionRedeemCode } from '@/lib/pricing';
 import { type Plan } from '@/lib/pricing/config';
 
@@ -119,7 +119,7 @@ export async function upgrade(redeemCode: string) {
 
     // Record the transaction
     const [currentTransaction] = await tx
-      .insert(transaction)
+      .insert(transactionTable)
       .values({
         userId,
         amount: plan.amount,
