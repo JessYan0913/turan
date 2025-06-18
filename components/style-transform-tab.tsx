@@ -1,13 +1,12 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Palette } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
-import useSWR from 'swr';
 import { z } from 'zod';
 
 import { ImageUploader } from '@/components/image-uploader';
@@ -16,17 +15,8 @@ import { StyleSelector } from '@/components/style-selector';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
-import { fetcher } from '@/lib/utils';
+import { StyleOption } from '@/lib/actions/options';
 import { useScopedI18n } from '@/locales/client';
-
-export interface StyleOption {
-  id: string;
-  name: string;
-  description: string;
-  prompt: string;
-  preview: string;
-}
-
 export function StyleTransformTab() {
   const router = useRouter();
   const t = useScopedI18n('styleTransform');
@@ -91,13 +81,21 @@ export function StyleTransformTab() {
     timeoutMessage: t('result.timeout'),
   });
 
-  const { data: styleOptions } = useSWR<StyleOption[]>('/api/style-options?tab=style', fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    shouldRetryOnError: true,
-    errorRetryCount: 3,
-    errorRetryInterval: 5000,
-  });
+  const [styleOptions, setStyleOptions] = useState<StyleOption[]>([]);
+
+  useEffect(() => {
+    const fetchStyleOptions = async () => {
+      try {
+        const { getStyleOptions } = await import('@/lib/actions/options');
+        const data = await getStyleOptions();
+        setStyleOptions(data);
+      } catch (error) {
+        console.error('Failed to fetch style options:', error);
+      }
+    };
+
+    fetchStyleOptions();
+  }, []);
 
   const handleImageUpload = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {

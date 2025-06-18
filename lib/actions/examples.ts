@@ -1,3 +1,5 @@
+'use server';
+
 export async function getExamples() {
   return {
     // 编辑功能示例

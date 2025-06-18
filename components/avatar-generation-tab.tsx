@@ -1,13 +1,12 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
-import useSWR from 'swr';
 import { z } from 'zod';
 
 import { ImageUploader } from '@/components/image-uploader';
@@ -16,7 +15,6 @@ import { StyleSelector } from '@/components/style-selector';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/usePollingRequest';
-import { fetcher } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
 export interface StyleOption {
@@ -89,23 +87,21 @@ export function AvatarGenerationTab() {
     timeoutMessage: t('result.timeout'),
   });
 
-  const { data: styles } = useSWR<StyleOption[]>('/api/style-options?tab=avatar', fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    shouldRetryOnError: true,
-    errorRetryCount: 3,
-    errorRetryInterval: 5000,
-  });
+  const [styles, setStyles] = useState<StyleOption[]>([]);
 
-  const handleImageUpload = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        form.setValue('image', file, { shouldValidate: true });
+  useEffect(() => {
+    const fetchStyles = async () => {
+      try {
+        const { getAvatarStyleOptions } = await import('@/lib/actions/options');
+        const data = await getAvatarStyleOptions();
+        setStyles(data);
+      } catch (error) {
+        console.error('Failed to fetch avatar styles:', error);
       }
-    },
-    [form]
-  );
+    };
+
+    fetchStyles();
+  }, []);
 
   const onSubmit = useCallback(
     (data: z.infer<typeof avatarGenerationSchema>) => {
