@@ -11,6 +11,7 @@ import * as z from 'zod';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { upgrade, validationRedeemCode } from '@/lib/actions/upgrade';
@@ -19,7 +20,7 @@ import { useScopedI18n } from '@/locales/client';
 
 // Define the schema for the form validation
 const redeemCodeSchema = z.object({
-  code: z.string().min(22, { message: 'Redeem code must be at least 22 characters' }),
+  code: z.string().min(21, { message: 'Redeem code must be at least 22 characters' }),
 });
 
 type RedeemCodeFormValues = z.infer<typeof redeemCodeSchema>;
@@ -42,6 +43,7 @@ export default function UpgradePage() {
     defaultValues: {
       code: '',
     },
+    mode: 'onBlur',
   });
 
   const handleVerify = async (data: RedeemCodeFormValues) => {
@@ -119,31 +121,39 @@ export default function UpgradePage() {
           </CardHeader>
           <CardContent>
             {!verificationResult ? (
-              <form onSubmit={form.handleSubmit(handleVerify)} className="space-y-4">
-                <div className="space-y-2">
-                  <Input
-                    {...form.register('code')}
-                    placeholder={t('codePlaceholder')}
-                    className="h-12 text-center font-mono text-lg tracking-wider"
-                    disabled={isVerifying}
-                    autoComplete="off"
-                    autoFocus
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleVerify)} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder={t('codePlaceholder')}
+                            className="h-12 text-center font-mono text-lg tracking-wider"
+                            disabled={isVerifying}
+                            autoComplete="off"
+                            autoFocus
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  {form.formState.errors.code && (
-                    <p className="text-destructive text-sm">{form.formState.errors.code.message}</p>
-                  )}
-                </div>
-                <Button type="submit" className="w-full" disabled={isVerifying || !form.formState.isDirty}>
-                  {isVerifying ? (
-                    <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                      {t('verifying')}
-                    </>
-                  ) : (
-                    t('verify')
-                  )}
-                </Button>
-              </form>
+                  <Button type="submit" className="w-full" disabled={isVerifying || !form.formState.isDirty}>
+                    {isVerifying ? (
+                      <>
+                        <Loader2 className="mr-2 size-4 animate-spin" />
+                        {t('verifying')}
+                      </>
+                    ) : (
+                      t('verify')
+                    )}
+                  </Button>
+                </form>
+              </Form>
             ) : (
               <div className="space-y-6">
                 <div className="rounded-lg border p-4">
