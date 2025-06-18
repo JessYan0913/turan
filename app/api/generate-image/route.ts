@@ -31,7 +31,7 @@ export async function POST(request: Request) {
         output_format: 'png',
       },
       webhook: `${WEBHOOK_HOST}/api/generate-image/webhook`,
-      webhook_events_filter: ['completed', 'logs', 'start'],
+      webhook_events_filter: ['completed'],
     });
 
     return NextResponse.json({ id, input }, { status: 201 });
