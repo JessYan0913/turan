@@ -106,7 +106,7 @@ export type OperationType = 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'LOGIN' | 
 export type OperationStatus = 'SUCCESS' | 'FAILED' | 'PENDING' | 'CANCELLED';
 
 // 操作日志表
-export const operationLog = pgTable(
+export const operationLogTable = pgTable(
   'operation_log',
   {
     // 基础信息
@@ -162,7 +162,7 @@ export const operationLog = pgTable(
   ]
 );
 
-export type OperationLog = InferSelectModel<typeof operationLog>;
+export type OperationLog = InferSelectModel<typeof operationLogTable>;
 
 // 定义交易类型
 export type TransactionType = 'redeem_code' | 'payment' | 'refund' | 'adjustment';
