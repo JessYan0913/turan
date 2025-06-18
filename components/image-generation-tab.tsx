@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
 import { z } from 'zod';
@@ -17,6 +18,7 @@ import { useScopedI18n } from '@/locales/client';
 
 export function ImageGenerationTab() {
   const t = useScopedI18n('imageGeneration');
+  const router = useRouter();
 
   // Define the form schema using Zod
   const imageGenerationSchema = z.object({
@@ -47,6 +49,7 @@ export function ImageGenerationTab() {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
+        router.push('/login');
         throw new Error(error.message || t('result.error'));
       }
       const result = await response.json();
