@@ -8,12 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import {
-  getUserTotalProcessingTime,
-  getUserUsedWorkTypesCount,
-  getUserWorksCount,
-  getUserWorksThisMonthCount,
-} from '@/lib/actions/profile';
+import { getUserWorkStatistics } from '@/lib/actions/profile';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
@@ -30,31 +25,26 @@ export default async function ProfilePage() {
     redirect('/login');
   }
 
-  const [totalWorks, thisMonthWorks, totalProcessingTime, usedWorkTypesCount] = await Promise.all([
-    getUserWorksCount(user.id),
-    getUserWorksThisMonthCount(user.id),
-    getUserTotalProcessingTime(user.id),
-    getUserUsedWorkTypesCount(user.id),
-  ]);
+  const { totalWorks, worksThisMonth, totalProcessingTime, usedWorkTypes } = await getUserWorkStatistics(user.id);
 
-  // 用户统计数据
-  const stats = {
-    plan: (() => {
-      if (user.plan === 'pro') return '专业版';
-      if (user.plan === 'enterprise') return '企业版';
-      if (user.plan === 'basic') return '基础版';
-      return '免费版';
-    })(),
-    planExpiry: (() => {
-      if (!user.planExpiry) return '无限期';
-      if (user.planExpiry instanceof Date) {
-        return user.planExpiry.toISOString().slice(0, 10);
-      }
-      return String(user.planExpiry).slice(0, 10);
-    })(),
-    usageThisMonth: user.usageCurrent || 0,
-    planLimit: user.usageLimit || 100,
-  };
+  const planName = (() => {
+    if (user.plan === 'pro') return '专业版';
+    if (user.plan === 'enterprise') return '企业版';
+    if (user.plan === 'basic') return '基础版';
+    return '免费版';
+  })();
+
+  const planExpiry = (() => {
+    if (!user.planExpiry) return '无限期';
+    if (user.planExpiry instanceof Date) {
+      return user.planExpiry.toISOString().slice(0, 10);
+    }
+    return String(user.planExpiry).slice(0, 10);
+  })();
+
+  const usageThisMonth = user.usageCurrent || 0;
+  const planLimit = user.usageLimit || 100;
+  const usagePercentage = (usageThisMonth / planLimit) * 100;
 
   return (
     <div className="bg-muted/20 min-h-screen pb-8 pt-16 transition-colors duration-300">
@@ -121,20 +111,20 @@ export default async function ProfilePage() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="textSecondary">{t('plan.type')}</span>
-                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">{stats.plan}</Badge>
+                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">{planName}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="textSecondary">{t('plan.expiry')}</span>
-                  <span className="text-sm">{stats.planExpiry}</span>
+                  <span className="text-sm">{planExpiry}</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="textSecondary">{t('plan.usage')}</span>
                     <span className="text-sm">
-                      {stats.usageThisMonth}/{stats.planLimit}
+                      {usageThisMonth}/{planLimit}
                     </span>
                   </div>
-                  <Progress value={(stats.usageThisMonth / stats.planLimit) * 100} className="h-2" />
+                  <Progress value={usagePercentage} className="h-2" />
                 </div>
                 <Button className="btn-primary w-full rounded-lg px-5 py-2 text-base font-medium shadow-md">
                   <Link href="/profile/upgrade" className="block size-full">
@@ -167,7 +157,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-muted-foreground text-sm">{t('stats.thisMonthWorks')}</p>
-                      <p className="text-3xl font-bold">{thisMonthWorks}</p>
+                      <p className="text-3xl font-bold">{worksThisMonth}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
                       <Zap className="size-6 text-green-500" />
@@ -193,7 +183,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-muted-foreground text-sm">{t('stats.workTypes')}</p>
-                      <p className="text-3xl font-bold">{usedWorkTypesCount}</p>
+                      <p className="text-3xl font-bold">{usedWorkTypes}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30">
                       <Layers className="size-6 text-amber-500" />

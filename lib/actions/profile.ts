@@ -1,6 +1,6 @@
 'use server';
 
-import { and, count, eq, gte, sql } from 'drizzle-orm';
+import { count, eq, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
@@ -9,78 +9,40 @@ import { redemptionRecordTable, transactionTable, userTable, workTable } from '@
 import { decryptionRedeemCode } from '@/lib/pricing';
 import { type Plan } from '@/lib/pricing/config';
 
-/**
- * 获取用户作品总数
- * @param userId 用户ID
- * @returns 作品总数
- */
-export async function getUserWorksCount(userId: string): Promise<number> {
-  try {
-    const result = await db.select({ count: count() }).from(workTable).where(eq(workTable.userId, userId));
-    return result[0]?.count || 0;
-  } catch (error) {
-    console.error('获取用户作品总数失败:', error);
-    return 0;
-  }
-}
-
-/**
- * 获取用户本月作品数
- * @param userId 用户ID
- * @returns 本月作品数
- */
-export async function getUserWorksThisMonthCount(userId: string): Promise<number> {
+export async function getUserWorkStatistics(userId: string): Promise<{
+  totalWorks: number;
+  worksThisMonth: number;
+  totalProcessingTime: number;
+  usedWorkTypes: number;
+}> {
   try {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const result = await db
-      .select({ count: count() })
-      .from(workTable)
-      .where(and(eq(workTable.userId, userId), gte(workTable.createdAt, firstDayOfMonth)));
-    return result[0]?.count || 0;
-  } catch (error) {
-    console.error('获取用户本月作品数失败:', error);
-    return 0;
-  }
-}
 
-/**
- * 获取用户总处理时间
- * @param userId 用户ID
- * @returns 总处理时间（秒）
- */
-export async function getUserTotalProcessingTime(userId: string): Promise<number> {
-  try {
-    const result = await db
-      .select({
-        totalTime: sql<number>`COALESCE(SUM(${workTable.predictTime}), 0)::float`,
-      })
-      .from(workTable)
-      .where(eq(workTable.userId, userId));
-    return parseFloat((result[0]?.totalTime || 0).toFixed(2));
-  } catch (error) {
-    console.error('获取用户总处理时间失败:', error);
-    return 0;
-  }
-}
-
-/**
- * 获取用户使用过的作品类型数量
- * @param userId 用户ID
- * @returns 使用过的作品类型数量
- */
-export async function getUserUsedWorkTypesCount(userId: string): Promise<number> {
-  try {
     const [result] = await db
       .select({
-        typeCount: sql<number>`COUNT(DISTINCT ${workTable.type})`,
+        totalWorks: count(),
+        worksThisMonth: sql<number>`SUM(CASE WHEN ${workTable.createdAt} >= ${firstDayOfMonth} THEN 1 ELSE 0 END)`,
+        totalProcessingTime: sql<number>`COALESCE(SUM(${workTable.predictTime}), 0)`,
+        usedWorkTypes: sql<number>`COUNT(DISTINCT ${workTable.type})`,
       })
       .from(workTable)
       .where(eq(workTable.userId, userId));
-    return result.typeCount || 0;
+
+    return {
+      totalWorks: Number(result.totalWorks) || 0,
+      worksThisMonth: Number(result.worksThisMonth) || 0,
+      totalProcessingTime: parseFloat((Number(result.totalProcessingTime) || 0).toFixed(2)),
+      usedWorkTypes: Number(result.usedWorkTypes) || 0,
+    };
   } catch (error) {
-    console.error('获取用户使用过的作品类型数量失败:', error);
-    return 0;
+    console.error('获取用户统计信息失败:', error);
+    return {
+      totalWorks: 0,
+      worksThisMonth: 0,
+      totalProcessingTime: 0,
+      usedWorkTypes: 0,
+    };
   }
 }
 
