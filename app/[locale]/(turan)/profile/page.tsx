@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { BarChart3, Camera, Check, Clock, CreditCard, Crown, Edit3, Info, Layers, User, Zap } from 'lucide-react';
+import { BarChart3, Camera, Clock, CreditCard, Crown, Edit3, Layers, User, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -16,7 +16,7 @@ import {
 } from '@/lib/actions/profile';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { user } from '@/lib/db/schema';
+import { userTable } from '@/lib/db/schema';
 import { getScopedI18n } from '@/locales/server';
 
 export default async function ProfilePage() {
@@ -25,35 +25,35 @@ export default async function ProfilePage() {
   if (!session || !session.user?.email) {
     redirect('/login');
   }
-  const [userInfo] = await db.select().from(user).where(eq(user.email, session.user.email));
-  if (!userInfo) {
+  const [user] = await db.select().from(userTable).where(eq(userTable.email, session.user.email));
+  if (!user) {
     redirect('/login');
   }
 
   const [totalWorks, thisMonthWorks, totalProcessingTime, usedWorkTypesCount] = await Promise.all([
-    getUserWorksCount(userInfo.id),
-    getUserWorksThisMonthCount(userInfo.id),
-    getUserTotalProcessingTime(userInfo.id),
-    getUserUsedWorkTypesCount(userInfo.id),
+    getUserWorksCount(user.id),
+    getUserWorksThisMonthCount(user.id),
+    getUserTotalProcessingTime(user.id),
+    getUserUsedWorkTypesCount(user.id),
   ]);
 
   // 用户统计数据
   const stats = {
     plan: (() => {
-      if (userInfo.plan === 'pro') return '专业版';
-      if (userInfo.plan === 'enterprise') return '企业版';
-      if (userInfo.plan === 'basic') return '基础版';
+      if (user.plan === 'pro') return '专业版';
+      if (user.plan === 'enterprise') return '企业版';
+      if (user.plan === 'basic') return '基础版';
       return '免费版';
     })(),
     planExpiry: (() => {
-      if (!userInfo.planExpiry) return '无限期';
-      if (userInfo.planExpiry instanceof Date) {
-        return userInfo.planExpiry.toISOString().slice(0, 10);
+      if (!user.planExpiry) return '无限期';
+      if (user.planExpiry instanceof Date) {
+        return user.planExpiry.toISOString().slice(0, 10);
       }
-      return String(userInfo.planExpiry).slice(0, 10);
+      return String(user.planExpiry).slice(0, 10);
     })(),
-    usageThisMonth: userInfo.usageCurrent || 0,
-    planLimit: userInfo.usageLimit || 100,
+    usageThisMonth: user.usageCurrent || 0,
+    planLimit: user.usageLimit || 100,
   };
 
   return (
@@ -67,7 +67,7 @@ export default async function ProfilePage() {
               <CardContent className="p-6">
                 <div className="relative mb-4 inline-block">
                   <Avatar className="size-24">
-                    <AvatarImage src={userInfo.avatar || '/placeholder.svg'} />
+                    <AvatarImage src={user.avatar || '/placeholder.svg'} />
                     <AvatarFallback className="bg-gray-700 text-white">
                       <User className="size-12" />
                     </AvatarFallback>
@@ -79,12 +79,12 @@ export default async function ProfilePage() {
                     <Camera className="size-4" />
                   </Link>
                 </div>
-                <h2 className="mb-1 text-2xl font-bold">{userInfo.name}</h2>
-                <p className="text-muted-foreground mb-3">{userInfo.email}</p>
+                <h2 className="mb-1 text-2xl font-bold">{user.name}</h2>
+                <p className="text-muted-foreground mb-3">{user.email}</p>
                 <p className="text-muted-foreground mb-4 text-sm">
                   {t('stats.joinDate')}{' '}
                   {(() => {
-                    const d: unknown = userInfo.joinDate ?? userInfo.createdAt;
+                    const d: unknown = user.joinDate ?? user.createdAt;
                     if (!d) return '';
                     if (typeof d === 'string') return d.slice(0, 10);
                     if (d instanceof Date && typeof d.toISOString === 'function') return d.toISOString().slice(0, 10);

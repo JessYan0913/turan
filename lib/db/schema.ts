@@ -3,7 +3,7 @@ import { boolean, index, integer, jsonb, numeric, pgTable, text, timestamp, uuid
 
 import { nanoid } from '@/lib/utils';
 
-export const user = pgTable(
+export const userTable = pgTable(
   'user',
   {
     id: uuid('id').primaryKey().notNull().defaultRandom(),
@@ -37,7 +37,7 @@ export const user = pgTable(
   ]
 );
 
-export type User = InferSelectModel<typeof user> & {
+export type User = InferSelectModel<typeof userTable> & {
   // Additional computed properties can be added here if needed
   planInfo?: {
     name: string;
@@ -79,7 +79,7 @@ export const work = pgTable(
     style: varchar('style', { length: 100 }).default(''),
     userId: uuid('user_id')
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => userTable.id, { onDelete: 'cascade' }),
     metadata: jsonb('metadata').default({}),
     completedAt: timestamp('completed_at'),
     predictTime: numeric('predict_time', { precision: 10, scale: 9 }),
@@ -177,7 +177,7 @@ export const transaction = pgTable(
     id: uuid('id').primaryKey().notNull().defaultRandom(),
     userId: uuid('user_id')
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => userTable.id, { onDelete: 'cascade' }),
     type: varchar('type', { length: 32 }).notNull().$type<TransactionType>(),
     amount: integer('amount').notNull(), // 正数表示收入，负数表示支出
     status: varchar('status', { length: 32 }).notNull().$type<TransactionStatus>().default('completed'),
@@ -205,7 +205,7 @@ export const redemptionRecord = pgTable(
     id: uuid('id').primaryKey().notNull().defaultRandom(),
     userId: uuid('user_id')
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => userTable.id, { onDelete: 'cascade' }),
     code: varchar('code', { length: 255 }).notNull(), // 原始兑换码
     type: varchar('type', { length: 32 }).notNull(), // 兑换类型
     reward: jsonb('reward').notNull(), // 奖励详情

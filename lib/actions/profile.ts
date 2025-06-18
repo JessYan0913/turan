@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { redemptionRecord, transaction, user, work } from '@/lib/db/schema';
+import { redemptionRecord, transaction, userTable, work } from '@/lib/db/schema';
 import { decryptionRedeemCode } from '@/lib/pricing';
 import { type Plan } from '@/lib/pricing/config';
 
@@ -103,18 +103,18 @@ export async function upgrade(redeemCode: string) {
     redirect('/login');
   }
   const plan = await decryptionRedeemCode(redeemCode);
-  const [currentUser] = await db.select().from(user).where(eq(user.id, userId));
+  const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
   return await db.transaction(async (tx) => {
     // Update user's plan and usage limit
     const [updatedUser] = await tx
-      .update(user)
+      .update(userTable)
       .set({
-        usageLimit: (currentUser.usageLimit || 0) + plan.amount,
+        usageLimit: (user.usageLimit || 0) + plan.amount,
         plan: plan.id,
         planExpiry: plan.expiresAt,
         updatedAt: new Date(),
       })
-      .where(eq(user.id, userId))
+      .where(eq(userTable.id, userId))
       .returning();
 
     // Record the transaction

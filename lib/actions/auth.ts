@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { signIn } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { user } from '@/lib/db/schema';
+import { userTable } from '@/lib/db/schema';
 
 const authFormSchema = z.object({
   email: z.string().email(),
@@ -57,15 +57,15 @@ export const register = async (_: RegisterActionState, formData: FormData): Prom
       password: formData.get('password'),
     });
 
-    const [userInfo] = await db.select().from(user).where(eq(user.email, validatedData.email));
+    const [user] = await db.select().from(userTable).where(eq(userTable.email, validatedData.email));
 
-    if (userInfo) {
+    if (user) {
       return { status: 'user_exists' } as RegisterActionState;
     }
 
     const salt = genSaltSync(10);
     const hash = hashSync(validatedData.password, salt);
-    await db.insert(user).values({
+    await db.insert(userTable).values({
       email: validatedData.email,
       password: hash,
       name: validatedData.email.split('@')[0],

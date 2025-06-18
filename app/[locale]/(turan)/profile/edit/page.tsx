@@ -8,7 +8,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { user } from '@/lib/db/schema';
+import { userTable } from '@/lib/db/schema';
 import { cn } from '@/lib/utils';
 import { getScopedI18n } from '@/locales/server';
 
@@ -17,8 +17,8 @@ export default async function ProfileEditPage() {
   if (!session || !session.user?.email) {
     redirect('/login');
   }
-  const [userInfo] = await db.select().from(user).where(eq(user.email, session.user.email));
-  if (!userInfo) {
+  const [user] = await db.select().from(userTable).where(eq(userTable.email, session.user.email));
+  if (!user) {
     redirect('/login');
   }
   const t = await getScopedI18n('profileEdit');
@@ -46,7 +46,7 @@ export default async function ProfileEditPage() {
             <CardTitle>{t('form.title')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <EditProfileForm userInfo={userInfo} />
+            <EditProfileForm userInfo={user} />
           </CardContent>
         </Card>
       </div>

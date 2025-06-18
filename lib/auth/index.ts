@@ -4,7 +4,7 @@ import NextAuth, { type Session, type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 import { db } from '@/lib/db/client';
-import { user } from '@/lib/db/schema';
+import { userTable } from '@/lib/db/schema';
 
 import { authConfig } from './config';
 
@@ -23,11 +23,11 @@ export const {
     Credentials({
       credentials: {},
       async authorize({ email, password }: any) {
-        const [userInfo] = await db.select().from(user).where(eq(user.email, email));
-        if (!userInfo) return null;
-        const passwordsMatch = await compare(password, userInfo.password!);
+        const [user] = await db.select().from(userTable).where(eq(userTable.email, email));
+        if (!user) return null;
+        const passwordsMatch = await compare(password, user.password!);
         if (!passwordsMatch) return null;
-        return userInfo;
+        return user;
       },
     }),
   ],
