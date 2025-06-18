@@ -14,7 +14,7 @@ import { ResultDisplay } from '@/components/result-display';
 import { StyleSelector } from '@/components/style-selector';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { usePollingRequest } from '@/hooks/usePollingRequest';
+import { usePollingRequest } from '@/hooks/use-polling-request';
 import { StyleOption } from '@/lib/actions/options';
 import { useScopedI18n } from '@/locales/client';
 export function StyleTransformTab() {

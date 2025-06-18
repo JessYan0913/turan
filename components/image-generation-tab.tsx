@@ -12,7 +12,7 @@ import { ResultDisplay } from '@/components/result-display';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { usePollingRequest } from '@/hooks/usePollingRequest';
+import { usePollingRequest } from '@/hooks/use-polling-request';
 import { useScopedI18n } from '@/locales/client';
 
 export function ImageGenerationTab() {
