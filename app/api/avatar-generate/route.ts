@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
-import { checkUserPoints } from '@/lib/actions/work';
+import { checkUserPoints, consumePoint } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
 import { WEBHOOK_HOST } from '@/lib/utils';
@@ -45,9 +45,11 @@ export async function POST(request: Request) {
         seed: 2,
         safety_tolerance: 2,
       },
-      webhook: `${WEBHOOK_HOST}/api/avatar-generate/webhook`,
+      webhook: `${WEBHOOK_HOST}/api/webhook/avatar-generate`,
       webhook_events_filter: ['completed', 'logs', 'start'],
     });
+
+    consumePoint(userId, 15);
 
     return NextResponse.json({ id, input }, { status: 201 });
   } catch (error) {

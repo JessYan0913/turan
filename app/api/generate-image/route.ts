@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { checkUserPoints } from '@/lib/actions/work';
+import { checkUserPoints, consumePoint } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
 import { WEBHOOK_HOST } from '@/lib/utils';
@@ -30,9 +30,11 @@ export async function POST(request: Request) {
         prompt,
         output_format: 'png',
       },
-      webhook: `${WEBHOOK_HOST}/api/generate-image/webhook`,
+      webhook: `${WEBHOOK_HOST}/api/webhook/generate-image`,
       webhook_events_filter: ['completed'],
     });
+
+    consumePoint(userId, 1);
 
     return NextResponse.json({ id, input }, { status: 201 });
   } catch (error) {

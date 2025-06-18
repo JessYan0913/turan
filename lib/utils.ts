@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { customAlphabet } from 'nanoid';
 import { twMerge } from 'tailwind-merge';
 
@@ -103,24 +103,29 @@ export async function downloadImage(imageUrl: string, filename?: string): Promis
   }
 }
 
-export function verifyWebhookSignature(request: Request): boolean {
-  const webhookId = request.headers.get('webhook-id');
-  const signature = request.headers.get('webhook-signature');
-  const timestamp = request.headers.get('webhook-timestamp');
-  console.log('=====>', JSON.stringify(Object.fromEntries(request.headers), null, 2));
+export function verifyWebhookSignature(signedContent: string, signatures: string): boolean {
+  try {
+    const signingSecret = process.env.REPLICATE_WEBHOOK_SIGNING_SECRET;
+    if (!signingSecret) {
+      console.error('Missing webhook signing secret');
+      return false;
+    }
+    // Get the secret key (remove 'whsec_' prefix if present)
+    const secretKey = signingSecret.split('_')[1];
+    const secretBytes = Buffer.from(secretKey, 'base64');
 
-  const body = request.body;
+    // Calculate the HMAC signature
+    const computedSignature = createHmac('sha256', secretBytes).update(signedContent).digest('base64');
 
-  if (!signature || !timestamp || !body) {
+    // Parse the webhook signatures (can be multiple space-separated)
+    const expectedSignatures = signatures.split(' ').map((sig) => sig.split(',')[1]);
+
+    const isValid = expectedSignatures.some((expectedSig) =>
+      timingSafeEqual(Buffer.from(expectedSig), Buffer.from(computedSignature))
+    );
+    return isValid;
+  } catch (error) {
+    console.error('Error verifying webhook signature:', error);
     return false;
   }
-  const signingSecret = process.env.REPLICATE_WEBHOOK_SIGNING_SECRET || '';
-  console.log('=====>', signingSecret);
-
-  const signedContent = `${webhookId}.${timestamp}.${JSON.stringify(body)}`;
-  const secretBytes = Buffer.from(signingSecret.split('_')[1], 'base64');
-  const computedSignature = createHmac('sha256', secretBytes).update(signedContent).digest('base64');
-  console.log('computedSignature', computedSignature);
-  console.log('signature', signature);
-  return signature === computedSignature;
 }

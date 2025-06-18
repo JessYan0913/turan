@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
-import { checkUserPoints } from '@/lib/actions/work';
+import { checkUserPoints, consumePoint } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
 import { getClientIp, WEBHOOK_HOST } from '@/lib/utils';
@@ -52,9 +52,11 @@ export async function POST(request: Request) {
         safety_tolerance: 2,
         ip: getClientIp(request),
       },
-      webhook: `${WEBHOOK_HOST}/api/style-transform/webhook`,
+      webhook: `${WEBHOOK_HOST}/api/webhook/style-transform`,
       webhook_events_filter: ['completed', 'logs', 'start'],
     });
+
+    consumePoint(userId, 15);
 
     return NextResponse.json({ id, input }, { status: 201 });
   } catch (error) {
