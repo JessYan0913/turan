@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { work, type WorkType } from '@/lib/db/schema';
+import { workTable, type WorkType } from '@/lib/db/schema';
 
 export async function GET(request: Request) {
   try {
@@ -24,14 +24,14 @@ export async function GET(request: Request) {
     }
 
     const conditions = [
-      eq(work.userId, userId),
-      ilike(work.title, `%${search}%`),
-      ...(type !== 'all' ? [eq(work.type, type as WorkType)] : []),
+      eq(workTable.userId, userId),
+      ilike(workTable.title, `%${search}%`),
+      ...(type !== 'all' ? [eq(workTable.type, type as WorkType)] : []),
     ];
 
     const result = await db
       .select()
-      .from(work)
+      .from(workTable)
       .where(and(...conditions))
       .limit(limit)
       .offset(offset);
@@ -75,7 +75,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Work ID is required' }, { status: 400 });
     }
 
-    await db.delete(work).where(and(eq(work.id, workId), eq(work.userId, userId)));
+    await db.delete(workTable).where(and(eq(workTable.id, workId), eq(workTable.userId, userId)));
 
     return NextResponse.json({ success: true });
   } catch (error) {

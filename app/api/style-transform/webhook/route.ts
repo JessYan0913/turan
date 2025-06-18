@@ -4,7 +4,7 @@ import { type Prediction } from 'replicate';
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
 import { db } from '@/lib/db/client';
-import { work } from '@/lib/db/schema';
+import { workTable } from '@/lib/db/schema';
 
 export async function POST(request: Request) {
   try {
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
       const processedImageBlob = await saveOnlineImage(prediction.output);
 
-      await db.insert(work).values({
+      await db.insert(workTable).values({
         userId,
         title,
         prompt,

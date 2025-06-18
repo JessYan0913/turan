@@ -63,7 +63,7 @@ export type WorkType = 'style-transfer' | 'avatar' | 'edit' | 'generate' | 'othe
 export type WorkStatus = 'processing' | 'completed' | 'failed';
 
 // 定义作品表结构
-export const work = pgTable(
+export const workTable = pgTable(
   'work',
   {
     id: varchar('id', { length: 191 })
@@ -97,7 +97,7 @@ export const work = pgTable(
   ]
 );
 
-export type Work = InferSelectModel<typeof work>;
+export type Work = InferSelectModel<typeof workTable>;
 
 // 定义操作类型
 export type OperationType = 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'LOGIN' | 'LOGOUT' | 'OTHER';

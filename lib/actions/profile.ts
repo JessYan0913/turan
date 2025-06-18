@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { redemptionRecord, transaction, userTable, work } from '@/lib/db/schema';
+import { redemptionRecord, transaction, userTable, workTable } from '@/lib/db/schema';
 import { decryptionRedeemCode } from '@/lib/pricing';
 import { type Plan } from '@/lib/pricing/config';
 
@@ -16,7 +16,7 @@ import { type Plan } from '@/lib/pricing/config';
  */
 export async function getUserWorksCount(userId: string): Promise<number> {
   try {
-    const result = await db.select({ count: count() }).from(work).where(eq(work.userId, userId));
+    const result = await db.select({ count: count() }).from(workTable).where(eq(workTable.userId, userId));
     return result[0]?.count || 0;
   } catch (error) {
     console.error('获取用户作品总数失败:', error);
@@ -35,8 +35,8 @@ export async function getUserWorksThisMonthCount(userId: string): Promise<number
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const result = await db
       .select({ count: count() })
-      .from(work)
-      .where(and(eq(work.userId, userId), gte(work.createdAt, firstDayOfMonth)));
+      .from(workTable)
+      .where(and(eq(workTable.userId, userId), gte(workTable.createdAt, firstDayOfMonth)));
     return result[0]?.count || 0;
   } catch (error) {
     console.error('获取用户本月作品数失败:', error);
@@ -53,10 +53,10 @@ export async function getUserTotalProcessingTime(userId: string): Promise<number
   try {
     const result = await db
       .select({
-        totalTime: sql<number>`COALESCE(SUM(${work.predictTime}), 0)::float`,
+        totalTime: sql<number>`COALESCE(SUM(${workTable.predictTime}), 0)::float`,
       })
-      .from(work)
-      .where(eq(work.userId, userId));
+      .from(workTable)
+      .where(eq(workTable.userId, userId));
     return parseFloat((result[0]?.totalTime || 0).toFixed(2));
   } catch (error) {
     console.error('获取用户总处理时间失败:', error);
@@ -71,13 +71,13 @@ export async function getUserTotalProcessingTime(userId: string): Promise<number
  */
 export async function getUserUsedWorkTypesCount(userId: string): Promise<number> {
   try {
-    const result = await db
+    const [result] = await db
       .select({
-        typeCount: sql<number>`COUNT(DISTINCT ${work.type})`,
+        typeCount: sql<number>`COUNT(DISTINCT ${workTable.type})`,
       })
-      .from(work)
-      .where(eq(work.userId, userId));
-    return result[0]?.typeCount || 0;
+      .from(workTable)
+      .where(eq(workTable.userId, userId));
+    return result.typeCount || 0;
   } catch (error) {
     console.error('获取用户使用过的作品类型数量失败:', error);
     return 0;
