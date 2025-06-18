@@ -1,5 +1,17 @@
 import type { InferSelectModel } from 'drizzle-orm';
-import { boolean, index, integer, jsonb, numeric, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  index,
+  integer,
+  jsonb,
+  numeric,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 import { nanoid } from '@/lib/utils';
 
@@ -62,6 +74,45 @@ export type WorkType = 'style-transfer' | 'avatar' | 'edit' | 'generate' | 'othe
 // 定义作品状态
 export type WorkStatus = 'processing' | 'completed' | 'failed';
 
+// Define Prediction status enum
+export const predictionStatusEnum = pgEnum('prediction_status', [
+  'starting',
+  'processing',
+  'succeeded',
+  'failed',
+  'canceled',
+]);
+
+// Prediction model based on Replicate's Prediction interface
+export const predictionTable = pgTable(
+  'prediction',
+  {
+    id: varchar('id', { length: 191 }).primaryKey(),
+    status: predictionStatusEnum('status').notNull(),
+    model: varchar('model', { length: 255 }).notNull(),
+    version: varchar('version', { length: 100 }).notNull(),
+    input: jsonb('input').notNull(),
+    output: jsonb('output'),
+    source: varchar('source', { length: 10 }).notNull().default('api'),
+    error: jsonb('error'),
+    logs: text('logs'),
+    metrics: jsonb('metrics'),
+    webhook: text('webhook'),
+    webhookEventsFilter: jsonb('webhook_events_filter'),
+    urls: jsonb('urls').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    startedAt: timestamp('started_at'),
+    completedAt: timestamp('completed_at'),
+    updatedAt: timestamp('updated_at')
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [index('prediction_status_idx').on(table.status), index('prediction_created_at_idx').on(table.createdAt)]
+);
+
+export type Prediction = InferSelectModel<typeof predictionTable>;
+
 // 定义作品表结构
 export const workTable = pgTable(
   'work',
@@ -81,6 +132,9 @@ export const workTable = pgTable(
       .notNull()
       .references(() => userTable.id, { onDelete: 'cascade' }),
     metadata: jsonb('metadata').default({}),
+    predictionId: varchar('prediction_id', { length: 191 }).references(() => predictionTable.id, {
+      onDelete: 'set null',
+    }),
     completedAt: timestamp('completed_at'),
     predictTime: numeric('predict_time', { precision: 10, scale: 9 }),
     points: integer('points'),
@@ -99,71 +153,6 @@ export const workTable = pgTable(
 );
 
 export type Work = InferSelectModel<typeof workTable>;
-
-// 定义操作类型
-export type OperationType = 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'LOGIN' | 'LOGOUT' | 'OTHER';
-
-// 定义操作状态
-export type OperationStatus = 'SUCCESS' | 'FAILED' | 'PENDING' | 'CANCELLED';
-
-// 操作日志表
-export const operationLogTable = pgTable(
-  'operation_log',
-  {
-    // 基础信息
-    id: varchar('id', { length: 64 })
-      .primaryKey()
-      .notNull()
-      .$defaultFn(() => nanoid()),
-
-    // 操作信息
-    operationName: varchar('operation_name', { length: 100 }).notNull(),
-    operationType: varchar('operation_type', { length: 20 }).notNull().$type<OperationType>(),
-    operationModule: varchar('operation_module', { length: 50 }),
-    operationDesc: text('operation_desc'),
-
-    // 请求信息
-    method: varchar('method', { length: 10 }).notNull(),
-    path: varchar('path', { length: 255 }).notNull(),
-    query: jsonb('query').default({}),
-    params: jsonb('params').default({}),
-    body: jsonb('body'),
-
-    // 响应信息
-    status: varchar('status', { length: 20 }).notNull().$type<OperationStatus>().default('PENDING'),
-    response: jsonb('response').default({}),
-    error: jsonb('error').default({}),
-
-    // 用户信息 - 不使用外键约束，允许记录不存在的用户ID（如已删除用户）
-    userId: uuid('user_id'),
-
-    // 系统信息
-    ip: varchar('ip', { length: 45 }),
-
-    // 时间信息
-    startTime: timestamp('start_time', { withTimezone: true }).notNull(),
-    endTime: timestamp('end_time', { withTimezone: true }),
-
-    // 元数据
-    metadata: jsonb('metadata').default({}),
-
-    // 审计字段
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [
-    index('operation_log_user_id_idx').on(table.userId),
-    index('operation_log_operation_type_idx').on(table.operationType),
-    index('operation_log_operation_module_idx').on(table.operationModule),
-    index('operation_log_status_idx').on(table.status),
-    index('operation_log_created_at_idx').on(table.createdAt),
-  ]
-);
-
-export type OperationLog = InferSelectModel<typeof operationLogTable>;
 
 // 定义交易类型
 export type TransactionType = 'redeem_code' | 'payment' | 'refund' | 'adjustment';
