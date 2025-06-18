@@ -83,6 +83,7 @@ export const workTable = pgTable(
     metadata: jsonb('metadata').default({}),
     completedAt: timestamp('completed_at'),
     predictTime: numeric('predict_time', { precision: 10, scale: 9 }),
+    points: integer('points'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()

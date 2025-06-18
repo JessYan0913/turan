@@ -106,6 +106,13 @@
       "when": 1750149739650,
       "tag": "0014_magenta_sersi",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1750236685424,
+      "tag": "0015_sturdy_starjammers",
+      "breakpoints": true
     }
   ]
 }

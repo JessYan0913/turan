@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
+import { checkUserPoints } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
 import { getClientIp, WEBHOOK_HOST } from '@/lib/utils';
@@ -14,6 +15,8 @@ export async function POST(request: Request) {
     }
 
     const userId = session.user.id;
+
+    await checkUserPoints(userId, 15);
 
     // Parse FormData from the request
     const formData = await request.formData();

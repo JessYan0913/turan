@@ -3,6 +3,7 @@ import { type Prediction } from 'replicate';
 
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
+import { consumePoint } from '@/lib/actions/work';
 import { db } from '@/lib/db/client';
 import { workTable } from '@/lib/db/schema';
 
@@ -26,12 +27,15 @@ export async function POST(request: Request) {
         title,
         prompt,
         type: 'edit',
+        points: 15,
         originalImage: input_image,
         processedImage: processedImageBlob.url,
         metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
         completedAt: new Date(prediction.completed_at || new Date()),
         predictTime: prediction.metrics?.predict_time?.toString(),
       });
+
+      await consumePoint(userId, 15);
     }
 
     return NextResponse.json({ received: true });

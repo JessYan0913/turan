@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 
+import { checkUserPoints } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
-import { getClientIp, WEBHOOK_HOST } from '@/lib/utils';
+import { WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -13,6 +14,8 @@ export async function POST(request: Request) {
     }
 
     const userId = session.user.id;
+
+    await checkUserPoints(userId, 1);
 
     const { prompt } = await request.json();
 
@@ -26,7 +29,6 @@ export async function POST(request: Request) {
         userId,
         prompt,
         output_format: 'png',
-        ip: getClientIp(request),
       },
       webhook: `${WEBHOOK_HOST}/api/generate-image/webhook`,
       webhook_events_filter: ['completed', 'logs', 'start'],
