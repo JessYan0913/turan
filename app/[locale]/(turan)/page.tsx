@@ -1,20 +1,11 @@
-'use client';
-
-import { useState } from 'react';
-
-import { ArrowRight, Camera, Edit3, Palette, Sparkles, Upload, Wand2 } from 'lucide-react';
+import { ArrowRight, Camera, Edit3, Palette, Sparkles, Upload } from 'lucide-react';
 import type React from 'react';
-import useSWR from 'swr';
 
-import { AvatarGenerationTab } from '@/components/avatar-generation-tab';
-import { ImageEditTab } from '@/components/image-edit-tab';
-import { ImageGenerationTab } from '@/components/image-generation-tab';
 import { ImageSlider } from '@/components/image-slider';
-import { StyleTransformTab } from '@/components/style-transform-tab';
+import { MainTabs } from '@/components/main-tabs';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetcher } from '@/lib/utils';
-import { useScopedI18n } from '@/locales/client';
+import { getExamples } from '@/lib/actions/examples';
+import { getScopedI18n } from '@/locales/server';
 
 export interface ExampleInfo {
   title: string;
@@ -28,17 +19,10 @@ export interface ExamplesResponse {
   avatarExamples: ExampleInfo[];
 }
 
-export default function HomePage() {
-  const t = useScopedI18n('home');
-  const [activeTab, setActiveTab] = useState('generate');
+export default async function HomePage() {
+  const t = await getScopedI18n('home');
 
-  const { data: examplesData } = useSWR<ExamplesResponse>('api/examples', fetcher, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-    shouldRetryOnError: true,
-    errorRetryCount: 3,
-    errorRetryInterval: 5000,
-  });
+  const examplesData = await getExamples();
 
   return (
     <div className="min-h-screen py-8 transition-colors duration-300 md:py-12 lg:py-16">
@@ -51,59 +35,7 @@ export default function HomePage() {
           </div>
 
           {/* 主要功能区 */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="mx-auto mb-8 max-w-3xl px-4">
-              <TabsList className="tabs-list grid h-auto w-full grid-cols-4 gap-0.5 overflow-hidden rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
-                <TabsTrigger
-                  value="generate"
-                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
-                >
-                  <span className="relative z-10">{t('tabs.generate')}</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="edit"
-                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
-                >
-                  <span className="relative z-10">{t('tabs.edit')}</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="style"
-                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
-                >
-                  <span className="relative z-10">{t('tabs.style')}</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="avatar"
-                  className="relative flex-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-blue-400"
-                >
-                  <span className="relative z-10">{t('tabs.avatar')}</span>
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            {/* 固定高度的内容区域，避免抖动 */}
-            <div className="min-h-[600px] rounded-xl p-4 md:p-6">
-              {/* 图像编辑功能 */}
-              <TabsContent value="edit" className="mt-0">
-                <ImageEditTab />
-              </TabsContent>
-
-              {/* 风格转换功能 */}
-              <TabsContent value="style" className="mt-0">
-                <StyleTransformTab />
-              </TabsContent>
-
-              {/* 头像生成功能 */}
-              <TabsContent value="avatar" className="mt-0">
-                <AvatarGenerationTab />
-              </TabsContent>
-
-              {/* 图片生成功能 */}
-              <TabsContent value="generate" className="mt-0">
-                <ImageGenerationTab />
-              </TabsContent>
-            </div>
-          </Tabs>
+          <MainTabs />
 
           {/* 简约的精彩示例展示区域 */}
           <div className="mt-24 scroll-m-20" id="examples">
