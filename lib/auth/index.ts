@@ -1,8 +1,10 @@
 import { compare } from 'bcrypt-ts';
+import { eq } from 'drizzle-orm';
 import NextAuth, { type Session, type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-import { getUser } from '@/lib/db/queries';
+import { db } from '@/lib/db/client';
+import { user } from '@/lib/db/schema';
 
 import { authConfig } from './config';
 
@@ -21,11 +23,11 @@ export const {
     Credentials({
       credentials: {},
       async authorize({ email, password }: any) {
-        const users = await getUser(email);
-        if (!users) return null;
-        const passwordsMatch = await compare(password, users.password!);
+        const [userInfo] = await db.select().from(user).where(eq(user.email, email));
+        if (!userInfo) return null;
+        const passwordsMatch = await compare(password, userInfo.password!);
         if (!passwordsMatch) return null;
-        return users;
+        return userInfo;
       },
     }),
   ],

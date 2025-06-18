@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -6,7 +7,8 @@ import EditProfileForm from '@/components/edit-profile-form';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/lib/auth';
-import { getUser } from '@/lib/db/queries';
+import { db } from '@/lib/db/client';
+import { user } from '@/lib/db/schema';
 import { cn } from '@/lib/utils';
 import { getScopedI18n } from '@/locales/server';
 
@@ -15,7 +17,7 @@ export default async function ProfileEditPage() {
   if (!session || !session.user?.email) {
     redirect('/login');
   }
-  const userInfo = await getUser(session.user.email);
+  const [userInfo] = await db.select().from(user).where(eq(user.email, session.user.email));
   if (!userInfo) {
     redirect('/login');
   }

@@ -1,9 +1,12 @@
 'use server';
 
+import { genSaltSync, hashSync } from 'bcrypt-ts';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { signIn } from '@/lib/auth';
-import { createUser, getUser } from '@/lib/db/queries';
+import { db } from '@/lib/db/client';
+import { user } from '@/lib/db/schema';
 
 const authFormSchema = z.object({
   email: z.string().email(),
@@ -54,14 +57,21 @@ export const register = async (_: RegisterActionState, formData: FormData): Prom
       password: formData.get('password'),
     });
 
-    const user = await getUser(validatedData.email);
+    const [userInfo] = await db.select().from(user).where(eq(user.email, validatedData.email));
 
-    if (user) {
+    if (userInfo) {
       return { status: 'user_exists' } as RegisterActionState;
     }
-    await createUser({
+
+    const salt = genSaltSync(10);
+    const hash = hashSync(validatedData.password, salt);
+    await db.insert(user).values({
       email: validatedData.email,
-      password: validatedData.password,
+      password: hash,
+      name: validatedData.email.split('@')[0],
+      plan: 'free',
+      usageLimit: 30,
+      usageCurrent: 0,
     });
     await signIn('credentials', {
       email: validatedData.email,

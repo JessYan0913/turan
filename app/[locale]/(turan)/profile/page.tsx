@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { BarChart3, Camera, Check, Clock, CreditCard, Crown, Edit3, Info, Layers, User, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -12,10 +13,10 @@ import {
   getUserUsedWorkTypesCount,
   getUserWorksCount,
   getUserWorksThisMonthCount,
-  listOperationLogs,
 } from '@/lib/actions/profile';
 import { auth } from '@/lib/auth';
-import { getUser } from '@/lib/db/queries';
+import { db } from '@/lib/db/client';
+import { user } from '@/lib/db/schema';
 import { getScopedI18n } from '@/locales/server';
 
 export default async function ProfilePage() {
@@ -24,24 +25,17 @@ export default async function ProfilePage() {
   if (!session || !session.user?.email) {
     redirect('/login');
   }
-  const userInfo = await getUser(session.user.email);
+  const [userInfo] = await db.select().from(user).where(eq(user.email, session.user.email));
   if (!userInfo) {
     redirect('/login');
   }
 
-  const [totalWorks, thisMonthWorks, totalProcessingTime, usedWorkTypesCount, { items: recentActivity }] =
-    await Promise.all([
-      getUserWorksCount(userInfo.id),
-      getUserWorksThisMonthCount(userInfo.id),
-      getUserTotalProcessingTime(userInfo.id),
-      getUserUsedWorkTypesCount(userInfo.id),
-      listOperationLogs({
-        userId: userInfo.id,
-        limit: 20,
-        orderBy: 'desc',
-        status: 'SUCCESS', // Only show successful operations
-      }),
-    ]);
+  const [totalWorks, thisMonthWorks, totalProcessingTime, usedWorkTypesCount] = await Promise.all([
+    getUserWorksCount(userInfo.id),
+    getUserWorksThisMonthCount(userInfo.id),
+    getUserTotalProcessingTime(userInfo.id),
+    getUserUsedWorkTypesCount(userInfo.id),
+  ]);
 
   // 用户统计数据
   const stats = {
@@ -208,51 +202,6 @@ export default async function ProfilePage() {
                 </CardContent>
               </Card>
             </div>
-
-            {/* 最近活动单独分组放底部 */}
-            <Card className="card-base">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold">{t('stats.recentActivity')}</CardTitle>
-              </CardHeader>
-              <CardContent className="max-h-[500px] space-y-3 overflow-y-auto">
-                {recentActivity.map((log) => {
-                  const isSuccess = log.status === 'SUCCESS';
-                  const description = log.operationDesc || '';
-                  const time = new Date(log.startTime).toLocaleString('zh-CN');
-
-                  return (
-                    <div
-                      key={log.id}
-                      className={`group flex items-start space-x-3 rounded-lg p-3 transition-all duration-200 ${
-                        isSuccess
-                          ? 'bg-green-50/80 hover:bg-green-100/60 dark:bg-green-900/20 dark:hover:bg-green-900/30'
-                          : 'bg-blue-50/80 hover:bg-blue-100/60 dark:bg-blue-900/20 dark:hover:bg-blue-900/30'
-                      }`}
-                    >
-                      <div
-                        className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-all duration-200 group-hover:scale-110 ${
-                          isSuccess
-                            ? 'bg-green-100 text-green-600 dark:bg-green-800/50'
-                            : 'bg-blue-100 text-blue-600 dark:bg-blue-800/50'
-                        }`}
-                      >
-                        {isSuccess ? <Check className="size-4" /> : <Info className="size-4" />}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                          <p className="truncate text-sm font-medium">
-                            {description && <span className="text-muted-foreground">{description}</span>}
-                          </p>
-                          <span className="text-muted-foreground mt-1 text-xs sm:ml-2 sm:mt-0 sm:whitespace-nowrap">
-                            {time}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
