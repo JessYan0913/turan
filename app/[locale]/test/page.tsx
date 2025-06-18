@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { encryptionRedeemCode, decryptionRedeemCode } from '@/lib/pricing';
+import { decryptionRedeemCode, encryptionRedeemCode } from '@/lib/pricing';
 import { type PlanId, PLANS } from '@/lib/pricing/config';
 
 export default function TestPage() {

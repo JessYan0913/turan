@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
 import { auth } from '@/lib/auth';
-import { listOperationLogs } from '@/lib/db/queries';
 
 export async function GET() {
   try {
@@ -14,27 +13,13 @@ export async function GET() {
     const userId = session.user.id;
     const limit = 50;
 
-    const logs = await listOperationLogs({
-      userId,
-      limit,
-      status: 'SUCCESS',
-      orderBy: 'desc',
-    });
-
-    const formattedLogs = logs.items.map((log) => ({
-      id: log.id,
-      operation: log.operationName,
-      description: log.operationDesc || '',
-      status: log.status,
-      timestamp: log.createdAt,
-      metadata: log.metadata || {},
-    }));
+    const logs = [];
 
     return NextResponse.json(
       {
-        items: formattedLogs,
-        total: logs.total,
-        hasMore: logs.hasMore,
+        items: [],
+        total: logs.length,
+        hasMore: false,
       },
       { status: 200 }
     );

@@ -1,9 +1,9 @@
-// File: e:\turan\app\api\works\route.ts
+import { and, eq, ilike } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 import { auth } from '@/lib/auth';
-import { deleteWork, getWorks } from '@/lib/db/queries';
-import { type WorkType } from '@/lib/db/schema';
+import { db } from '@/lib/db/client';
+import { work, type WorkType } from '@/lib/db/schema';
 
 export async function GET(request: Request) {
   try {
@@ -23,16 +23,21 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const result = await getWorks({
-      userId,
-      searchTerm: search,
-      ...(type !== 'all' ? { type: type as WorkType } : {}),
-      limit,
-      offset,
-    });
+    const conditions = [
+      eq(work.userId, userId),
+      ilike(work.title, `%${search}%`),
+      ...(type !== 'all' ? [eq(work.type, type as WorkType)] : []),
+    ];
+
+    const result = await db
+      .select()
+      .from(work)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset);
 
     // Format the works data
-    const works = result.items.map((work) => ({
+    const works = result.map((work) => ({
       ...work,
       createdAt: work.createdAt.toISOString(),
       originalImage: work.originalImage || '',
@@ -42,8 +47,8 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         works,
-        total: result.total,
-        hasMore: result.hasMore,
+        total: result.length,
+        hasMore: result.length >= limit,
         page,
         limit,
       },
@@ -70,7 +75,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Work ID is required' }, { status: 400 });
     }
 
-    await deleteWork(workId, userId);
+    await db.delete(work).where(and(eq(work.id, workId), eq(work.userId, userId)));
 
     return NextResponse.json({ success: true });
   } catch (error) {

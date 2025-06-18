@@ -3,7 +3,8 @@ import { type Prediction } from 'replicate';
 
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
-import { createOperationLog, createWork } from '@/lib/db/queries';
+import { db } from '@/lib/db/client';
+import { work } from '@/lib/db/schema';
 
 export async function POST(request: Request) {
   try {
@@ -20,38 +21,16 @@ export async function POST(request: Request) {
 
       const processedImageBlob = await saveOnlineImage(prediction.output);
 
-      await createWork(
-        {
-          title,
-          prompt,
-          type: 'avatar',
-          originalImage: input_image,
-          processedImage: processedImageBlob.url,
-          metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
-          completedAt: new Date(prediction.completed_at || new Date()),
-          predictTime: prediction.metrics?.predict_time?.toString(),
-        },
-        userId
-      );
-
-      createOperationLog({
+      await db.insert(work).values({
         userId,
-        operationName: 'generate-image',
-        operationType: 'CREATE',
-        operationModule: 'image',
-        operationDesc: 'Generate image',
-        method: 'POST',
-        path: '/api/generate-image',
-        query: JSON.stringify(prediction.input),
-        params: JSON.stringify(prediction.input),
-        body: JSON.stringify(prediction.input),
-        status: 'SUCCESS',
-        response: JSON.stringify(prediction.output),
-        error: null,
-        ip,
-        startTime: new Date(),
-        endTime: new Date(),
-        metadata: JSON.stringify(prediction),
+        title,
+        prompt,
+        type: 'avatar',
+        originalImage: input_image,
+        processedImage: processedImageBlob.url,
+        metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
+        completedAt: new Date(prediction.completed_at || new Date()),
+        predictTime: prediction.metrics?.predict_time?.toString(),
       });
     }
 

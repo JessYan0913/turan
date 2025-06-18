@@ -1,7 +1,9 @@
+import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 import { auth } from '@/lib/auth';
-import { getUser } from '@/lib/db/queries';
+import { db } from '@/lib/db/client';
+import { user } from '@/lib/db/schema';
 
 export async function GET() {
   const session = await auth();
@@ -9,11 +11,11 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const users = await getUser(session.user.email);
-  if (!users.length) {
+  const [userInfo] = await db.select().from(user).where(eq(user.email, session.user.email));
+  if (!userInfo) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
-  const { password, ...userWithoutPassword } = users[0];
+  const { password, ...userWithoutPassword } = userInfo;
   return NextResponse.json(userWithoutPassword, { status: 200 });
 }
