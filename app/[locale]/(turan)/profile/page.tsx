@@ -1,5 +1,21 @@
+import { formatDistanceToNow } from 'date-fns';
 import { eq } from 'drizzle-orm';
-import { BarChart3, Camera, Clock, CreditCard, Crown, Edit3, Layers, User, Zap } from 'lucide-react';
+import {
+  BarChart3,
+  Camera,
+  CheckCircle,
+  Clock as ClockIcon,
+  CreditCard,
+  Crown,
+  Edit3,
+  ExternalLink,
+  Layers,
+  Loader2,
+  User,
+  XCircle,
+  Zap,
+} from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -26,6 +42,67 @@ export default async function ProfilePage() {
   }
 
   const { totalWorks, worksThisMonth, totalProcessingTime, usedWorkTypes } = await getUserWorkStatistics();
+
+  // Mock data for recent generations
+  const recentGenerations = [
+    {
+      id: 'gen_123',
+      status: 'succeeded',
+      model: 'stability-ai/sdxl',
+      input: { prompt: 'A beautiful sunset over mountains' },
+      output: { url: '/placeholder.svg' },
+      createdAt: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+      completedAt: new Date(Date.now() - 1000 * 60 * 4), // 4 minutes ago
+    },
+    {
+      id: 'gen_124',
+      status: 'processing',
+      model: 'stability-ai/sdxl',
+      input: { prompt: 'A futuristic city skyline at night' },
+      createdAt: new Date(Date.now() - 1000 * 60 * 2), // 2 minutes ago
+      completedAt: null,
+      error: null,
+    },
+    {
+      id: 'gen_125',
+      status: 'failed',
+      model: 'stability-ai/sdxl',
+      input: { prompt: 'A magical forest with glowing plants' },
+      error: { message: 'Generation failed' },
+      output: null,
+      createdAt: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+      completedAt: new Date(Date.now() - 1000 * 60 * 58), // 58 minutes ago
+    },
+  ] as const;
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'succeeded':
+        return <CheckCircle className="size-4 text-green-500" />;
+      case 'failed':
+        return <XCircle className="size-4 text-red-500" />;
+      case 'processing':
+      case 'starting':
+        return <Loader2 className="size-4 animate-spin text-blue-500" />;
+      default:
+        return <ClockIcon className="size-4 text-amber-500" />;
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'succeeded':
+        return '已完成';
+      case 'failed':
+        return '失败';
+      case 'processing':
+        return '处理中';
+      case 'starting':
+        return '开始中';
+      default:
+        return status;
+    }
+  };
 
   const planName = (() => {
     if (user.plan === 'pro') return '专业版';
@@ -173,7 +250,7 @@ export default async function ProfilePage() {
                       <p className="text-3xl font-bold">{totalProcessingTime}</p>
                     </div>
                     <div className="flex size-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                      <Clock className="size-6 text-purple-500" />
+                      <ClockIcon className="size-6 text-purple-500" />
                     </div>
                   </div>
                 </CardContent>
@@ -192,6 +269,84 @@ export default async function ProfilePage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Recent Generations */}
+            <Card className="card-base">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-lg font-semibold">最近生成</CardTitle>
+                <Link href="/generations" className="text-sm text-blue-500 hover:underline">
+                  查看全部
+                </Link>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {recentGenerations.length > 0 ? (
+                  <div className="space-y-3">
+                    {recentGenerations.map((gen) => (
+                      <div key={gen.id} className="hover:bg-muted/50 flex items-start gap-3 rounded-lg p-3">
+                        <div className="mt-0.5">
+                          <div className="bg-muted flex size-8 items-center justify-center rounded-full">
+                            {getStatusIcon(gen.status)}
+                          </div>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between">
+                            <p className="truncate text-sm font-medium">
+                              {typeof gen.input === 'object' && 'prompt' in gen.input
+                                ? (gen.input.prompt as string)
+                                : 'Untitled'}
+                            </p>
+                            <span className="text-muted-foreground ml-2 whitespace-nowrap text-xs">
+                              {formatDistanceToNow(new Date(gen.createdAt), { addSuffix: true })}
+                            </span>
+                          </div>
+                          <div className="text-muted-foreground mt-1 flex items-center text-xs">
+                            <span className="inline-flex items-center gap-1">
+                              {getStatusIcon(gen.status)}
+                              {getStatusText(gen.status)}
+                            </span>
+                            <span className="mx-2">•</span>
+                            <span className="truncate">{gen.model.split('/').pop()}</span>
+                            {gen.completedAt && (
+                              <>
+                                <span className="mx-2">•</span>
+                                <span>{Math.ceil((gen.completedAt.getTime() - gen.createdAt.getTime()) / 1000)}s</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        {gen.status === 'succeeded' && gen.output?.url && (
+                          <Link
+                            href={gen.output.url}
+                            target="_blank"
+                            className="ml-2 shrink-0 text-blue-500 hover:text-blue-600 hover:underline"
+                          >
+                            <ExternalLink className="size-4" />
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Image
+                      src="/placeholder.svg"
+                      alt="No generations"
+                      width={120}
+                      height={120}
+                      className="mb-4 opacity-40"
+                    />
+                    <p className="text-muted-foreground">
+                      <ClockIcon className="mr-1 inline-block size-4" />
+                      暂无生成记录
+                    </p>
+                    <Button variant="outline" className="mt-4">
+                      <Zap className="mr-2 size-4" />
+                      开始生成
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
