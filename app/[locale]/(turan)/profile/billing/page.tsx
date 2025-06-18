@@ -6,45 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getBillingHistory } from '@/lib/actions/billing';
 import { cn } from '@/lib/utils';
 import { getScopedI18n } from '@/locales/server';
 
-interface ActivationRecord {
-  id: string;
-  code: string;
-  planName: string;
-  activationDate: Date;
-  expirationDate: Date;
-  status: 'active' | 'expired';
-}
-
-// Mock data - Replace with actual API call in production
-const mockActivationData: ActivationRecord[] = [
-  {
-    id: '1',
-    code: 'ACT-7890-ABCD-1234',
-    planName: 'Pro Monthly',
-    activationDate: new Date('2025-06-01'),
-    expirationDate: new Date('2025-07-01'),
-    status: 'active',
-  },
-  {
-    id: '2',
-    code: 'ACT-5678-EFGH-9012',
-    planName: 'Basic Monthly',
-    activationDate: new Date('2025-05-01'),
-    expirationDate: new Date('2025-06-01'),
-    status: 'expired',
-  },
-];
-
-export default async function BillingPage() {
+export default async function BillingPage({ params }: { params: Promise<{ page?: string; limit?: string }> }) {
   const t = await getScopedI18n('billing');
-  const activationRecords = mockActivationData;
-
-  const formatDate = (date: Date) => {
-    return format(date, 'yyyy-MM-dd HH:mm');
-  };
+  const { page, limit } = await params;
+  const pageInt = page ? parseInt(page, 10) : 1;
+  const limitInt = limit ? parseInt(limit, 10) : 10;
+  const { transactions, total } = await getBillingHistory(limitInt, pageInt);
+  const totalPages = Math.ceil(total / limitInt);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -70,32 +42,34 @@ export default async function BillingPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('activationCode')}</TableHead>
-                    <TableHead>{t('plan')}</TableHead>
-                    <TableHead>{t('activationDate')}</TableHead>
-                    <TableHead>{t('expirationDate')}</TableHead>
-                    <TableHead className="text-right">{t('status')}</TableHead>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {activationRecords.length > 0 ? (
-                    activationRecords.map((record) => (
-                      <TableRow key={record.id}>
-                        <TableCell className="font-mono">{record.code}</TableCell>
-                        <TableCell>{record.planName}</TableCell>
-                        <TableCell>{formatDate(record.activationDate)}</TableCell>
-                        <TableCell>{formatDate(record.expirationDate)}</TableCell>
-                        <TableCell className="text-right">
+                  {transactions.length > 0 ? (
+                    transactions.map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell className="font-mono">{transaction.id}</TableCell>
+                        <TableCell>{transaction.type}</TableCell>
+                        <TableCell>{transaction.amount}</TableCell>
+                        <TableCell>
                           <Badge
-                            variant={record.status === 'active' ? 'default' : 'secondary'}
+                            variant={transaction.status === 'completed' ? 'default' : 'secondary'}
                             className={cn(
-                              record.status === 'active'
+                              transaction.status === 'completed'
                                 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+                                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                             )}
                           >
-                            {record.status === 'active' ? t('active') : t('expired')}
+                            {transaction.status}
                           </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {format(new Date(transaction.createdAt), 'yyyy-MM-dd HH:mm')}
                         </TableCell>
                       </TableRow>
                     ))
@@ -111,6 +85,35 @@ export default async function BillingPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="text-muted-foreground text-sm">{`Page ${pageInt} of ${totalPages}`}</div>
+            <div className="space-x-2">
+              <Link
+                href={`?page=${Math.max(1, pageInt - 1)}&limit=${limitInt}`}
+                className={cn(
+                  buttonVariants({ variant: 'outline' }),
+                  'w-24',
+                  pageInt === 1 && 'pointer-events-none opacity-50'
+                )}
+              >
+                Previous
+              </Link>
+              <Link
+                href={`?page=${Math.min(totalPages, pageInt + 1)}&limit=${limitInt}`}
+                className={cn(
+                  buttonVariants({ variant: 'outline' }),
+                  'w-24',
+                  pageInt >= totalPages && 'pointer-events-none opacity-50'
+                )}
+              >
+                Next
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

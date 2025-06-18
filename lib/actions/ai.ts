@@ -1,3 +1,5 @@
+'use server';
+
 import { generateText } from 'ai';
 
 import { modelProvider } from '@/lib/ai/provider';

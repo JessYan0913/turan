@@ -25,7 +25,7 @@ export default async function ProfilePage() {
     redirect('/login');
   }
 
-  const { totalWorks, worksThisMonth, totalProcessingTime, usedWorkTypes } = await getUserWorkStatistics(user.id);
+  const { totalWorks, worksThisMonth, totalProcessingTime, usedWorkTypes } = await getUserWorkStatistics();
 
   const planName = (() => {
     if (user.plan === 'pro') return '专业版';

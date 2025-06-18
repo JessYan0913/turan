@@ -13,7 +13,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { upgrade, validationRedeemCode } from '@/lib/actions/profile';
+import { upgrade, validationRedeemCode } from '@/lib/actions/upgrade';
 import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
