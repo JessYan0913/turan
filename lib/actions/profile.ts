@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
-import { redemptionRecord, transactionTable, userTable, workTable } from '@/lib/db/schema';
+import { redemptionRecordTable, transactionTable, userTable, workTable } from '@/lib/db/schema';
 import { decryptionRedeemCode } from '@/lib/pricing';
 import { type Plan } from '@/lib/pricing/config';
 
@@ -86,7 +86,7 @@ export async function getUserUsedWorkTypesCount(userId: string): Promise<number>
 
 export async function validationRedeemCode(redeemCode: string): Promise<Plan & { expiresAt: Date }> {
   const plan = await decryptionRedeemCode(redeemCode);
-  const [record] = await db.select().from(redemptionRecord).where(eq(redemptionRecord.code, redeemCode));
+  const [record] = await db.select().from(redemptionRecordTable).where(eq(redemptionRecordTable.code, redeemCode));
   if (record) {
     throw new Error('兑换码已使用');
   }
@@ -136,7 +136,7 @@ export async function upgrade(redeemCode: string) {
       })
       .returning();
 
-    await tx.insert(redemptionRecord).values({
+    await tx.insert(redemptionRecordTable).values({
       userId,
       code: redeemCode,
       type: 'plan_upgrade',

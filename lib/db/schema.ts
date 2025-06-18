@@ -199,7 +199,7 @@ export const transactionTable = pgTable(
 export type Transaction = InferSelectModel<typeof transactionTable>;
 
 // 兑换记录表（替换原有的redeemCodeUsage）
-export const redemptionRecord = pgTable(
+export const redemptionRecordTable = pgTable(
   'redemption_record',
   {
     id: uuid('id').primaryKey().notNull().defaultRandom(),
@@ -220,4 +220,4 @@ export const redemptionRecord = pgTable(
   ]
 );
 
-export type RedemptionRecord = InferSelectModel<typeof redemptionRecord>;
+export type RedemptionRecord = InferSelectModel<typeof redemptionRecordTable>;
