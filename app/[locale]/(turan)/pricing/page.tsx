@@ -3,7 +3,7 @@ import { Building2, Check, Crown, Star, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { type Plan, PLANS } from '@/lib/pricing/config';
+import { getPlans, type Plan } from '@/lib/actions/pricing';
 import { getScopedI18n } from '@/locales/server';
 
 const getPlanIcon = (id: Plan['id']) => {
@@ -31,7 +31,7 @@ interface PlanWithTranslations extends Plan {
 export default async function PricingPage() {
   const t = await getScopedI18n('pricing');
 
-  const plans = PLANS.map((plan) => {
+  const plans = (await getPlans()).map((plan) => {
     const name = t(`plans.${plan.id}.name`);
     const description = t(`plans.${plan.id}.description`);
     const buttonText = t(`plans.${plan.id}.buttonText`);

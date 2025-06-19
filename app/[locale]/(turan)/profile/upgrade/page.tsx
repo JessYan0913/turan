@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { upgrade, validationRedeemCode } from '@/lib/actions/upgrade';
+import { validationRedeemCode } from '@/lib/actions/pricing';
 import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
@@ -72,9 +72,16 @@ export default function UpgradePage() {
 
     try {
       setIsRedeeming(true);
-      const response = await upgrade(verificationResult.code);
+      const response = await fetch('/api/upgrade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: verificationResult.code }),
+      });
+      const result = await response.json();
 
-      if (response.success) {
+      if (result.success) {
         toast({
           title: 'Redeemed successfully',
           description: `Your ${verificationResult.planName} plan has been activated!`,
@@ -172,7 +179,7 @@ export default function UpgradePage() {
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t('expiresAt')}</p>
-                      <p>{new Date(verificationResult.expiresAt).toLocaleDateString()}</p>
+                      <p>{verificationResult.expiresAt}</p>
                     </div>
                   </div>
                 </div>

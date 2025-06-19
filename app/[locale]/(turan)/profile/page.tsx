@@ -24,12 +24,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { getPlans } from '@/lib/actions/pricing';
 import { getUserWorkStatistics } from '@/lib/actions/profile';
 import { getPredictions } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
-import { PLANS } from '@/lib/pricing/config';
 import { getScopedI18n } from '@/locales/server';
 
 export default async function ProfilePage() {
@@ -43,7 +43,7 @@ export default async function ProfilePage() {
     redirect('/login');
   }
 
-  const { totalWorks, worksThisMonth, totalProcessingTime, usedWorkTypes } = await getUserWorkStatistics();
+  const { totalWorks, worksThisMonth, totalProcessingTime, usedWorkTypes } = await getUserWorkStatistics(user.id);
 
   // Get recent generations from database
   const { predictions: recentGenerations } = await getPredictions(user.id, 10, 1);
@@ -93,7 +93,7 @@ export default async function ProfilePage() {
   })();
 
   const usageThisMonth = user.planPoints - user.points;
-  const planLimit = PLANS.find((plan) => plan.id === user.plan)?.points || 0;
+  const planLimit = (await getPlans()).find((plan) => plan.id === user.plan)?.points || 0;
   const usagePercentage = (usageThisMonth / planLimit) * 100;
 
   return (

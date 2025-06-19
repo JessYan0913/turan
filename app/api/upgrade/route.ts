@@ -1,15 +1,13 @@
-'use server';
-
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
+import { NextRequest, NextResponse } from 'next/server';
 
+import { decryptionRedeemCode } from '@/lib/actions/pricing';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { redemptionRecordTable, transactionTable, userTable } from '@/lib/db/schema';
-import { decryptionRedeemCode } from '@/lib/pricing';
-import { type Plan } from '@/lib/pricing/config';
 
-export async function validationRedeemCode(redeemCode: string): Promise<Plan> {
+export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user) {
     redirect('/login');
@@ -18,30 +16,17 @@ export async function validationRedeemCode(redeemCode: string): Promise<Plan> {
   if (!userId) {
     redirect('/login');
   }
-  const plan = await decryptionRedeemCode(redeemCode);
-  const [record] = await db.select().from(redemptionRecordTable).where(eq(redemptionRecordTable.code, redeemCode));
+  const { code } = await req.json();
+  if (!code) {
+    return NextResponse.json({ message: 'code  required' }, { status: 400 });
+  }
+  const record = await db.select().from(redemptionRecordTable).where(eq(redemptionRecordTable.code, code));
   if (record) {
     throw new Error('兑换码已使用');
   }
-  return plan;
-}
-
-export async function upgrade(redeemCode: string) {
-  const session = await auth();
-  if (!session?.user) {
-    redirect('/login');
-  }
-  const userId = session.user.id;
-  if (!userId) {
-    redirect('/login');
-  }
-  const record = await db.select().from(redemptionRecordTable).where(eq(redemptionRecordTable.code, redeemCode));
-  if (record) {
-    throw new Error('兑换码已使用');
-  }
-  const plan = await decryptionRedeemCode(redeemCode);
+  const plan = await decryptionRedeemCode(code);
   const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
-  return await db.transaction(async (tx) => {
+  const result = await db.transaction(async (tx) => {
     // Calculate new expiry: extend from current expiry or now + 1 month
     const now = new Date();
     const newExpiry =
@@ -71,7 +56,7 @@ export async function upgrade(redeemCode: string) {
         balanceBefore: user.points,
         balanceAfter: updatedUser.points,
         metadata: {
-          redeemCode,
+          redeemCode: code,
           action: 'upgrade',
           planId: plan.id,
           amount: plan.points,
@@ -84,7 +69,7 @@ export async function upgrade(redeemCode: string) {
 
     await tx.insert(redemptionRecordTable).values({
       userId,
-      code: redeemCode,
+      code,
       type: 'plan_upgrade',
       transactionId: currentTransaction.id,
       reward: {
@@ -102,4 +87,5 @@ export async function upgrade(redeemCode: string) {
 
     return { success: true, plan, user: updatedUser };
   });
+  return NextResponse.json(result, { status: 200 });
 }
