@@ -48,8 +48,8 @@ export default async function ProfileEditPage() {
           <CardContent>
             <EditProfileForm
               initialData={{
-                name: session.user.name || '',
-                email: session.user.email || '',
+                name: user.name || '',
+                email: user.email || '',
                 bio: user.bio || '',
               }}
             />

@@ -71,7 +71,7 @@ export function EditProfileForm({ initialData }: EditProfileFormProps) {
         });
 
         toast.success('Profile updated successfully');
-        router.refresh();
+        router.push('/profile');
       } else {
         throw new Error('Failed to update profile');
       }
