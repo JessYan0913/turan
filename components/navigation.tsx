@@ -1,12 +1,14 @@
 'use client';
 
-import { Check, Crown, Globe, Home, ImageIcon, Menu, Moon, Palette, Sun, UserIcon } from 'lucide-react';
+import { Crown, Home, ImageIcon, Menu, Moon, Palette, Sun, UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
+import { LanguageSwitcher } from '@/components/language-switcher';
 import { useTheme } from '@/components/theme-provider';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,14 +17,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-import { useChangeLocale, useCurrentLocale, useScopedI18n } from '../locales/client';
+import { useScopedI18n } from '@/locales/client';
 
 export function Navigation({ user }: { user: User | undefined }) {
   const pathname = usePathname();
   const { isDarkMode, toggleTheme } = useTheme();
-  const changeLocale = useChangeLocale();
-  const currentLocale = useCurrentLocale();
   const t = useScopedI18n('navigation');
 
   const locales = [
@@ -30,6 +29,8 @@ export function Navigation({ user }: { user: User | undefined }) {
     { code: 'en', name: 'English' },
     { code: 'ja', name: '日本語' },
   ];
+
+  const currentLocale = pathname.split('/')[1] || 'en';
 
   const isActive = (path: string) => {
     if (path === '/' && pathname === '/') return true;
@@ -91,40 +92,8 @@ export function Navigation({ user }: { user: User | undefined }) {
               </Button>
             </Link>
 
-            {/* 国际化下拉菜单 */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="text-muted-foreground hover:bg-muted/50 hover:text-foreground flex items-center space-x-2 transition-all duration-300"
-                >
-                  <Globe className="size-4" />
-                  <span>{locales.find((locale) => locale.code === currentLocale)?.name || currentLocale}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="border-border bg-popover">
-                {locales.map((locale) => (
-                  <DropdownMenuItem
-                    key={locale.code}
-                    className="text-popover-foreground hover:bg-accent"
-                    onSelect={() => changeLocale(locale.code as any)}
-                  >
-                    <span>{locale.name}</span>
-                    {currentLocale === locale.code && <Check className="size-4" />}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* 主题切换按钮 */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleTheme}
-              className="text-muted-foreground hover:bg-muted/50 hover:text-foreground rounded-full shadow-sm transition-all duration-300"
-            >
-              {isDarkMode ? <Sun className="size-4" /> : <Moon className="size-4" />}
-            </Button>
+            <LanguageSwitcher currentLocale={currentLocale} locales={locales} />
+            <ThemeToggle />
 
             {/* 用户头像或登录按钮 */}
             {user ? (
