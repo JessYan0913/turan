@@ -112,13 +112,16 @@ export function AvatarGenerationTab() {
   );
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        {/* Left Column - Form Controls */}
-        <div className="rounded-2xl bg-gradient-to-br from-white to-blue-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <Form {...form}>
+        <form
+          className="rounded-2xl bg-gradient-to-br from-white to-blue-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          {/* Left Column - Form Controls */}
           <div className="mb-6 space-y-2">
             <h3 className="text-xl font-medium tracking-tight text-blue-950 dark:text-blue-200">{t('title')}</h3>
-            <p className="text-muted-foreground text-sm">{t('description')}</p>
+            <p className="text-sm text-muted-foreground">{t('description')}</p>
           </div>
 
           <div className="space-y-8">
@@ -151,7 +154,7 @@ export function AvatarGenerationTab() {
                 <FormItem>
                   <div className="mb-2 space-y-1">
                     <FormLabel className="font-medium text-blue-800 dark:text-blue-300">{t('prompt.label')}</FormLabel>
-                    <p className="text-muted-foreground text-xs">{t('prompt.description')}</p>
+                    <p className="text-xs text-muted-foreground">{t('prompt.description')}</p>
                   </div>
                   <FormControl>
                     <StyleSelector
@@ -188,26 +191,25 @@ export function AvatarGenerationTab() {
               )}
             </Button>
           </div>
+        </form>
+      </Form>
+      {/* Right Column - Result Display */}
+      <div className="flex flex-col rounded-2xl bg-gradient-to-br from-white to-purple-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10">
+        <div className="mb-6 space-y-2">
+          <h3 className="text-xl font-medium tracking-tight text-purple-950 dark:text-purple-200">
+            {t('result.title')}
+          </h3>
+          <p className="text-sm text-muted-foreground">{t('result.description')}</p>
         </div>
-
-        {/* Right Column - Result Display */}
-        <div className="flex flex-col rounded-2xl bg-gradient-to-br from-white to-purple-50/30 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10">
-          <div className="mb-6 space-y-2">
-            <h3 className="text-xl font-medium tracking-tight text-purple-950 dark:text-purple-200">
-              {t('result.title')}
-            </h3>
-            <p className="text-muted-foreground text-sm">{t('result.description')}</p>
-          </div>
-          <div className="min-h-[350px] flex-1">
-            <ResultDisplay
-              generatedImage={generatedImage}
-              status={status}
-              imageName={form.getValues('image')?.name || 'avatar.png'}
-              className="h-full"
-            />
-          </div>
+        <div className="min-h-[350px] flex-1">
+          <ResultDisplay
+            generatedImage={generatedImage}
+            status={status}
+            imageName={form.getValues('image')?.name || 'avatar.png'}
+            className="h-full"
+          />
         </div>
-      </form>
-    </Form>
+      </div>
+    </div>
   );
 }

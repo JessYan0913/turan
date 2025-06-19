@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback } from 'react';
 
 import { ArrowRight, Palette } from 'lucide-react';
@@ -24,30 +26,40 @@ export function ResultDisplay({
 }: ResultDisplayProps) {
   const t = useScopedI18n('resultDisplay');
 
-  const handleDownload = useCallback(async () => {
-    if (generatedImage) {
-      try {
-        await downloadImage(generatedImage, imageName);
-      } catch (error) {
-        console.error('下载图片失败:', error);
+  const handleDownload = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      if (generatedImage) {
+        try {
+          await downloadImage(generatedImage, imageName);
+        } catch (error) {
+          console.error('下载图片失败:', error);
+        }
       }
-    }
-  }, [generatedImage, imageName]);
+    },
+    [generatedImage, imageName]
+  );
   return (
     <div className={`flex w-full flex-col ${className}`}>
       <div className="flex flex-1 items-center justify-center p-0">
         {generatedImage ? (
           <div className="w-full max-w-full">
             {/* Image display */}
-            <div className="relative w-full">
+            <div className="relative flex max-h-[50vh] w-full items-center justify-center">
               <Image
                 src={generatedImage}
                 alt={t('altText')}
                 width={600}
                 height={600}
                 sizes="(max-width: 768px) 100vw, 600px"
-                className="w-full max-w-full rounded-lg object-contain"
+                className="size-auto max-h-[50vh] max-w-full rounded-lg object-contain"
                 priority
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '50vh',
+                  width: 'auto',
+                  height: 'auto',
+                }}
               />
             </div>
 

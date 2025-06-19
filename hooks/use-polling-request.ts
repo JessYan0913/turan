@@ -66,8 +66,6 @@ export function usePollingRequest<T, R>({
       setProgress(0);
 
       try {
-        toast.info('处理中');
-
         // Make the initial request
         const response = await request(requestData);
         const requestId = response.id;
@@ -94,7 +92,6 @@ export function usePollingRequest<T, R>({
               const result = getResult(statusData);
               setData(result);
               setStatus('success');
-              toast.success(successMessage);
               return;
             }
           } catch (err) {
@@ -114,7 +111,7 @@ export function usePollingRequest<T, R>({
         toast.error(err instanceof Error ? err.message : errorMessage);
       }
     },
-    [request, checkStatus, errorMessage, getResult, interval, isComplete, maxAttempts, successMessage]
+    [request, checkStatus, errorMessage, getResult, interval, isComplete, maxAttempts]
   );
 
   const reset = useCallback(() => {

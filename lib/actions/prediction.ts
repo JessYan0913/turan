@@ -121,7 +121,9 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
     }
 
     const title = await generateTitle(prompt);
-    const processedImageBlob = await saveOnlineImage(prediction.output[0]);
+    const processedImageBlob = await saveOnlineImage(
+      Array.isArray(prediction.output) ? prediction.output[0] : prediction.output
+    );
 
     await db.transaction(async (tx) => {
       // 更新预测状态
