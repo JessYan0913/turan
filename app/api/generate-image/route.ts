@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { checkUserPoints, createPrediction } from '@/lib/actions/work';
+import { checkUserPoints, createPrediction } from '@/lib/actions/prediction';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
 import { WEBHOOK_HOST } from '@/lib/utils';

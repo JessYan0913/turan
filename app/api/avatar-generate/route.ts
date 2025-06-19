@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
-import { checkUserPoints, createPrediction } from '@/lib/actions/work';
+import { checkUserPoints, createPrediction } from '@/lib/actions/prediction';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
 import { WEBHOOK_HOST } from '@/lib/utils';

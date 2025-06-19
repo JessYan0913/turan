@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { processPrediction } from '@/lib/actions/work';
+import { processPrediction } from '@/lib/actions/prediction';
 import { verifyWebhookSignature } from '@/lib/utils';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ type: string }> }) {
