@@ -123,22 +123,6 @@ export default function EditProfileForm({ userInfo }: { userInfo: any }) {
             />
           </div>
         </div>
-
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="phone" className="text-sm font-medium">
-            手机
-          </Label>
-          <div className="border-input bg-background ring-offset-background focus-within:ring-ring group flex items-center overflow-hidden rounded-md border px-3 py-2 text-sm focus-within:ring-1">
-            <Phone className="text-muted-foreground group-focus-within:text-foreground mr-2 size-4 transition-colors" />
-            <Input
-              id="phone"
-              className="border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              value={form.phone}
-              onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-              placeholder="请输入您的手机号码"
-            />
-          </div>
-        </div>
       </div>
 
       {/* 按钮组 */}
