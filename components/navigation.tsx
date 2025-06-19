@@ -126,31 +126,44 @@ export function Navigation({ user }: { user: User | undefined }) {
               {isDarkMode ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </Button>
 
-            {/* 用户头像 */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                {user && (
+            {/* 用户头像或登录按钮 */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <Avatar className="size-8 cursor-pointer">
                     <AvatarImage src="/placeholder.svg?height=32&width=32" />
                     <AvatarFallback className="bg-muted text-muted-foreground">
                       <UserIcon className="size-4" />
                     </AvatarFallback>
                   </Avatar>
-                )}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="border-border bg-popover">
-                <Link href="/profile">
-                  <DropdownMenuItem>{t('profile')}</DropdownMenuItem>
-                </Link>
-                {/* Settings menu item removed as it's not in the translations */}
-                <DropdownMenuItem
-                  className="text-popover-foreground hover:bg-accent"
-                  onClick={() => signOut({ redirectTo: '/' })}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="border-border bg-popover">
+                  <Link href="/profile">
+                    <DropdownMenuItem>{t('profile')}</DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuItem
+                    className="text-popover-foreground hover:bg-accent"
+                    onClick={() => signOut({ redirectTo: '/' })}
+                  >
+                    {t('signOut')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login">
+                <Button
+                  variant="ghost"
+                  className={`flex items-center space-x-2 transition-all duration-300 ${
+                    isActive('/login')
+                      ? 'bg-muted/60 text-foreground'
+                      : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
+                  }`}
                 >
-                  {t('signOut')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <UserIcon className="size-4" />
+                  <span>{t('signIn')}</span>
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* 移动端菜单 */}
