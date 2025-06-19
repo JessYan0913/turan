@@ -1,21 +1,30 @@
 import { format } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getBillingHistory } from '@/lib/actions/billing';
+import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { getScopedI18n } from '@/locales/server';
 
 export default async function BillingPage({ params }: { params: Promise<{ page?: string; limit?: string }> }) {
+  const session = await auth();
+  if (!session?.user) {
+    redirect('/login');
+  }
+  const userId = session.user.id;
+  if (!userId) {
+    redirect('/login');
+  }
   const t = await getScopedI18n('billing');
   const { page, limit } = await params;
   const pageInt = page ? parseInt(page, 10) : 1;
   const limitInt = limit ? parseInt(limit, 10) : 10;
-  const { transactions, total } = await getBillingHistory(limitInt, pageInt);
+  const { transactions, total } = await getBillingHistory(userId, limitInt, pageInt);
   const totalPages = Math.ceil(total / limitInt);
 
   return (
@@ -33,58 +42,51 @@ export default async function BillingPage({ params }: { params: Promise<{ page?:
           <p className="text-muted-foreground mt-2">{t('description')}</p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('activationHistory')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Date</TableHead>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {transactions.length > 0 ? (
+                transactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell className="font-mono">{transaction.id}</TableCell>
+                    <TableCell>{transaction.type}</TableCell>
+                    <TableCell>{transaction.amount}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={transaction.status === 'completed' ? 'default' : 'secondary'}
+                        className={cn(
+                          transaction.status === 'completed'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                        )}
+                      >
+                        {transaction.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {format(new Date(transaction.createdAt), 'yyyy-MM-dd HH:mm')}
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {transactions.length > 0 ? (
-                    transactions.map((transaction) => (
-                      <TableRow key={transaction.id}>
-                        <TableCell className="font-mono">{transaction.id}</TableCell>
-                        <TableCell>{transaction.type}</TableCell>
-                        <TableCell>{transaction.amount}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={transaction.status === 'completed' ? 'default' : 'secondary'}
-                            className={cn(
-                              transaction.status === 'completed'
-                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                            )}
-                          >
-                            {transaction.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {format(new Date(transaction.createdAt), 'yyyy-MM-dd HH:mm')}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={5} className="h-24 text-center">
-                        {t('noRecords')}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    {t('noRecords')}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
         {/* Pagination */}
         {totalPages > 1 && (

@@ -246,9 +246,9 @@ export default async function ProfilePage() {
             {/* Recent Generations */}
             <Card className="card-base">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-lg font-semibold">最近生成</CardTitle>
-                <Link href="/generations" className="text-sm text-blue-500 hover:underline">
-                  查看全部
+                <CardTitle className="text-lg font-semibold">{t('prediction.title')}</CardTitle>
+                <Link href="/profile/prediction" className="text-sm text-blue-500 hover:underline">
+                  {t('prediction.viewAll')}
                 </Link>
               </CardHeader>
               <CardContent className="space-y-4">
