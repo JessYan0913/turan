@@ -291,7 +291,15 @@ export default {
     profile: '个人中心',
     title: '积分使用记录',
     description: '查看您的积分使用情况',
-    status: '状态',
+    table: {
+      id: 'ID',
+      type: '类型',
+      amount: '积分',
+      balanceBefore: '之前积分',
+      balanceAfter: '之后积分',
+      status: '状态',
+      createdAt: '创建时间',
+    },
     noRecords: '暂无积分使用记录',
   },
   prediction: {

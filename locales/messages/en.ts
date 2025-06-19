@@ -299,7 +299,15 @@ export default {
     profile: 'Profile Center',
     title: 'Billing History',
     description: 'View your billing records',
-    status: 'Status',
+    table: {
+      id: 'ID',
+      type: 'Type',
+      amount: 'Points',
+      balanceBefore: 'Previous Balance',
+      balanceAfter: 'New Balance',
+      status: 'Status',
+      createdAt: 'Created At',
+    },
     noRecords: 'No billing records found',
   },
   prediction: {

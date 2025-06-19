@@ -298,7 +298,15 @@ export default {
     profile: 'プロフィール',
     title: '請求履歴',
     description: 'あなたの積み立て状況を確認',
-    status: 'ステータス',
+    table: {
+      id: 'ID',
+      type: 'タイプ',
+      amount: 'ポイント',
+      balanceBefore: '前のポイント',
+      balanceAfter: '後のポイント',
+      status: 'ステータス',
+      createdAt: '作成日時',
+    },
     noRecords: '現在の請求履歴はありません',
   },
   prediction: {

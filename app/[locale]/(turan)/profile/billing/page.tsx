@@ -46,13 +46,13 @@ export default async function BillingPage({ params }: { params: Promise<{ page?:
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Balance Before</TableHead>
-                <TableHead>Balance After</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Date</TableHead>
+                <TableHead>{t('table.id')}</TableHead>
+                <TableHead>{t('table.type')}</TableHead>
+                <TableHead>{t('table.amount')}</TableHead>
+                <TableHead>{t('table.balanceBefore')}</TableHead>
+                <TableHead>{t('table.balanceAfter')}</TableHead>
+                <TableHead>{t('table.status')}</TableHead>
+                <TableHead className="text-right">{t('table.createdAt')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
