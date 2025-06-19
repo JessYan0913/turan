@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   if (!code) {
     return NextResponse.json({ message: 'code  required' }, { status: 400 });
   }
-  const record = await db.select().from(redemptionRecordTable).where(eq(redemptionRecordTable.code, code));
+  const [record] = await db.select().from(redemptionRecordTable).where(eq(redemptionRecordTable.code, code));
   if (record) {
     throw new Error('兑换码已使用');
   }
