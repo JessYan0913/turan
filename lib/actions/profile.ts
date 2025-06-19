@@ -3,7 +3,7 @@
 import { count, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db/client';
-import { workTable } from '@/lib/db/schema';
+import { type User, userTable, workTable } from '@/lib/db/schema';
 
 export async function getUserWorkStatistics(userId: string): Promise<{
   totalWorks: number;
@@ -39,5 +39,32 @@ export async function getUserWorkStatistics(userId: string): Promise<{
       totalProcessingTime: 0,
       usedWorkTypes: 0,
     };
+  }
+}
+
+export async function updateUserInfo(userId: string, data: Partial<Pick<User, 'name' | 'bio' | 'email'>>) {
+  try {
+    const [updatedUser] = await db
+      .update(userTable)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(userTable.id, userId))
+      .returning();
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    return {
+      id: updatedUser.id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      bio: updatedUser.bio,
+    };
+  } catch (error) {
+    console.error('Error updating user info:', error);
+    throw new Error('Failed to update user information');
   }
 }

@@ -2,6 +2,7 @@ import '../globals.css';
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { SessionProvider } from 'next-auth/react';
 import { setStaticParamsLocale } from 'next-international/server';
 import type React from 'react';
 
@@ -31,8 +32,10 @@ export default async function RootLayout({
       <body className={inter.className}>
         <I18nProviderClient locale={locale}>
           <ThemeProvider>
-            <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-            <Toaster />
+            <SessionProvider>
+              <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+              <Toaster />
+            </SessionProvider>
           </ThemeProvider>
         </I18nProviderClient>
       </body>

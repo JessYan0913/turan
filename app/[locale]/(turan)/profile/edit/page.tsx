@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-import EditProfileForm from '@/components/edit-profile-form';
+import { EditProfileForm } from '@/components/edit-profile-form';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/lib/auth';
@@ -46,7 +46,13 @@ export default async function ProfileEditPage() {
             <CardTitle>{t('form.title')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <EditProfileForm userInfo={user} />
+            <EditProfileForm
+              initialData={{
+                name: session.user.name || '',
+                email: session.user.email || '',
+                bio: user.bio || '',
+              }}
+            />
           </CardContent>
         </Card>
       </div>
