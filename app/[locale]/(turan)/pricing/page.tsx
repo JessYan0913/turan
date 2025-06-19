@@ -1,9 +1,11 @@
 import { Building2, Check, Crown, Star, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getPlans, type Plan } from '@/lib/actions/pricing';
+import { cn } from '@/lib/utils';
 import { getScopedI18n } from '@/locales/server';
 
 const getPlanIcon = (id: Plan['id']) => {
@@ -97,16 +99,19 @@ export default async function PricingPage() {
                 </CardHeader>
 
                 <CardContent className="space-y-6">
-                  <Button
-                    className={`w-full ${
-                      plan.popular
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
-                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                    }`}
-                    size="lg"
+                  <Link
+                    href={`/profile/upgrade`}
+                    className={cn(
+                      buttonVariants({
+                        variant: plan.popular ? 'default' : 'outline',
+                        className: 'w-full',
+                      }),
+                      plan.popular &&
+                        'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+                    )}
                   >
                     {plan.buttonText}
-                  </Button>
+                  </Link>
 
                   <div className="space-y-4">
                     <h4 className="font-semibold">{t('features')}</h4>
