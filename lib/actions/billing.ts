@@ -1,6 +1,6 @@
 'use server';
 
-import { count, eq } from 'drizzle-orm';
+import { count, desc, eq } from 'drizzle-orm';
 
 import { db } from '@/lib/db/client';
 import { transactionTable } from '@/lib/db/schema';
@@ -11,6 +11,7 @@ export async function getBillingHistory(userId: string, limit: number, page: num
     .select()
     .from(transactionTable)
     .where(eq(transactionTable.userId, userId))
+    .orderBy(desc(transactionTable.createdAt)) // Add this line to sort by createdAt in descending order
     .limit(limit)
     .offset(offset);
   const totalResult = await db

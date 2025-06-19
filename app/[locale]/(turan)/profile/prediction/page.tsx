@@ -1,17 +1,24 @@
 import { format } from 'date-fns';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getPredictions } from '@/lib/actions/prediction';
 import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { getScopedI18n } from '@/locales/server';
 
-export default async function PredictionPage({ params }: { params: Promise<{ page?: string; limit?: string }> }) {
+interface PageProps {
+  params: { locale: string };
+  searchParams: Promise<{
+    page?: string | string[];
+  }>;
+}
+
+export default async function PredictionPage({ params, searchParams }: PageProps) {
   const session = await auth();
   if (!session?.user) {
     redirect('/login');
@@ -21,11 +28,16 @@ export default async function PredictionPage({ params }: { params: Promise<{ pag
     redirect('/login');
   }
   const t = await getScopedI18n('prediction');
-  const { page, limit } = await params;
+  // Get page parameter from searchParams
+  const pageParam = (await searchParams).page;
+  const page = Array.isArray(pageParam) ? pageParam[0] : pageParam;
   const pageInt = page ? parseInt(page, 10) : 1;
-  const limitInt = limit ? parseInt(limit, 10) : 10;
+  const limitInt = 10; // Fixed limit of 10 items per page
+
   const { predictions, total } = await getPredictions(userId, limitInt, pageInt);
   const totalPages = Math.ceil(total / limitInt);
+  const hasPrevious = pageInt > 1;
+  const hasNext = pageInt < totalPages;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -52,10 +64,12 @@ export default async function PredictionPage({ params }: { params: Promise<{ pag
     <div className="container mx-auto px-4 py-8">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <Link href="/profile" className={cn(buttonVariants({ variant: 'ghost' }), 'flex items-center gap-2')}>
-            <ArrowLeft className="size-4" />
-            {t('profile')}
-          </Link>
+          <Button asChild variant="ghost" className="gap-2">
+            <Link href="/profile">
+              <ArrowLeft className="size-4" />
+              {t('profile')}
+            </Link>
+          </Button>
         </div>
 
         <div>
@@ -82,7 +96,9 @@ export default async function PredictionPage({ params }: { params: Promise<{ pag
                   <TableRow key={prediction.id}>
                     <TableCell className="font-mono text-xs">{prediction.id.slice(0, 8)}...</TableCell>
                     <TableCell>{prediction.model || 'N/A'}</TableCell>
-                    <TableCell className="max-w-[300px] truncate">{prediction.input?.['prompt'] || 'N/A'}</TableCell>
+                    <TableCell className="max-w-[300px] truncate">
+                      {(prediction.input as any)['prompt'] || 'N/A'}
+                    </TableCell>
                     <TableCell>{getStatusBadge(prediction.status || 'unknown')}</TableCell>
                     <TableCell className="text-right">
                       {prediction.createdAt ? format(new Date(prediction.createdAt), 'yyyy-MM-dd HH:mm') : 'N/A'}
@@ -97,7 +113,7 @@ export default async function PredictionPage({ params }: { params: Promise<{ pag
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={7} className="h-24 text-center">
                     {t('noRecords')}
                   </TableCell>
                 </TableRow>
@@ -107,27 +123,35 @@ export default async function PredictionPage({ params }: { params: Promise<{ pag
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-end space-x-2">
-            <span className="text-muted-foreground text-sm">
-              Page {pageInt} of {totalPages}
-            </span>
-            <div className="flex space-x-1">
-              {pageInt > 1 && (
-                <Link
-                  href={`/profile/prediction?page=${pageInt - 1}&limit=${limitInt}`}
-                  className={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'h-9 w-9')}
-                >
-                  &lt;
-                </Link>
-              )}
-              {pageInt < totalPages && (
-                <Link
-                  href={`/profile/prediction?page=${pageInt + 1}&limit=${limitInt}`}
-                  className={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'h-9 w-9')}
-                >
-                  &gt;
-                </Link>
-              )}
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="text-muted-foreground text-sm">{`Page ${pageInt} of ${totalPages}`}</div>
+            <div className="space-x-2">
+              <Link
+                href={`?${new URLSearchParams({
+                  page: String(Math.max(1, pageInt - 1)),
+                })}`}
+                className={cn(
+                  buttonVariants({ variant: 'outline' }),
+                  'w-24',
+                  !hasPrevious && 'pointer-events-none opacity-50'
+                )}
+                aria-disabled={!hasPrevious}
+              >
+                Previous
+              </Link>
+              <Link
+                href={`?${new URLSearchParams({
+                  page: String(Math.min(totalPages, pageInt + 1)),
+                })}`}
+                className={cn(
+                  buttonVariants({ variant: 'outline' }),
+                  'w-24',
+                  !hasNext && 'pointer-events-none opacity-50'
+                )}
+                aria-disabled={!hasNext}
+              >
+                Next
+              </Link>
             </div>
           </div>
         )}

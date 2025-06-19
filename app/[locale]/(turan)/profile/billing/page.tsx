@@ -11,7 +11,14 @@ import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { getScopedI18n } from '@/locales/server';
 
-export default async function BillingPage({ params }: { params: Promise<{ page?: string; limit?: string }> }) {
+interface PageProps {
+  params: { locale: string };
+  searchParams: Promise<{
+    page?: string | string[];
+  }>;
+}
+
+export default async function BillingPage({ params, searchParams }: PageProps) {
   const session = await auth();
   if (!session?.user) {
     redirect('/login');
@@ -21,11 +28,14 @@ export default async function BillingPage({ params }: { params: Promise<{ page?:
     redirect('/login');
   }
   const t = await getScopedI18n('billing');
-  const { page, limit } = await params;
+  const pageParam = (await searchParams).page;
+  const page = Array.isArray(pageParam) ? pageParam[0] : pageParam;
   const pageInt = page ? parseInt(page, 10) : 1;
-  const limitInt = limit ? parseInt(limit, 10) : 10;
+  const limitInt = 10; // Fixed limit of 10 items per page
   const { transactions, total } = await getBillingHistory(userId, limitInt, pageInt);
   const totalPages = Math.ceil(total / limitInt);
+  const hasPrevious = pageInt > 1;
+  const hasNext = pageInt < totalPages;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -103,22 +113,28 @@ export default async function BillingPage({ params }: { params: Promise<{ page?:
             <div className="text-muted-foreground text-sm">{`Page ${pageInt} of ${totalPages}`}</div>
             <div className="space-x-2">
               <Link
-                href={`?page=${Math.max(1, pageInt - 1)}&limit=${limitInt}`}
+                href={`?${new URLSearchParams({
+                  page: String(Math.max(1, pageInt - 1)),
+                })}`}
                 className={cn(
                   buttonVariants({ variant: 'outline' }),
                   'w-24',
-                  pageInt === 1 && 'pointer-events-none opacity-50'
+                  !hasPrevious && 'pointer-events-none opacity-50'
                 )}
+                aria-disabled={!hasPrevious}
               >
                 Previous
               </Link>
               <Link
-                href={`?page=${Math.min(totalPages, pageInt + 1)}&limit=${limitInt}`}
+                href={`?${new URLSearchParams({
+                  page: String(Math.min(totalPages, pageInt + 1)),
+                })}`}
                 className={cn(
                   buttonVariants({ variant: 'outline' }),
                   'w-24',
-                  pageInt >= totalPages && 'pointer-events-none opacity-50'
+                  !hasNext && 'pointer-events-none opacity-50'
                 )}
+                aria-disabled={!hasNext}
               >
                 Next
               </Link>

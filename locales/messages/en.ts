@@ -320,6 +320,8 @@ export default {
       prompt: 'Prompt',
       status: 'Status',
       createdAt: 'Created At',
+      startedAt: 'Started At',
+      completedAt: 'Completed At',
     },
     status: {
       succeeded: 'Succeeded',
