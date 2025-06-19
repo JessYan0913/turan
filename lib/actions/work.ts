@@ -1,12 +1,12 @@
 'use server';
 
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { type Prediction } from 'replicate';
 
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
 import { db } from '@/lib/db/client';
-import { userTable, workTable } from '@/lib/db/schema';
+import { predictionTable, transactionTable, userTable, workTable } from '@/lib/db/schema';
 
 export async function checkUserPoints(userId: string, requiredPoints: number) {
   const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
@@ -32,12 +32,28 @@ export async function consumePoint(userId: string, points: number) {
 
 export async function processGenerateImagePrediction(prediction: Prediction) {
   try {
+    const [predication] = await db
+      .select()
+      .from(predictionTable)
+      .where(and(eq(predictionTable.id, prediction.id), eq(predictionTable.status, 'starting')));
+    if (!predication) throw new Error('Prediction not found', { cause: prediction });
     const { prompt, userId } = prediction.input as {
       prompt: string;
       userId: string;
     };
     if (prediction.status !== 'succeeded') {
       if (['failed', 'canceled'].includes(prediction.status)) {
+        await db
+          .update(predictionTable)
+          .set({
+            status: prediction.status,
+            output: prediction.output,
+            error: prediction.error,
+            logs: prediction.logs,
+            metrics: prediction.metrics,
+            completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+          })
+          .where(eq(predictionTable.id, prediction.id));
         await consumePoint(userId, -1);
       }
       console.log('Prediction not succeeded, status:', prediction.status);
@@ -47,16 +63,44 @@ export async function processGenerateImagePrediction(prediction: Prediction) {
     const title = await generateTitle(prompt);
     const processedImageBlob = await saveOnlineImage(prediction.output[0]);
 
-    await db.insert(workTable).values({
-      userId,
-      title,
-      prompt,
-      type: 'generate',
-      points: 1,
-      processedImage: processedImageBlob.url,
-      metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
-      completedAt: new Date(prediction.completed_at || new Date()),
-      predictTime: prediction.metrics?.predict_time?.toString(),
+    await db.transaction(async (tx) => {
+      const [updatedPrediction] = await tx
+        .update(predictionTable)
+        .set({
+          status: prediction.status,
+          output: prediction.output,
+          error: prediction.error,
+          logs: prediction.logs,
+          metrics: prediction.metrics,
+          completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+        })
+        .where(eq(predictionTable.id, prediction.id))
+        .returning();
+
+      const [work] = await tx
+        .insert(workTable)
+        .values({
+          userId,
+          title,
+          prompt,
+          type: 'generate',
+          points: 1,
+          processedImage: processedImageBlob.url,
+          metadata: prediction.metrics,
+          completedAt: new Date(prediction.completed_at || new Date()),
+          predictTime: prediction.metrics?.predict_time?.toString(),
+          predictionId: updatedPrediction.id,
+        })
+        .returning();
+
+      await tx.insert(transactionTable).values({
+        userId,
+        workId: work.id,
+        amount: -1,
+        type: 'payment' as const,
+        status: 'completed' as const,
+        metadata: prediction,
+      });
     });
     console.log('✅ Successfully processed prediction:', prediction.id);
   } catch (error) {
@@ -66,14 +110,32 @@ export async function processGenerateImagePrediction(prediction: Prediction) {
 
 export async function processStyleTransformPrediction(prediction: Prediction) {
   try {
+    const [predication] = await db
+      .select()
+      .from(predictionTable)
+      .where(and(eq(predictionTable.id, prediction.id), eq(predictionTable.status, 'starting')));
+    if (!predication) throw new Error('Prediction not found', { cause: prediction });
+
     const { prompt, userId, input_image, style } = prediction.input as {
       userId: string;
       prompt: string;
       input_image: string;
       style: string;
     };
+
     if (prediction.status !== 'succeeded') {
       if (['failed', 'canceled'].includes(prediction.status)) {
+        await db
+          .update(predictionTable)
+          .set({
+            status: prediction.status,
+            output: prediction.output,
+            error: prediction.error,
+            logs: prediction.logs,
+            metrics: prediction.metrics,
+            completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+          })
+          .where(eq(predictionTable.id, prediction.id));
         await consumePoint(userId, -15);
       }
       console.log('Prediction not succeeded, status:', prediction.status);
@@ -83,18 +145,46 @@ export async function processStyleTransformPrediction(prediction: Prediction) {
     const title = await generateTitle(prompt);
     const processedImageBlob = await saveOnlineImage(prediction.output[0]);
 
-    await db.insert(workTable).values({
-      userId,
-      title,
-      prompt,
-      type: 'style-transfer',
-      points: 15,
-      style,
-      originalImage: input_image,
-      processedImage: processedImageBlob.url,
-      metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
-      completedAt: new Date(prediction.completed_at || new Date()),
-      predictTime: prediction.metrics?.predict_time?.toString(),
+    await db.transaction(async (tx) => {
+      const [updatedPrediction] = await tx
+        .update(predictionTable)
+        .set({
+          status: prediction.status,
+          output: prediction.output,
+          error: prediction.error,
+          logs: prediction.logs,
+          metrics: prediction.metrics,
+          completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+        })
+        .where(eq(predictionTable.id, prediction.id))
+        .returning();
+
+      const [work] = await tx
+        .insert(workTable)
+        .values({
+          userId,
+          title,
+          prompt,
+          type: 'style-transfer',
+          points: 15,
+          style,
+          originalImage: input_image,
+          processedImage: processedImageBlob.url,
+          metadata: prediction.metrics,
+          completedAt: new Date(prediction.completed_at || new Date()),
+          predictTime: prediction.metrics?.predict_time?.toString(),
+          predictionId: updatedPrediction.id,
+        })
+        .returning();
+
+      await tx.insert(transactionTable).values({
+        userId,
+        workId: work.id,
+        amount: -15,
+        type: 'payment' as const,
+        status: 'completed' as const,
+        metadata: prediction,
+      });
     });
     console.log('✅ Successfully processed prediction:', prediction.id);
   } catch (error) {
@@ -104,13 +194,31 @@ export async function processStyleTransformPrediction(prediction: Prediction) {
 
 export async function processImageEditPrediction(prediction: Prediction) {
   try {
+    const [predication] = await db
+      .select()
+      .from(predictionTable)
+      .where(and(eq(predictionTable.id, prediction.id), eq(predictionTable.status, 'starting')));
+    if (!predication) throw new Error('Prediction not found', { cause: prediction });
+
     const { prompt, userId, input_image } = prediction.input as {
       userId: string;
       prompt: string;
       input_image: string;
     };
+
     if (prediction.status !== 'succeeded') {
       if (['failed', 'canceled'].includes(prediction.status)) {
+        await db
+          .update(predictionTable)
+          .set({
+            status: prediction.status,
+            output: prediction.output,
+            error: prediction.error,
+            logs: prediction.logs,
+            metrics: prediction.metrics,
+            completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+          })
+          .where(eq(predictionTable.id, prediction.id));
         await consumePoint(userId, -15);
       }
       console.log('Prediction not succeeded, status:', prediction.status);
@@ -120,17 +228,45 @@ export async function processImageEditPrediction(prediction: Prediction) {
     const title = await generateTitle(prompt);
     const processedImageBlob = await saveOnlineImage(prediction.output[0]);
 
-    await db.insert(workTable).values({
-      userId,
-      title,
-      prompt,
-      type: 'edit',
-      points: 15,
-      originalImage: input_image,
-      processedImage: processedImageBlob.url,
-      metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
-      completedAt: new Date(prediction.completed_at || new Date()),
-      predictTime: prediction.metrics?.predict_time?.toString(),
+    await db.transaction(async (tx) => {
+      const [updatedPrediction] = await tx
+        .update(predictionTable)
+        .set({
+          status: prediction.status,
+          output: prediction.output,
+          error: prediction.error,
+          logs: prediction.logs,
+          metrics: prediction.metrics,
+          completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+        })
+        .where(eq(predictionTable.id, prediction.id))
+        .returning();
+
+      const [work] = await tx
+        .insert(workTable)
+        .values({
+          userId,
+          title,
+          prompt,
+          type: 'edit',
+          points: 15,
+          originalImage: input_image,
+          processedImage: processedImageBlob.url,
+          metadata: prediction.metrics,
+          completedAt: new Date(prediction.completed_at || new Date()),
+          predictTime: prediction.metrics?.predict_time?.toString(),
+          predictionId: updatedPrediction.id,
+        })
+        .returning();
+
+      await tx.insert(transactionTable).values({
+        userId,
+        workId: work.id,
+        amount: -15,
+        type: 'payment' as const,
+        status: 'completed' as const,
+        metadata: prediction,
+      });
     });
     console.log('✅ Successfully processed prediction:', prediction.id);
   } catch (error) {
@@ -140,13 +276,31 @@ export async function processImageEditPrediction(prediction: Prediction) {
 
 export async function processAvatarGeneratePrediction(prediction: Prediction) {
   try {
+    const [predication] = await db
+      .select()
+      .from(predictionTable)
+      .where(and(eq(predictionTable.id, prediction.id), eq(predictionTable.status, 'starting')));
+    if (!predication) throw new Error('Prediction not found', { cause: prediction });
+
     const { prompt, userId, input_image } = prediction.input as {
       userId: string;
       prompt: string;
       input_image: string;
     };
+
     if (prediction.status !== 'succeeded') {
       if (['failed', 'canceled'].includes(prediction.status)) {
+        await db
+          .update(predictionTable)
+          .set({
+            status: prediction.status,
+            output: prediction.output,
+            error: prediction.error,
+            logs: prediction.logs,
+            metrics: prediction.metrics,
+            completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+          })
+          .where(eq(predictionTable.id, prediction.id));
         await consumePoint(userId, -15);
       }
       console.log('Prediction not succeeded, status:', prediction.status);
@@ -156,17 +310,45 @@ export async function processAvatarGeneratePrediction(prediction: Prediction) {
     const title = await generateTitle(prompt);
     const processedImageBlob = await saveOnlineImage(prediction.output[0]);
 
-    await db.insert(workTable).values({
-      userId,
-      title,
-      prompt,
-      type: 'avatar',
-      points: 15,
-      originalImage: input_image,
-      processedImage: processedImageBlob.url,
-      metadata: JSON.parse(JSON.stringify(prediction)) as Record<string, unknown>,
-      completedAt: new Date(prediction.completed_at || new Date()),
-      predictTime: prediction.metrics?.predict_time?.toString(),
+    await db.transaction(async (tx) => {
+      const [updatedPrediction] = await tx
+        .update(predictionTable)
+        .set({
+          status: prediction.status,
+          output: prediction.output,
+          error: prediction.error,
+          logs: prediction.logs,
+          metrics: prediction.metrics,
+          completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+        })
+        .where(eq(predictionTable.id, prediction.id))
+        .returning();
+
+      const [work] = await tx
+        .insert(workTable)
+        .values({
+          userId,
+          title,
+          prompt,
+          type: 'avatar',
+          points: 15,
+          originalImage: input_image,
+          processedImage: processedImageBlob.url,
+          metadata: prediction.metrics,
+          completedAt: new Date(prediction.completed_at || new Date()),
+          predictTime: prediction.metrics?.predict_time?.toString(),
+          predictionId: updatedPrediction.id,
+        })
+        .returning();
+
+      await tx.insert(transactionTable).values({
+        userId,
+        workId: work.id,
+        amount: -15,
+        type: 'payment' as const,
+        status: 'completed' as const,
+        metadata: prediction,
+      });
     });
     console.log('✅ Successfully processed prediction:', prediction.id);
   } catch (error) {

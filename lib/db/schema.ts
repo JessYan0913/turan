@@ -87,7 +87,7 @@ export const predictionStatusEnum = pgEnum('prediction_status', [
 export const predictionTable = pgTable(
   'prediction',
   {
-    id: varchar('id', { length: 191 }).primaryKey(),
+    id: varchar('id', { length: 191 }).primaryKey().notNull(),
     status: predictionStatusEnum('status').notNull(),
     model: varchar('model', { length: 255 }).notNull(),
     version: varchar('version', { length: 100 }).notNull(),
@@ -170,6 +170,7 @@ export const transactionTable = pgTable(
       .references(() => userTable.id, { onDelete: 'cascade' }),
     type: varchar('type', { length: 32 }).notNull().$type<TransactionType>(),
     amount: integer('amount').notNull(), // 正数表示收入，负数表示支出
+    workId: varchar('work_id', { length: 191 }).references(() => workTable.id, { onDelete: 'set null' }),
     status: varchar('status', { length: 32 }).notNull().$type<TransactionStatus>().default('completed'),
     metadata: jsonb('metadata').default({}), // 存储额外信息，如JWT内容、支付信息等
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

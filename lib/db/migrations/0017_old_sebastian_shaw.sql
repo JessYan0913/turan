@@ -1,0 +1,2 @@
+ALTER TABLE "transaction" ADD COLUMN "work_id" varchar(191);--> statement-breakpoint
+ALTER TABLE "transaction" ADD CONSTRAINT "transaction_work_id_work_id_fk" FOREIGN KEY ("work_id") REFERENCES "public"."work"("id") ON DELETE set null ON UPDATE no action;
