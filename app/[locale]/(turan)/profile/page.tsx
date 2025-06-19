@@ -18,6 +18,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import type { Prediction } from 'replicate';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { getUserWorkStatistics } from '@/lib/actions/profile';
+import { getPredictions } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
@@ -43,37 +45,8 @@ export default async function ProfilePage() {
 
   const { totalWorks, worksThisMonth, totalProcessingTime, usedWorkTypes } = await getUserWorkStatistics();
 
-  // Mock data for recent generations
-  const recentGenerations = [
-    {
-      id: 'gen_123',
-      status: 'succeeded',
-      model: 'stability-ai/sdxl',
-      input: { prompt: 'A beautiful sunset over mountains' },
-      output: { url: '/placeholder.svg' },
-      createdAt: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-      completedAt: new Date(Date.now() - 1000 * 60 * 4), // 4 minutes ago
-    },
-    {
-      id: 'gen_124',
-      status: 'processing',
-      model: 'stability-ai/sdxl',
-      input: { prompt: 'A futuristic city skyline at night' },
-      createdAt: new Date(Date.now() - 1000 * 60 * 2), // 2 minutes ago
-      completedAt: null,
-      error: null,
-    },
-    {
-      id: 'gen_125',
-      status: 'failed',
-      model: 'stability-ai/sdxl',
-      input: { prompt: 'A magical forest with glowing plants' },
-      error: { message: 'Generation failed' },
-      output: null,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
-      completedAt: new Date(Date.now() - 1000 * 60 * 58), // 58 minutes ago
-    },
-  ] as const;
+  // Get recent generations from database
+  const { predictions: recentGenerations } = await getPredictions(user.id, 10, 1);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -291,8 +264,8 @@ export default async function ProfilePage() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between">
                             <p className="truncate text-sm font-medium">
-                              {typeof gen.input === 'object' && 'prompt' in gen.input
-                                ? (gen.input.prompt as string)
+                              {gen.input && typeof gen.input === 'object' && 'prompt' in gen.input && gen.input.prompt
+                                ? String(gen.input.prompt)
                                 : 'Untitled'}
                             </p>
                             <span className="text-muted-foreground ml-2 whitespace-nowrap text-xs">
@@ -305,18 +278,25 @@ export default async function ProfilePage() {
                               {getStatusText(gen.status)}
                             </span>
                             <span className="mx-2">•</span>
-                            <span className="truncate">{gen.model.split('/').pop()}</span>
+                            <span className="truncate">
+                              {typeof gen.model === 'string' ? gen.model.split('/').pop() : 'Unknown'}
+                            </span>
                             {gen.completedAt && (
                               <>
                                 <span className="mx-2">•</span>
-                                <span>{Math.ceil((gen.completedAt.getTime() - gen.createdAt.getTime()) / 1000)}s</span>
+                                <span>
+                                  {Math.ceil(
+                                    (new Date(gen.completedAt).getTime() - new Date(gen.createdAt).getTime()) / 1000
+                                  )}
+                                  s
+                                </span>
                               </>
                             )}
                           </div>
                         </div>
-                        {gen.status === 'succeeded' && gen.output?.url && (
+                        {gen.status === 'succeeded' && Array.isArray(gen.output) && gen.output[0] && (
                           <Link
-                            href={gen.output.url}
+                            href={String(gen.output[0])}
                             target="_blank"
                             className="ml-2 shrink-0 text-blue-500 hover:text-blue-600 hover:underline"
                           >

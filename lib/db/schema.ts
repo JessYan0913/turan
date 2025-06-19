@@ -88,6 +88,9 @@ export const predictionTable = pgTable(
   'prediction',
   {
     id: varchar('id', { length: 191 }).primaryKey().notNull(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => userTable.id, { onDelete: 'cascade' }),
     status: predictionStatusEnum('status').notNull(),
     model: varchar('model', { length: 255 }).notNull(),
     version: varchar('version', { length: 100 }).notNull(),
@@ -108,7 +111,12 @@ export const predictionTable = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (table) => [index('prediction_status_idx').on(table.status), index('prediction_created_at_idx').on(table.createdAt)]
+  (table) => [
+    index('prediction_user_id_idx').on(table.userId),
+    index('prediction_status_idx').on(table.status),
+    index('prediction_created_at_idx').on(table.createdAt),
+    index('prediction_user_status_idx').on(table.userId, table.status),
+  ]
 );
 
 export type Prediction = InferSelectModel<typeof predictionTable>;

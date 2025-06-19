@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import {
-  processAvatarGeneratePrediction,
-  processGenerateImagePrediction,
-  processImageEditPrediction,
-  processStyleTransformPrediction,
-} from '@/lib/actions/work';
+import { processPrediction } from '@/lib/actions/work';
 import { verifyWebhookSignature } from '@/lib/utils';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ type: string }> }) {
@@ -54,16 +49,39 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     switch (type) {
       case 'generate-image':
-        processGenerateImagePrediction(prediction);
+        processPrediction(prediction, {
+          type: 'generate',
+          points: 1,
+          getWorkData: () => ({}),
+        });
         break;
       case 'style-transform':
-        processStyleTransformPrediction(prediction);
+        processPrediction(prediction, {
+          type: 'style-transfer',
+          points: 15,
+          getWorkData: () => ({
+            originalImage: prediction.input['input_image'],
+            style: prediction.input['style'],
+          }),
+        });
         break;
       case 'image-edit':
-        processImageEditPrediction(prediction);
+        processPrediction(prediction, {
+          type: 'edit',
+          points: 15,
+          getWorkData: () => ({
+            originalImage: prediction.input['input_image'],
+          }),
+        });
         break;
       case 'avatar-generate':
-        processAvatarGeneratePrediction(prediction);
+        processPrediction(prediction, {
+          type: 'avatar',
+          points: 15,
+          getWorkData: () => ({
+            originalImage: prediction.input['input_image'],
+          }),
+        });
         break;
       default:
         console.error('Invalid webhook type:', type);

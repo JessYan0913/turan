@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
-import { checkUserPoints, consumePoint } from '@/lib/actions/work';
+import { checkUserPoints, createPrediction } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { replicate } from '@/lib/replicate';
 import { getClientIp, WEBHOOK_HOST } from '@/lib/utils';
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     const blobData = await uploadFileToBlobStorage(imageFile);
 
-    const { id, input } = await replicate.predictions.create({
+    const prediction = await replicate.predictions.create({
       model: 'black-forest-labs/flux-kontext-pro',
       input: {
         userId,
@@ -55,10 +55,9 @@ export async function POST(request: Request) {
       webhook: `${WEBHOOK_HOST}/api/webhook/style-transform`,
       webhook_events_filter: ['completed', 'logs', 'start'],
     });
+    createPrediction(userId, 15, prediction);
 
-    consumePoint(userId, 15);
-
-    return NextResponse.json({ id, input }, { status: 201 });
+    return NextResponse.json({ id: prediction.id, input: prediction.input }, { status: 201 });
   } catch (error) {
     console.error('Error processing style transform:', error);
     return NextResponse.json(
