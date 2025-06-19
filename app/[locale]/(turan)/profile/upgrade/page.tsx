@@ -53,12 +53,10 @@ export default function UpgradePage() {
       setVerificationResult({
         code: data.code,
         planName: response.id || '',
-        value: response.amount || 0,
-        expiresAt: response.expiresAt.toISOString() || '',
+        value: response.points || 0,
+        expiresAt: response.period,
       });
     } catch (error) {
-      console.log('====> error');
-
       toast({
         title: 'Verification failed',
         description: error instanceof Error ? error.message : 'Failed to verify code',

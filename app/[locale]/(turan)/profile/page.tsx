@@ -18,7 +18,6 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import type { Prediction } from 'replicate';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +29,7 @@ import { getPredictions } from '@/lib/actions/work';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
+import { PLANS } from '@/lib/pricing/config';
 import { getScopedI18n } from '@/locales/server';
 
 export default async function ProfilePage() {
@@ -92,8 +92,8 @@ export default async function ProfilePage() {
     return String(user.planExpiry).slice(0, 10);
   })();
 
-  const usageThisMonth = user.usageCurrent || 0;
-  const planLimit = user.usageLimit || 100;
+  const usageThisMonth = user.planPoints - user.points;
+  const planLimit = PLANS.find((plan) => plan.id === user.plan)?.points || 0;
   const usagePercentage = (usageThisMonth / planLimit) * 100;
 
   return (

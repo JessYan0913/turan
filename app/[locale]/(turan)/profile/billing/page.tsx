@@ -49,6 +49,8 @@ export default async function BillingPage({ params }: { params: Promise<{ page?:
                 <TableHead>ID</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Amount</TableHead>
+                <TableHead>Balance Before</TableHead>
+                <TableHead>Balance After</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Date</TableHead>
               </TableRow>
@@ -59,7 +61,14 @@ export default async function BillingPage({ params }: { params: Promise<{ page?:
                   <TableRow key={transaction.id}>
                     <TableCell className="font-mono">{transaction.id}</TableCell>
                     <TableCell>{transaction.type}</TableCell>
-                    <TableCell>{transaction.amount}</TableCell>
+                    <TableCell
+                      className={cn('font-medium', transaction.amount > 0 ? 'text-green-600' : 'text-red-600')}
+                    >
+                      {transaction.amount > 0 ? '+' : ''}
+                      {transaction.amount}
+                    </TableCell>
+                    <TableCell>{transaction.balanceBefore}</TableCell>
+                    <TableCell>{transaction.balanceAfter}</TableCell>
                     <TableCell>
                       <Badge
                         variant={transaction.status === 'completed' ? 'default' : 'secondary'}
@@ -79,7 +88,7 @@ export default async function BillingPage({ params }: { params: Promise<{ page?:
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={7} className="h-24 text-center">
                     {t('noRecords')}
                   </TableCell>
                 </TableRow>

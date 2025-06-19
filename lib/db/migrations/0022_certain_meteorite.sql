@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "plan_points" SET NOT NULL;

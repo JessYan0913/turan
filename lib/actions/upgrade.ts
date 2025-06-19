@@ -9,7 +9,7 @@ import { redemptionRecordTable, transactionTable, userTable } from '@/lib/db/sch
 import { decryptionRedeemCode } from '@/lib/pricing';
 import { type Plan } from '@/lib/pricing/config';
 
-export async function validationRedeemCode(redeemCode: string): Promise<Plan & { expiresAt: Date }> {
+export async function validationRedeemCode(redeemCode: string): Promise<Plan> {
   const session = await auth();
   if (!session?.user) {
     redirect('/login');
@@ -35,16 +35,28 @@ export async function upgrade(redeemCode: string) {
   if (!userId) {
     redirect('/login');
   }
+  const record = await db.select().from(redemptionRecordTable).where(eq(redemptionRecordTable.code, redeemCode));
+  if (record) {
+    throw new Error('兑换码已使用');
+  }
   const plan = await decryptionRedeemCode(redeemCode);
   const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
   return await db.transaction(async (tx) => {
+    // Calculate new expiry: extend from current expiry or now + 1 month
+    const now = new Date();
+    const newExpiry =
+      user.planExpiry && user.planExpiry > now
+        ? new Date(user.planExpiry.getTime() + 30 * 24 * 60 * 60 * 1000) // Add 1 month to current expiry
+        : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Now + 1 month
+
     const [updatedUser] = await tx
       .update(userTable)
       .set({
-        usageLimit: (user.usageLimit || 0) + plan.amount,
         plan: plan.id,
-        planExpiry: plan.expiresAt,
-        updatedAt: new Date(),
+        planPoints: plan.points,
+        planExpiry: newExpiry,
+        points: user.points + plan.points, // Add new points to existing balance
+        updatedAt: now,
       })
       .where(eq(userTable.id, userId))
       .returning();
@@ -53,14 +65,17 @@ export async function upgrade(redeemCode: string) {
       .insert(transactionTable)
       .values({
         userId,
-        amount: plan.amount,
+        amount: plan.points,
         type: 'redeem_code',
         status: 'completed',
+        balanceBefore: user.points,
+        balanceAfter: updatedUser.points,
         metadata: {
+          redeemCode,
           action: 'upgrade',
           planId: plan.id,
-          amount: plan.amount,
-          expiresAt: plan.expiresAt?.toISOString(),
+          amount: plan.points,
+          planPeriod: plan.period,
         },
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -75,8 +90,8 @@ export async function upgrade(redeemCode: string) {
       reward: {
         planId: plan.id,
         planName: plan.id, // Using plan.id as name since plan.name isn't available
-        amount: plan.amount,
-        expiresAt: plan.expiresAt?.toISOString(),
+        amount: plan.points,
+        planPeriod: plan.period,
       },
       metadata: {
         action: 'upgrade',

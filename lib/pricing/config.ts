@@ -6,7 +6,7 @@ export interface Plan {
   id: PlanId;
   price: string;
   period: PlanPeriod;
-  amount: number;
+  points: number;
   features: string[];
   limitations?: string[];
   popular: boolean;
@@ -17,7 +17,7 @@ export const PLANS: Plan[] = [
     id: 'free',
     price: '¥0',
     period: 'Month',
-    amount: 30,
+    points: 30,
     features: [
       '30 credits per montxh',
       'Generate Image: 1 credit per image',
@@ -33,7 +33,7 @@ export const PLANS: Plan[] = [
     id: 'basic',
     price: '¥19',
     period: 'Month',
-    amount: 300,
+    points: 300,
     features: [
       '300 credits per month',
       'Generate Image: 1 credit per image',
@@ -49,7 +49,7 @@ export const PLANS: Plan[] = [
     id: 'pro',
     price: '¥49',
     period: 'Month',
-    amount: 1000,
+    points: 1000,
     features: [
       '1000 credits per month',
       'Generate Image: 1 credit per image',
@@ -66,7 +66,7 @@ export const PLANS: Plan[] = [
     id: 'enterprise',
     price: '¥99',
     period: 'Month',
-    amount: 2500,
+    points: 2500,
     features: [
       '2500 credits per month',
       'Generate Image: 1 credit per image',

@@ -28,7 +28,7 @@ export const encryptionRedeemCode = async (plan: Omit<PlanId, 'free'>): Promise<
   }
 };
 
-export const decryptionRedeemCode = async (code: string): Promise<Plan & { expiresAt: Date }> => {
+export const decryptionRedeemCode = async (code: string): Promise<Plan> => {
   try {
     const encrypted = base62.decode(code);
 
@@ -36,12 +36,7 @@ export const decryptionRedeemCode = async (code: string): Promise<Plan & { expir
     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
     const packageId = decrypted[0];
     const plan = PLANS[packageId];
-    const expiresAt = new Date();
-    expiresAt.setMonth(expiresAt.getMonth() + 1);
-    return {
-      ...plan,
-      expiresAt,
-    };
+    return plan;
   } catch (error) {
     throw new Error(error as string);
   }

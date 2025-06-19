@@ -134,6 +134,34 @@
       "when": 1750300847556,
       "tag": "0018_sad_la_nuit",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1750303057364,
+      "tag": "0019_strange_queen_noir",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1750303277928,
+      "tag": "0020_fancy_patch",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1750304126489,
+      "tag": "0021_milky_captain_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1750304842720,
+      "tag": "0022_certain_meteorite",
+      "breakpoints": true
     }
   ]
 }

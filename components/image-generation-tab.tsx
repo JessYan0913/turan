@@ -47,9 +47,13 @@ export function ImageGenerationTab() {
         body: JSON.stringify(data),
       });
 
+      if (response.status === 401) {
+        router.push('/login');
+        return;
+      }
+
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        router.push('/login');
         throw new Error(error.message || t('result.error'));
       }
       const result = await response.json();

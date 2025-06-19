@@ -27,10 +27,10 @@ export const userTable = pgTable(
     avatar: text(),
     points: integer('points').default(0).notNull(),
     plan: varchar('plan', { length: 20 }).default('free'),
-    planExpiry: timestamp('plan_expiry'),
+    planPoints: integer('plan_points').default(30).notNull(), // 每月基础积分
+    planExpiry: timestamp('plan_expiry'), // 订阅到期时间
+    nextResetDate: timestamp('next_reset_date'), // 下次重置时间
     subscriptionId: varchar('subscription_id', { length: 128 }),
-    usageLimit: integer('usage_limit').default(100),
-    usageCurrent: integer('usage_current').default(0),
     favoriteStyle: varchar('favorite_style', { length: 50 }),
     lastActive: timestamp('last_active'),
     emailVerified: boolean('email_verified').default(false),
@@ -178,7 +178,11 @@ export const transactionTable = pgTable(
       .references(() => userTable.id, { onDelete: 'cascade' }),
     type: varchar('type', { length: 32 }).notNull().$type<TransactionType>(),
     amount: integer('amount').notNull(), // 正数表示收入，负数表示支出
-    workId: varchar('work_id', { length: 191 }).references(() => workTable.id, { onDelete: 'set null' }),
+    balanceBefore: integer('balance_before').notNull(), // User's balance before this transaction
+    balanceAfter: integer('balance_after').notNull(), // User's balance after this transaction
+    predictionId: varchar('prediction_id', { length: 191 }).references(() => predictionTable.id, {
+      onDelete: 'set null',
+    }),
     status: varchar('status', { length: 32 }).notNull().$type<TransactionStatus>().default('completed'),
     metadata: jsonb('metadata').default({}), // 存储额外信息，如JWT内容、支付信息等
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

@@ -70,8 +70,15 @@ export const register = async (_: RegisterActionState, formData: FormData): Prom
       password: hash,
       name: validatedData.email.split('@')[0],
       plan: 'free',
-      usageLimit: 30,
-      usageCurrent: 0,
+      planPoints: 30,
+      points: 30,
+      planExpiry: null,
+      nextResetDate: null,
+      subscriptionId: null,
+      favoriteStyle: null,
+      lastActive: null,
+      emailVerified: false,
+      metadata: {},
     });
     await signIn('credentials', {
       email: validatedData.email,

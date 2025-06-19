@@ -99,7 +99,7 @@ export default function TestPage() {
               >
                 {PLANS.map((plan) => (
                   <option key={plan.id} value={plan.id}>
-                    {plan.id} - {plan.amount}
+                    {plan.id} - {plan.points}
                   </option>
                 ))}
               </select>
@@ -109,7 +109,7 @@ export default function TestPage() {
               <h4 className="mb-2 font-medium">Plan Details:</h4>
               <div className="space-y-1 text-sm">
                 <p>Name: {PLANS.find((plan) => plan.id === selectedPlan)?.id}</p>
-                <p>Points: {PLANS.find((plan) => plan.id === selectedPlan)?.amount}</p>
+                <p>Points: {PLANS.find((plan) => plan.id === selectedPlan)?.points}</p>
                 <p>Period: {PLANS.find((plan) => plan.id === selectedPlan)?.period}</p>
               </div>
             </div>

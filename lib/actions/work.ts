@@ -14,8 +14,7 @@ export async function checkUserPoints(userId: string, requiredPoints: number) {
   if (!user) {
     redirect('/login');
   }
-  const remain = (user.usageLimit ?? 0) - (user.usageCurrent ?? 0);
-  if (remain < requiredPoints) {
+  if (user.points < requiredPoints) {
     throw new Error('Insufficient points');
   }
 }
@@ -25,8 +24,7 @@ export async function createPrediction(userId: string, points: number, predictio
   if (!user) {
     redirect('/login');
   }
-  const remain = (user.usageLimit ?? 0) - (user.usageCurrent ?? 0);
-  if (remain < points) {
+  if (user.points < points) {
     throw new Error('Insufficient points');
   }
   await db.transaction(async (tx) => {
@@ -48,10 +46,21 @@ export async function createPrediction(userId: string, points: number, predictio
       createdAt: prediction.created_at ? new Date(prediction.created_at) : new Date(),
       startedAt: prediction.started_at ? new Date(prediction.started_at) : null,
     });
-    await tx
+    const [updatedUser] = await tx
       .update(userTable)
-      .set({ usageCurrent: (user.usageCurrent ?? 0) + points })
-      .where(eq(userTable.id, userId));
+      .set({ points: user.points - points })
+      .where(eq(userTable.id, userId))
+      .returning();
+    await tx.insert(transactionTable).values({
+      userId,
+      amount: -points,
+      type: 'payment' as const,
+      status: 'completed' as const,
+      balanceBefore: user.points,
+      balanceAfter: updatedUser.points,
+      predictionId: prediction.id,
+      metadata: prediction,
+    });
   });
 }
 
@@ -90,11 +99,21 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
               completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
             })
             .where(eq(predictionTable.id, prediction.id));
-
-          await tx
+          const [updatedUser] = await tx
             .update(userTable)
-            .set({ usageCurrent: (user.usageCurrent ?? 0) - config.points })
-            .where(eq(userTable.id, userId));
+            .set({ points: user.points + config.points })
+            .where(eq(userTable.id, userId))
+            .returning();
+          await tx.insert(transactionTable).values({
+            userId,
+            amount: config.points,
+            type: 'payment' as const,
+            status: 'completed' as const,
+            balanceBefore: user.points,
+            balanceAfter: updatedUser.points,
+            predictionId: prediction.id,
+            metadata: prediction,
+          });
         });
       }
       console.log('Prediction not succeeded, status:', prediction.status);
@@ -134,17 +153,7 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
         ...config.getWorkData(prediction.input, processedImageBlob.url),
       };
 
-      const [work] = await tx.insert(workTable).values(workData).returning();
-
-      // 记录交易
-      await tx.insert(transactionTable).values({
-        userId,
-        workId: work.id,
-        amount: -config.points,
-        type: 'payment' as const,
-        status: 'completed' as const,
-        metadata: prediction,
-      });
+      await tx.insert(workTable).values(workData);
     });
 
     console.log('✅ Successfully processed prediction:', prediction.id);
