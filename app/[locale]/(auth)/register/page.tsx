@@ -4,10 +4,10 @@ import { useActionState, useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import { AuthForm } from '@/components/auth-form';
 import { SubmitButton } from '@/components/submit-button';
-import { toast } from '@/components/toast';
 import { register, type RegisterActionState } from '@/lib/actions/auth';
 import { useScopedI18n } from '@/locales/client';
 
@@ -24,16 +24,13 @@ export default function Page() {
 
   useEffect(() => {
     if (state.status === 'user_exists') {
-      toast({ type: 'error', description: t('errors.userExists') });
+      toast.error(t('errors.userExists'));
     } else if (state.status === 'failed') {
-      toast({ type: 'error', description: t('errors.createFailed') });
+      toast.error(t('errors.createFailed'));
     } else if (state.status === 'invalid_data') {
-      toast({
-        type: 'error',
-        description: t('errors.validationFailed'),
-      });
+      toast.error(t('errors.validationFailed'));
     } else if (state.status === 'success') {
-      toast({ type: 'success', description: t('errors.success') });
+      toast.success(t('errors.success'));
 
       setIsSuccessful(true);
       router.refresh();

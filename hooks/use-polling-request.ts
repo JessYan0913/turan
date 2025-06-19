@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 type Status = 'idle' | 'loading' | 'polling' | 'success' | 'error';
 
@@ -66,10 +66,7 @@ export function usePollingRequest<T, R>({
       setProgress(0);
 
       try {
-        toast({
-          title: '处理中',
-          description: '正在处理您的请求，请稍候...',
-        });
+        toast.info('处理中');
 
         // Make the initial request
         const response = await request(requestData);
@@ -85,11 +82,7 @@ export function usePollingRequest<T, R>({
         const poll = async () => {
           if (attempts >= maxAttempts) {
             setStatus('error');
-            toast({
-              title: '请求超时',
-              description: timeoutMessage,
-              variant: 'destructive',
-            });
+            toast.error('请求超时');
             return;
           }
 
@@ -101,10 +94,7 @@ export function usePollingRequest<T, R>({
               const result = getResult(statusData);
               setData(result);
               setStatus('success');
-              toast({
-                title: '成功',
-                description: successMessage,
-              });
+              toast.success(successMessage);
               return;
             }
           } catch (err) {
@@ -121,14 +111,10 @@ export function usePollingRequest<T, R>({
         console.error('Request failed:', err);
         setStatus('error');
         setError(err instanceof Error ? err : new Error(errorMessage));
-        toast({
-          title: '错误',
-          description: err instanceof Error ? err.message : errorMessage,
-          variant: 'destructive',
-        });
+        toast.error(err instanceof Error ? err.message : errorMessage);
       }
     },
-    [request, checkStatus, errorMessage, getResult, interval, isComplete, maxAttempts, successMessage, timeoutMessage]
+    [request, checkStatus, errorMessage, getResult, interval, isComplete, maxAttempts, successMessage]
   );
 
   const reset = useCallback(() => {

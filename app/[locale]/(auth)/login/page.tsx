@@ -4,10 +4,10 @@ import { useActionState, useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import { AuthForm } from '@/components/auth-form';
 import { SubmitButton } from '@/components/submit-button';
-import { toast } from '@/components/toast';
 import { login, type LoginActionState } from '@/lib/actions/auth';
 import { useScopedI18n } from '@/locales/client';
 
@@ -24,15 +24,9 @@ export default function Page() {
 
   useEffect(() => {
     if (state.status === 'failed') {
-      toast({
-        type: 'error',
-        description: t('errors.invalidCredentials'),
-      });
+      toast.error(t('errors.invalidCredentials'));
     } else if (state.status === 'invalid_data') {
-      toast({
-        type: 'error',
-        description: t('errors.validationFailed'),
-      });
+      toast.error(t('errors.validationFailed'));
     } else if (state.status === 'success') {
       setIsSuccessful(true);
       // 刷新页面以更新认证状态

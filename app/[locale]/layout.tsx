@@ -5,9 +5,9 @@ import { Inter } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { setStaticParamsLocale } from 'next-international/server';
 import type React from 'react';
+import { Toaster } from 'sonner';
 
 import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
 import { I18nProviderClient } from '@/locales/client';
 
 const inter = Inter({ subsets: ['latin'] });

@@ -4,9 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { toast } from '@/components/toast';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -50,10 +50,7 @@ export function EditProfileForm({ initialData }: EditProfileFormProps) {
 
   const onSubmit = async (values: ProfileFormValues) => {
     if (!session?.user?.id) {
-      toast({
-        type: 'error',
-        description: 'Authentication required',
-      });
+      toast.error('Authentication required');
       return;
     }
 
@@ -73,20 +70,14 @@ export function EditProfileForm({ initialData }: EditProfileFormProps) {
           },
         });
 
-        toast({
-          type: 'success',
-          description: 'Profile updated successfully',
-        });
+        toast.success('Profile updated successfully');
         router.refresh();
       } else {
         throw new Error('Failed to update profile');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast({
-        type: 'error',
-        description: 'Failed to update profile. Please try again.',
-      });
+      toast.error('Failed to update profile. Please try again.');
     }
   };
 

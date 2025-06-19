@@ -7,13 +7,13 @@ import { ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { validationRedeemCode } from '@/lib/actions/pricing';
 import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
@@ -27,7 +27,6 @@ type RedeemCodeFormValues = z.infer<typeof redeemCodeSchema>;
 
 export default function UpgradePage() {
   const router = useRouter();
-  const { toast } = useToast();
   const t = useScopedI18n('upgrade');
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationResult, setVerificationResult] = useState<{
@@ -57,11 +56,7 @@ export default function UpgradePage() {
         expiresAt: response.period,
       });
     } catch (error) {
-      toast({
-        title: 'Verification failed',
-        description: error instanceof Error ? error.message : 'Failed to verify code',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to verify code');
     } finally {
       setIsVerifying(false);
     }
@@ -82,18 +77,11 @@ export default function UpgradePage() {
       const result = await response.json();
 
       if (result.success) {
-        toast({
-          title: 'Redeemed successfully',
-          description: `Your ${verificationResult.planName} plan has been activated!`,
-        });
+        toast.success(`Your ${verificationResult.planName} plan has been activated!`);
         router.push('/profile/billing');
       }
     } catch (error) {
-      toast({
-        title: 'Redemption failed',
-        description: error instanceof Error ? error.message : 'Failed to redeem code',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to redeem code');
     } finally {
       setIsRedeeming(false);
     }
