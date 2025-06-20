@@ -3,7 +3,6 @@
 import { useTransition } from 'react';
 
 import { Check, Globe } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,28 +11,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useChangeLocale, useCurrentLocale } from '@/locales/client';
 
 interface Locale {
   code: string;
   name: string;
 }
 
-interface LanguageSwitcherProps {
-  currentLocale: string;
-  locales: Locale[];
-}
-
-export function LanguageSwitcher({ currentLocale, locales }: LanguageSwitcherProps) {
-  const router = useRouter();
+export function LanguageSwitcher() {
   const [isPending, startTransition] = useTransition();
-  const pathname = usePathname();
+  const currentLocale = useCurrentLocale();
+  const changeLocale = useChangeLocale();
+
+  const locales = [
+    { code: 'zh', name: '中文' },
+    { code: 'en', name: 'English' },
+    { code: 'ja', name: '日本語' },
+  ];
 
   const switchLocale = (locale: string) => {
-    // Get the current path without the locale
-    const pathWithoutLocale = pathname.replace(`/${currentLocale}`, '');
-    // Navigate to the same path with the new locale
     startTransition(() => {
-      router.push(`/${locale}${pathWithoutLocale}`);
+      changeLocale(locale as 'en' | 'ja' | 'zh');
     });
   };
 

@@ -2,7 +2,6 @@
 
 import { Crown, Home, ImageIcon, Menu, Moon, Palette, Sun, UserIcon } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
@@ -20,23 +19,8 @@ import {
 import { useScopedI18n } from '@/locales/client';
 
 export function Navigation({ user }: { user: User | undefined }) {
-  const pathname = usePathname();
   const { isDarkMode, toggleTheme } = useTheme();
   const t = useScopedI18n('navigation');
-
-  const locales = [
-    { code: 'zh', name: '中文' },
-    { code: 'en', name: 'English' },
-    { code: 'ja', name: '日本語' },
-  ];
-
-  const currentLocale = pathname.split('/')[1] || 'en';
-
-  const isActive = (path: string) => {
-    if (path === '/' && pathname === '/') return true;
-    if (path !== '/' && pathname.startsWith(path)) return true;
-    return false;
-  };
 
   return (
     <nav className="nav-bar sticky top-0 z-50 border-b transition-colors duration-300">
@@ -55,11 +39,7 @@ export function Navigation({ user }: { user: User | undefined }) {
             <Link href="/">
               <Button
                 variant="ghost"
-                className={`flex items-center space-x-2 transition-all duration-300 ${
-                  isActive('/')
-                    ? 'bg-muted/60 text-foreground'
-                    : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
-                }`}
+                className="text-muted-foreground hover:bg-muted/40 hover:text-foreground flex items-center space-x-2 transition-all duration-300"
               >
                 <Home className="size-4" />
                 <span>{t('home')}</span>
@@ -68,11 +48,7 @@ export function Navigation({ user }: { user: User | undefined }) {
             <Link href="/pricing">
               <Button
                 variant="ghost"
-                className={`flex items-center space-x-2 transition-all duration-300 ${
-                  isActive('/pricing')
-                    ? 'bg-muted/60 text-foreground'
-                    : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
-                }`}
+                className="text-muted-foreground hover:bg-muted/40 hover:text-foreground flex items-center space-x-2 transition-all duration-300"
               >
                 <Crown className="size-4" />
                 <span>{t('pricing')}</span>
@@ -81,18 +57,14 @@ export function Navigation({ user }: { user: User | undefined }) {
             <Link href="/works">
               <Button
                 variant="ghost"
-                className={`flex items-center space-x-2 transition-all duration-300 ${
-                  isActive('/works')
-                    ? 'bg-muted/60 text-foreground'
-                    : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
-                }`}
+                className="text-muted-foreground hover:bg-muted/40 hover:text-foreground flex items-center space-x-2 transition-all duration-300"
               >
                 <ImageIcon className="size-4" />
                 <span>{t('works')}</span>
               </Button>
             </Link>
 
-            <LanguageSwitcher currentLocale={currentLocale} locales={locales} />
+            <LanguageSwitcher />
             <ThemeToggle />
 
             {/* 用户头像或登录按钮 */}
@@ -122,11 +94,7 @@ export function Navigation({ user }: { user: User | undefined }) {
               <Link href="/login">
                 <Button
                   variant="ghost"
-                  className={`flex items-center space-x-2 transition-all duration-300 ${
-                    isActive('/login')
-                      ? 'bg-muted/60 text-foreground'
-                      : 'text-muted-foreground hover:bg-muted/40 hover:text-foreground'
-                  }`}
+                  className="text-muted-foreground hover:bg-muted/40 hover:text-foreground flex items-center space-x-2 transition-all duration-300"
                 >
                   <UserIcon className="size-4" />
                   <span>{t('signIn')}</span>
