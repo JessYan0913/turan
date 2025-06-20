@@ -63,7 +63,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       icon: Palette,
       title: t('tools.style-preset.title'),
       description: t('tools.style-preset.description'),
-      href: '#',
+      href: '/style-preset',
       color: 'from-pink-500 to-rose-500',
     },
     {
