@@ -60,7 +60,7 @@ export async function getStyleOptions(): Promise<StyleOption[]> {
 export async function getAvatarStyleOptions(): Promise<StyleOption[]> {
   return [
     {
-      id: 'business',
+      id: 'office',
       name: '办公室',
       description: '办公室背景',
       preview:
