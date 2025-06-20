@@ -47,7 +47,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       icon: TypeIcon,
       title: t('tools.text-to-image.title'),
       description: t('tools.text-to-image.description'),
-      href: '#',
+      href: '/text-to-image',
       color: 'from-blue-500 to-cyan-500',
     },
     {
