@@ -71,7 +71,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       icon: Camera,
       title: t('tools.photo-restore.title'),
       description: t('tools.photo-restore.description'),
-      href: '#',
+      href: '/photo-restore',
       color: 'from-amber-500 to-orange-500',
     },
     {
@@ -79,7 +79,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       icon: Brush,
       title: t('tools.style-transfer.title'),
       description: t('tools.style-transfer.description'),
-      href: '#',
+      href: '/style-transfer',
       color: 'from-emerald-500 to-teal-500',
     },
     {
@@ -87,7 +87,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       icon: Eye,
       title: t('tools.style-extract.title'),
       description: t('tools.style-extract.description'),
-      href: '#',
+      href: '/style-extract',
       color: 'from-indigo-500 to-blue-500',
     },
   ];
