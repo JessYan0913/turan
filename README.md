@@ -106,3 +106,9 @@ Please restore the damaged and missing areas in this old photo. The restoration 
 ```txt
 version: 1.4
 ```
+
+## 背景删除
+
+### 模型
+
+`851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc`

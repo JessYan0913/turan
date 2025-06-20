@@ -55,7 +55,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       icon: ImageIcon,
       title: t('tools.image-edit.title'),
       description: t('tools.image-edit.description'),
-      href: '#',
+      href: '/image-edit',
       color: 'from-violet-500 to-purple-500',
     },
     {
