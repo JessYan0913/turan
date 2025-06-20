@@ -37,7 +37,6 @@ export default {
     },
   },
   navigation: {
-    home: '首页',
     pricing: '价格套餐',
     works: '我的作品',
     language: '语言',
@@ -45,6 +44,33 @@ export default {
     profile: '个人资料',
     signOut: '退出登录',
     signIn: '登录',
+    imageTools: '图片工具',
+    tools: {
+      'text-to-image': {
+        title: '文字生图',
+        description: '用文字描述生成图片',
+      },
+      'image-edit': {
+        title: '图片转换',
+        description: '上传图片+提示词转换',
+      },
+      'style-preset': {
+        title: '风格预设',
+        description: '选择预设风格快速转换',
+      },
+      'photo-restore': {
+        title: '照片修复',
+        description: '老照片修复和上色',
+      },
+      'style-transfer': {
+        title: '风格迁移',
+        description: '两张图片风格融合',
+      },
+      'style-extract': {
+        title: '风格提取',
+        description: '分析图片风格特征',
+      },
+    },
   },
   home: {
     title: 'Turan',

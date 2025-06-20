@@ -41,7 +41,6 @@ export default {
     maxLength: '{max}文字以内で入力してください',
   },
   navigation: {
-    home: 'ホーム',
     pricing: '料金プラン',
     works: '作品一覧',
     language: '言語',
@@ -49,6 +48,33 @@ export default {
     profile: 'プロフィール',
     signOut: 'ログアウト',
     signIn: 'ログイン',
+    imageTools: '画像ツール',
+    tools: {
+      'text-to-image': {
+        title: 'テキストからイメージを生成',
+        description: 'テキストで画像を生成',
+      },
+      'image-edit': {
+        title: '画像を編集',
+        description: '画像をアップロードして編集',
+      },
+      'style-preset': {
+        title: 'プリセットスタイル',
+        description: 'プリセットスタイルを選択して編集',
+      },
+      'photo-restore': {
+        title: '古い写真を復元',
+        description: '古い写真を修復してカラー化',
+      },
+      'style-transfer': {
+        title: 'スタイルを移転',
+        description: '2つの画像をスタイルを融合',
+      },
+      'style-extract': {
+        title: 'スタイルを抽出',
+        description: '画像のスタイル特徴を抽出',
+      },
+    },
   },
   home: {
     title: 'トゥラン',

@@ -41,7 +41,6 @@ export default {
     maxLength: 'Cannot exceed {max} characters',
   },
   navigation: {
-    home: 'Home',
     pricing: 'Pricing',
     works: 'My Works',
     language: 'Language',
@@ -49,6 +48,33 @@ export default {
     profile: 'My Profile',
     signOut: 'Sign Out',
     signIn: 'Sign In',
+    imageTools: 'Image Tools',
+    tools: {
+      'text-to-image': {
+        title: 'Text to Image',
+        description: 'Generate images from text',
+      },
+      'image-edit': {
+        title: 'Image Edit',
+        description: 'Upload an image and edit it',
+      },
+      'style-preset': {
+        title: 'Style Preset',
+        description: 'Select a preset style to edit',
+      },
+      'photo-restore': {
+        title: 'Photo Restore',
+        description: 'Restore and colorize old photos',
+      },
+      'style-transfer': {
+        title: 'Style Transfer',
+        description: 'Transfer style between two images',
+      },
+      'style-extract': {
+        title: 'Style Extract',
+        description: 'Extract style from an image',
+      },
+    },
   },
   home: {
     title: 'Turan',

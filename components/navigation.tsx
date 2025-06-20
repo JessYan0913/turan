@@ -1,6 +1,6 @@
 'use client';
 
-import { Crown, Home, ImageIcon, Menu, Palette, UserIcon } from 'lucide-react';
+import { Brush, Camera, Crown, Eye, Home, ImageIcon, Menu, Palette, Type as TypeIcon, UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
@@ -32,6 +32,66 @@ import { useScopedI18n } from '@/locales/client';
 export function Navigation({ user }: { user: User | undefined }) {
   const t = useScopedI18n('navigation');
 
+  type MenuItem = {
+    id: string;
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    description: string;
+    href: string;
+    color: string;
+  };
+
+  const menuItems: MenuItem[] = [
+    {
+      id: 'text-to-image',
+      icon: TypeIcon,
+      title: t('tools.text-to-image.title'),
+      description: t('tools.text-to-image.description'),
+      href: '#',
+      color: 'from-blue-500 to-cyan-500',
+    },
+    {
+      id: 'image-edit',
+      icon: ImageIcon,
+      title: t('tools.image-edit.title'),
+      description: t('tools.image-edit.description'),
+      href: '#',
+      color: 'from-violet-500 to-purple-500',
+    },
+    {
+      id: 'style-preset',
+      icon: Palette,
+      title: t('tools.style-preset.title'),
+      description: t('tools.style-preset.description'),
+      href: '#',
+      color: 'from-pink-500 to-rose-500',
+    },
+    {
+      id: 'photo-restore',
+      icon: Camera,
+      title: t('tools.photo-restore.title'),
+      description: t('tools.photo-restore.description'),
+      href: '#',
+      color: 'from-amber-500 to-orange-500',
+    },
+    {
+      id: 'style-transfer',
+      icon: Brush,
+      title: t('tools.style-transfer.title'),
+      description: t('tools.style-transfer.description'),
+      href: '#',
+      color: 'from-emerald-500 to-teal-500',
+    },
+    {
+      id: 'style-extract',
+      icon: Eye,
+      title: t('tools.style-extract.title'),
+      description: t('tools.style-extract.description'),
+      href: '#',
+      color: 'from-indigo-500 to-blue-500',
+    },
+  ];
+
   return (
     <nav className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b backdrop-blur">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -49,8 +109,7 @@ export function Navigation({ user }: { user: User | undefined }) {
             <NavigationMenu>
               <NavigationMenuList className="gap-1">
                 <NavigationMenuItem>
-                  <NavigationMenuLink
-                    href="/"
+                  <NavigationMenuTrigger
                     className={cn(
                       'group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
                       'hover:bg-accent hover:text-accent-foreground',
@@ -58,8 +117,30 @@ export function Navigation({ user }: { user: User | undefined }) {
                       'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
                     )}
                   >
-                    {t('home')}
-                  </NavigationMenuLink>
+                    {t('imageTools')}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="bg-popover rounded-lg p-4 shadow-lg">
+                    <div className="grid w-[500px] grid-cols-2 gap-3">
+                      {menuItems.map(({ id, icon: Icon, title, description, href, color }) => (
+                        <NavigationMenuLink asChild key={id}>
+                          <Link
+                            href={href}
+                            className="hover:bg-accent group flex items-start gap-3 rounded-lg p-3 transition-colors"
+                          >
+                            <div
+                              className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${color}`}
+                            >
+                              <Icon className="size-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-foreground font-medium">{title}</div>
+                              <div className="text-muted-foreground mt-1 text-sm">{description}</div>
+                            </div>
+                          </Link>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
@@ -165,12 +246,6 @@ export function Navigation({ user }: { user: User | undefined }) {
                     Navigation
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="my-1" />
-                  <Link href="/">
-                    <DropdownMenuItem className="cursor-pointer rounded-md p-2 text-sm">
-                      <Home className="mr-2 size-4" />
-                      {t('home')}
-                    </DropdownMenuItem>
-                  </Link>
                   <Link href="/pricing">
                     <DropdownMenuItem className="cursor-pointer rounded-md p-2 text-sm">
                       <Crown className="mr-2 size-4" />
@@ -183,6 +258,25 @@ export function Navigation({ user }: { user: User | undefined }) {
                       {t('works')}
                     </DropdownMenuItem>
                   </Link>
+
+                  <DropdownMenuSeparator className="my-1" />
+                  <DropdownMenuLabel className="text-muted-foreground px-2 py-1.5 text-xs font-medium">
+                    {t('imageTools')}
+                  </DropdownMenuLabel>
+                  <div className="grid grid-cols-2 gap-2 p-2">
+                    {menuItems.map(({ id, icon: Icon, title, href, color }) => (
+                      <Link key={id} href={href}>
+                        <DropdownMenuItem className="m-0 flex h-full flex-col items-center justify-center space-y-1.5 p-2 text-center">
+                          <div
+                            className={`flex size-9 items-center justify-center rounded-lg bg-gradient-to-br ${color}`}
+                          >
+                            <Icon className="size-4 text-white" />
+                          </div>
+                          <span className="text-xs font-medium">{title}</span>
+                        </DropdownMenuItem>
+                      </Link>
+                    ))}
+                  </div>
 
                   <DropdownMenuSeparator className="my-1" />
                   <DropdownMenuLabel className="text-muted-foreground px-2 py-1.5 text-xs font-medium">
