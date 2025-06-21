@@ -67,7 +67,7 @@ export function ImageUploader({
   return (
     <div className={className}>
       <div
-        className={`border-input bg-background group flex h-32 w-full overflow-hidden rounded-md border ${
+        className={`group flex h-32 w-full overflow-hidden rounded-md border border-input ${
           isDisabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
         }`}
         onDragOver={handleDragOver}
@@ -75,7 +75,7 @@ export function ImageUploader({
         onClick={() => !isDisabled && document.getElementById(inputId)?.click()}
       >
         {/* Left Side - Square Preview */}
-        <div className="border-border/20 relative h-full w-32 shrink-0 border-r">
+        <div className="relative h-full w-32 shrink-0 border-r border-border/20">
           {showPreview ? (
             <div className="relative size-full">
               <Image
@@ -91,7 +91,7 @@ export function ImageUploader({
                 }}
               />
               {!isDisabled && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
                   <div className="flex flex-col items-center gap-1 text-white">
                     <Upload className="size-3.5" />
                     <span className="text-[11px] font-medium">Change</span>
@@ -101,8 +101,8 @@ export function ImageUploader({
             </div>
           ) : (
             <div className="flex size-full flex-col items-center justify-center">
-              <div className="bg-muted/50 flex size-10 items-center justify-center rounded-full">
-                <Upload className="text-muted-foreground size-4" />
+              <div className="flex size-10 items-center justify-center rounded-full bg-muted/50">
+                <Upload className="size-4 text-muted-foreground" />
               </div>
             </div>
           )}
@@ -115,10 +115,10 @@ export function ImageUploader({
               <h4 className="text-sm font-medium">{localFile ? 'Selected Image' : 'Preview'}</h4>
               <div className="flex items-start gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-muted-foreground line-clamp-1 break-all text-xs font-medium">
+                  <p className="line-clamp-1 break-all text-xs font-medium text-muted-foreground">
                     {localFile?.name || 'No file selected'}
                   </p>
-                  <p className="text-muted-foreground/80 text-[11px]">
+                  <p className="text-[11px] text-muted-foreground/80">
                     {localFile ? `${(localFile.size / 1024).toFixed(1)} KB` : ''}
                   </p>
                 </div>
@@ -129,10 +129,10 @@ export function ImageUploader({
             </div>
           ) : (
             <div className="space-y-1.5">
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm text-muted-foreground">
                 <span className="text-foreground">Click to upload</span> or drag and drop
               </p>
-              <p className="text-muted-foreground/80 text-xs">SVG, PNG, JPG or GIF (max. 5MB)</p>
+              <p className="text-xs text-muted-foreground/80">SVG, PNG, JPG or GIF (max. 5MB)</p>
             </div>
           )}
         </div>
@@ -149,10 +149,10 @@ export function ImageUploader({
 
         {/* Loading State */}
         {status === 'loading' && (
-          <div className="bg-background/80 absolute inset-0 z-30 flex items-center justify-center">
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-background/80">
             <div className="flex flex-col items-center gap-2">
-              <div className="border-primary/30 border-t-primary size-8 animate-spin rounded-full border-4" />
-              <span className="text-muted-foreground text-sm">Uploading...</span>
+              <div className="size-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+              <span className="text-sm text-muted-foreground">Uploading...</span>
             </div>
           </div>
         )}

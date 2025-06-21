@@ -1,9 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 
 import Image from 'next/image';
-import type React from 'react';
 
 interface ImageSliderProps {
   beforeImage: string;
@@ -13,13 +12,10 @@ interface ImageSliderProps {
   className?: string;
 }
 
-export function ImageSlider({
-  beforeImage,
-  afterImage,
-  beforeLabel = '原图',
-  afterLabel = '处理后',
-  className = '',
-}: ImageSliderProps) {
+const ImageSlider = forwardRef<HTMLDivElement, ImageSliderProps>(function ImageSlider(
+  { beforeImage, afterImage, beforeLabel = '原图', afterLabel = '处理后', className = '' },
+  ref
+) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -52,7 +48,16 @@ export function ImageSlider({
 
   return (
     <div
-      ref={containerRef}
+      ref={(node) => {
+        // Forward the ref to the container element
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+        // Also set the container ref for internal use
+        containerRef.current = node;
+      }}
       className={`relative cursor-col-resize select-none overflow-hidden rounded-xl ${className}`}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -60,7 +65,7 @@ export function ImageSlider({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleMouseUp}
     >
-      {/* 原图 */}
+      {/* Original Image */}
       <div className="relative size-full">
         <Image
           src={beforeImage || '/placeholder.svg'}
@@ -76,7 +81,7 @@ export function ImageSlider({
         )}
       </div>
 
-      {/* 处理后的图片 */}
+      {/* Processed Image */}
       <div
         className="absolute left-0 top-0 size-full overflow-hidden"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
@@ -95,7 +100,7 @@ export function ImageSlider({
         )}
       </div>
 
-      {/* 滑块 */}
+      {/* Slider Handle */}
       <div
         className="absolute inset-y-0 w-1 cursor-col-resize bg-white shadow-lg"
         style={{ left: `${sliderPosition}%` }}
@@ -103,10 +108,14 @@ export function ImageSlider({
         onTouchStart={handleMouseDown}
       >
         <div className="absolute left-1/2 top-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-lg">
-          <div className="mx-0.5 h-4 w-1 rounded-full bg-gray-400"></div>
-          <div className="mx-0.5 h-4 w-1 rounded-full bg-gray-400"></div>
+          <div className="mx-0.5 h-4 w-1 rounded-full bg-gray-400" />
+          <div className="mx-0.5 h-4 w-1 rounded-full bg-gray-400" />
         </div>
       </div>
     </div>
   );
-}
+});
+
+ImageSlider.displayName = 'ImageSlider';
+
+export { ImageSlider };

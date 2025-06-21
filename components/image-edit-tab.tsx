@@ -1,22 +1,20 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Download, Image as ImageIcon, Loader2, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertCircle, Download, Image as ImageIcon, Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { ImageSlider } from '@/components/image-slider';
+import { ImageUploader } from '@/components/image-uploader';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
 import { usePollingRequest } from '@/hooks/use-polling-request';
-import { cn } from '@/lib/utils';
-
-import { ImageSlider } from './image-slider';
-import { ImageUploader } from './image-uploader';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
-import { Textarea } from './ui/textarea';
+import { cn, downloadImage } from '@/lib/utils';
 
 // Define the Prediction type
 interface Prediction {
@@ -28,34 +26,13 @@ interface Prediction {
 
 export function ImageEditTab() {
   const router = useRouter();
+  const imageRef = useRef<HTMLImageElement>(null);
 
   // Define the form schema using Zod
   const imageEditSchema = z.object({
     image: z.instanceof(File, { message: 'Please upload an image' }),
     prompt: z.string().min(1, { message: 'Please enter a prompt' }),
   });
-
-  // Text constants
-  const text = {
-    uploadLabel: 'Upload Image',
-    uploadDescription: 'Drag and drop an image here, or click to select',
-    uploadPlaceholder: 'Click to upload or drag and drop',
-    promptLabel: 'Edit Instructions',
-    promptDescription: 'Enter a description of the changes you want to make to the image.',
-    promptPlaceholder: 'Describe the changes you want to make to the image...',
-    generate: 'Generate',
-    generating: 'Generating your image...',
-    resultPlaceholder: 'Your edited image will appear here',
-    errorTitle: 'Something went wrong',
-    errorDescription: 'We encountered an error while processing your request. Please try again.',
-    retry: 'Try Again',
-    download: 'Download',
-    result: {
-      title: 'Result',
-      description: 'Your edited image will appear here',
-    },
-    processing: 'Processing...',
-  };
 
   // Initialize react-hook-form with Zod validation
   const form = useForm<z.infer<typeof imageEditSchema>>({
@@ -128,15 +105,20 @@ export function ImageEditTab() {
   }, [form, reset, submitEdit]);
 
   const handleDownload = useCallback(() => {
-    if (generatedImage) {
-      const link = document.createElement('a');
-      link.href = generatedImage;
-      link.download = form.getValues('image')?.name || 'edited-image.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (!imageRef.current || !generatedImage) return;
+
+    // 确定图片URL
+    let imageUrl = '';
+    if (typeof generatedImage === 'string') {
+      imageUrl = generatedImage;
+    } else if (generatedImage?.output?.[0]) {
+      imageUrl = generatedImage.output[0] as string;
+    } else {
+      return; // 没有有效的图片URL
     }
-  }, [generatedImage, form]);
+
+    downloadImage(imageUrl, `generated-image-${Date.now()}.png`);
+  }, [generatedImage]);
 
   return (
     <div className="grid h-full min-h-[calc(100vh-250px)] grid-cols-1 gap-8 lg:grid-cols-2">
@@ -145,70 +127,67 @@ export function ImageEditTab() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex h-full flex-col justify-between rounded-2xl bg-gradient-to-br from-white to-teal-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-teal-950/20 dark:ring-white/10"
+            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-teal-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-teal-950/20 dark:ring-white/10"
           >
             <div className="space-y-6">
-              <div className="space-y-2">
-                <div>
-                  <FormLabel className="font-medium text-teal-700 dark:text-teal-400">{text.uploadLabel}</FormLabel>
-                  <p className="text-muted-foreground text-xs">{text.uploadDescription}</p>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field: { onChange } }) => (
-                    <FormItem>
-                      <FormControl>
-                        <ImageUploader
-                          onImageChange={onChange}
-                          disabled={status === 'loading' || status === 'polling'}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { onChange } }) => (
+                  <FormItem className="space-y-2">
+                    <div className="mb-2 space-y-1">
+                      <FormLabel className="font-medium text-teal-700 dark:text-teal-400">Upload Image</FormLabel>
+                      <p className="text-xs text-muted-foreground">Drag and drop an image here, or click to select</p>
+                    </div>
+                    <FormControl>
+                      <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="prompt"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="mb-2 space-y-1">
-                    <FormLabel className="font-medium text-teal-700 dark:text-teal-400">{text.promptLabel}</FormLabel>
-                    <p className="text-muted-foreground text-xs">{text.promptDescription}</p>
-                  </div>
-                  <FormControl>
-                    <Textarea
-                      placeholder={text.promptPlaceholder}
-                      disabled={status === 'loading' || status === 'polling'}
-                      rows={8}
-                      className="min-h-[200px] w-full resize-none rounded-lg border border-gray-200 bg-white/80 p-4 transition-colors hover:border-teal-400 focus:border-teal-400 focus:shadow-[0_8px_30px_rgba(13,148,136,0.15)] dark:border-gray-700 dark:bg-gray-950/50"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="prompt"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <div className="mb-2 space-y-1">
+                      <FormLabel className="font-medium text-teal-700 dark:text-teal-400">Edit Instructions</FormLabel>
+                      <p className="text-xs text-muted-foreground">
+                        Enter a description of the changes you want to make to the image.
+                      </p>
+                    </div>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe the changes you want to make to the image..."
+                        disabled={status === 'loading' || status === 'polling'}
+                        rows={6}
+                        className="min-h-[160px] w-full resize-none rounded-lg border border-gray-200 bg-white/80 p-3 transition-colors hover:border-teal-400 focus:border-teal-400 focus:shadow-[0_8px_30px_rgba(13,148,136,0.15)] dark:border-gray-700 dark:bg-gray-950/50"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="mt-8">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-teal-600 to-emerald-500 py-6 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-teal-700 hover:to-emerald-600 hover:shadow-md disabled:from-teal-400 disabled:to-emerald-400"
+                className="w-full bg-gradient-to-r from-teal-600 to-emerald-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-teal-700 hover:to-emerald-600 hover:shadow-md disabled:from-teal-400 disabled:to-emerald-400"
                 disabled={status === 'loading' || status === 'polling'}
               >
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
-                    {text.processing}
+                    Processing...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="mr-2 size-5" />
-                    {text.generate}
+                    <Sparkles className="mr-2 size-4" />
+                    Generate
                   </>
                 )}
               </Button>
@@ -254,7 +233,7 @@ export function ImageEditTab() {
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Edit</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{text.resultPlaceholder}</p>
+              <p className="mt-2 max-w-xs text-sm text-muted-foreground">Your edited image will appear here</p>
             </div>
           </div>
 
@@ -272,8 +251,8 @@ export function ImageEditTab() {
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 {status === 'loading' ? 'Editing Your Image' : 'Processing...'}
               </h3>
-              <p className="text-muted-foreground mt-2 text-sm">
-                {status === 'loading' ? text.generating : text.processing}
+              <p className="mt-2 text-sm text-muted-foreground">
+                {status === 'loading' ? 'Generating your image...' : 'Processing...'}
               </p>
             </div>
           </div>
@@ -286,27 +265,16 @@ export function ImageEditTab() {
             )}
           >
             <div className="rounded-full bg-red-100 p-6 dark:bg-red-900/30">
-              <svg
-                className="size-16 text-red-500 dark:text-red-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
+              <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{text.errorTitle}</h3>
-              <p className="text-muted-foreground mt-2 text-sm">{text.errorDescription}</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something went wrong</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                We encountered an error while processing your request. Please try again.
+              </p>
               <Button
                 className="mt-4 bg-gradient-to-r from-teal-600 to-emerald-500 text-white hover:from-teal-700 hover:to-emerald-600"
-                onClick={handleRegenerate}
+                onClick={() => form.reset()}
               >
                 Try Again
               </Button>
@@ -324,6 +292,7 @@ export function ImageEditTab() {
               <div className="relative size-full p-4">
                 <div className="relative size-full overflow-hidden rounded-lg shadow-md">
                   <ImageSlider
+                    ref={imageRef}
                     beforeImage={URL.createObjectURL(form.getValues('image'))}
                     afterImage={generatedImage}
                     beforeLabel="Original"

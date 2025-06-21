@@ -2,11 +2,38 @@
 
 import { useState } from 'react';
 
-import { ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, Paintbrush } from 'lucide-react';
 import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
+import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+
+// Custom scrollbar styles
+const scrollbarStyles = `
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.3);
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.5);
+  }
+`;
 
 interface StyleOption {
   id: string;
@@ -21,16 +48,25 @@ interface StyleSelectorProps {
   value?: string;
   onSelect: (style: StyleOption) => void;
   placeholder?: string;
-  isDarkMode?: boolean;
+  disabled?: boolean;
 }
 
 export function StyleSelector({
   options,
   value,
   onSelect,
-  placeholder = '选择风格',
-  isDarkMode = false,
+  placeholder = 'Select a style',
+  disabled = false,
 }: StyleSelectorProps) {
+  // Add scrollbar styles to document
+  if (typeof document !== 'undefined') {
+    const styleEl = document.createElement('style');
+    styleEl.textContent = scrollbarStyles;
+    if (!document.head.querySelector('style[data-custom-scrollbar]')) {
+      styleEl.setAttribute('data-custom-scrollbar', '');
+      document.head.appendChild(styleEl);
+    }
+  }
   const [open, setOpen] = useState(false);
   const selectedOption = options.find((option) => option.id === value);
 
@@ -39,74 +75,93 @@ export function StyleSelector({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`h-auto w-full justify-between py-2 ${
-            isDarkMode
-              ? 'border-gray-700/50 bg-gray-800/70 text-white hover:bg-gray-700'
-              : 'border-gray-200/50 bg-white/70 hover:bg-gray-50'
-          }`}
+          role="combobox"
+          aria-expanded={open}
+          aria-label="Select a style"
+          disabled={disabled}
+          className={cn(
+            'relative h-auto w-full justify-between rounded-lg border bg-transparent px-4 py-6 text-left shadow-sm transition-all',
+            'hover:bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2',
+            disabled && 'pointer-events-none opacity-50'
+          )}
         >
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-4">
             {selectedOption ? (
               <>
-                <div className="size-6 shrink-0 overflow-hidden rounded-md">
+                <div className="relative size-14 shrink-0 overflow-hidden rounded-lg shadow-sm transition-shadow">
                   <Image
                     src={selectedOption.preview || '/placeholder.svg'}
                     alt={selectedOption.name}
-                    width={24}
-                    height={24}
-                    className="size-full object-cover"
+                    fill
+                    sizes="56px"
+                    className="object-cover transition-transform duration-300"
+                    priority
                   />
                 </div>
-                <div className="text-left">
-                  <div className="text-sm font-medium">{selectedOption.name}</div>
-                  <div className={`text-[11px] leading-tight ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {selectedOption.description}
-                  </div>
+                <div className="flex flex-col gap-1 text-left">
+                  <div className="text-base font-medium tracking-tight">{selectedOption.name}</div>
+                  <div className="line-clamp-2 text-sm text-gray-600">{selectedOption.description}</div>
                 </div>
               </>
             ) : (
-              <span className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>{placeholder}</span>
+              <div className="flex items-center gap-3">
+                <Paintbrush className="size-5 text-purple-500" />
+                <span className="text-base text-gray-500">{placeholder}</span>
+              </div>
             )}
           </div>
-          <ChevronDown className="size-4 opacity-50" />
+          <ChevronDown
+            className={cn(
+              'size-4 text-gray-400 transition-transform duration-200 ease-in-out',
+              open ? 'rotate-180 transform' : ''
+            )}
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className={`w-72 p-1.5 ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'}`}
+        className="max-h-[500px] w-[340px] overflow-hidden rounded-lg border p-0 shadow-lg"
         align="start"
+        sideOffset={4}
       >
-        <div className="grid grid-cols-2 gap-1.5">
-          {options.map((option) => (
-            <button
-              key={option.id}
-              onClick={() => {
-                onSelect(option);
-                setOpen(false);
-              }}
-              className={`rounded-lg p-3 text-left transition-all hover:scale-105 ${
-                selectedOption?.id === option.id
-                  ? isDarkMode
-                    ? 'border-2 border-blue-500 bg-blue-900/50'
-                    : 'border-2 border-blue-500 bg-blue-50'
-                  : isDarkMode
-                    ? 'border-2 border-transparent bg-gray-700/50 hover:bg-gray-600/50'
-                    : 'border-2 border-transparent bg-gray-50 hover:bg-gray-100'
-              }`}
-            >
-              <div className="mb-1.5 h-16 w-full overflow-hidden rounded-md">
-                <Image
-                  src={option.preview || '/placeholder.svg'}
-                  alt={option.name}
-                  width={120}
-                  height={80}
-                  className="size-full object-cover"
-                />
-              </div>
-              <div className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{option.name}</div>
-              <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{option.description}</div>
-            </button>
-          ))}
-        </div>
+        <Command>
+          <CommandGroup className="custom-scrollbar overflow-y-auto" style={{ maxHeight: '500px' }}>
+            <div className="grid grid-cols-2 gap-3 p-3">
+              {options.map((option) => (
+                <CommandItem
+                  key={option.id}
+                  onSelect={() => {
+                    onSelect(option);
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    'flex flex-col items-start overflow-hidden rounded-lg p-0',
+                    'border transition-all duration-200 hover:scale-[1.02] hover:shadow-md',
+                    selectedOption?.id === option.id ? 'border-purple-500 ring-1 ring-purple-200' : ''
+                  )}
+                >
+                  <div className="relative aspect-[3/2] w-full overflow-hidden bg-gray-50">
+                    <Image
+                      src={option.preview || '/placeholder.svg'}
+                      alt={option.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                    {selectedOption?.id === option.id && (
+                      <div className="absolute right-2 top-2 rounded-full bg-purple-500 p-1 shadow-sm">
+                        <Check className="size-3 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="w-full p-3">
+                    <div className="mb-0.5 text-sm font-medium tracking-tight">{option.name}</div>
+                    <div className="line-clamp-2 text-xs text-gray-600">{option.description}</div>
+                  </div>
+                </CommandItem>
+              ))}
+            </div>
+          </CommandGroup>
+        </Command>
       </PopoverContent>
     </Popover>
   );
