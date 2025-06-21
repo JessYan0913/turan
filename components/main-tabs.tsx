@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 
-import { AvatarGenerationTab } from '@/components/avatar-generation-tab';
-import { ImageEditTab } from '@/components/image-edit-tab';
-import { ImageGenerationTab } from '@/components/image-generation-tab';
-import { StyleTransformTab } from '@/components/style-transform-tab';
+import { CreateAvatar } from '@/components/create-avatar';
+import { ImageEdit } from '@/components/image-edit';
+import { StyleTransfer } from '@/components/style-transfer';
+import { TextToImage } from '@/components/text-to-image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useScopedI18n } from '@/locales/client';
 
@@ -47,19 +47,19 @@ export function MainTabs() {
       {/* Fixed height content area to prevent layout shift */}
       <div className="min-h-[600px] rounded-xl p-4 md:p-6">
         <TabsContent value="edit" className="mt-0">
-          <ImageEditTab />
+          <ImageEdit />
         </TabsContent>
 
         <TabsContent value="style" className="mt-0">
-          <StyleTransformTab />
+          <StyleTransfer />
         </TabsContent>
 
         <TabsContent value="avatar" className="mt-0">
-          <AvatarGenerationTab />
+          <CreateAvatar />
         </TabsContent>
 
         <TabsContent value="generate" className="mt-0">
-          <ImageGenerationTab />
+          <TextToImage />
         </TabsContent>
       </div>
     </Tabs>

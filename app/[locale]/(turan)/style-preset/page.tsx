@@ -1,5 +1,5 @@
 import { ImageSlider } from '@/components/image-slider';
-import { StyleTransformTab } from '@/components/style-transform-tab';
+import { StyleTransfer } from '@/components/style-transfer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -134,7 +134,7 @@ export default function StylePresetPage() {
             </p>
           </section>
 
-          <StyleTransformTab />
+          <StyleTransfer />
 
           {/* Style Presets Grid */}
           <section className="mt-12 scroll-m-20" id="presets">

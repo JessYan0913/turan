@@ -67,6 +67,14 @@ export function Navigation({ user }: { user: User | undefined }) {
       color: 'from-pink-500 to-rose-500',
     },
     {
+      id: 'create-avatar',
+      icon: Palette,
+      title: t('tools.create-avatar.title'),
+      description: t('tools.create-avatar.description'),
+      href: '/create-avatar',
+      color: 'from-pink-500 to-rose-500',
+    },
+    {
       id: 'photo-restore',
       icon: Camera,
       title: t('tools.photo-restore.title'),

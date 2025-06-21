@@ -74,6 +74,10 @@ export default {
         title: 'スタイルを抽出',
         description: '画像のスタイル特徴を抽出',
       },
+      'create-avatar': {
+        title: 'アバター生成',
+        description: '生成アバター',
+      },
     },
   },
   home: {

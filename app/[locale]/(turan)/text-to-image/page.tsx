@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import type React from 'react';
 
-import { ImageGenerationTab } from '@/components/image-generation-tab';
+import { TextToImage } from '@/components/text-to-image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -117,7 +117,7 @@ export default function TextToImagePage() {
           </section>
 
           {/* 主生成区域 */}
-          <ImageGenerationTab />
+          <TextToImage />
 
           {/* 示例展示区 */}
           <section className="mt-24 scroll-m-20" id="examples">

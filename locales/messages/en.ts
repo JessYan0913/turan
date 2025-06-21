@@ -74,6 +74,10 @@ export default {
         title: 'Style Extract',
         description: 'Extract style from an image',
       },
+      'create-avatar': {
+        title: 'Avatar Generation',
+        description: 'Generate an avatar',
+      },
     },
   },
   home: {

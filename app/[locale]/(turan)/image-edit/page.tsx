@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import { ImageEditTab } from '@/components/image-edit-tab';
+import { ImageEdit } from '@/components/image-edit';
 import { ImageSlider } from '@/components/image-slider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -115,7 +115,7 @@ export default function TextToImagePage() {
           </section>
 
           {/* 主生成区域 */}
-          <ImageEditTab />
+          <ImageEdit />
 
           {/* 示例展示区 */}
           <section className="mt-24 scroll-m-20" id="examples">

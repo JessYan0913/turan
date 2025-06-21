@@ -70,6 +70,10 @@ export default {
         title: '风格提取',
         description: '分析图片风格特征',
       },
+      'create-avatar': {
+        title: '头像生成',
+        description: '生成头像',
+      },
     },
   },
   home: {
