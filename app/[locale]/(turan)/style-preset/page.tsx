@@ -1,5 +1,5 @@
 import { ImageSlider } from '@/components/image-slider';
-import { StyleTransfer } from '@/components/style-transfer';
+import { StylePreset } from '@/components/style-preset';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -121,28 +121,34 @@ const stylePresets = [
 
 export default function StylePresetPage() {
   return (
-    <div className="min-h-screen py-8 transition-colors duration-300 md:py-12 lg:py-16">
+    <div className="min-h-screen transition-colors duration-300">
       <div className="container px-4 md:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          {/* Header Section */}
-          <section className="mb-12 space-y-4 text-center">
-            <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
-              Style Presets
-            </h1>
-            <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-              Transform your images with one-click style presets
-            </p>
+          {/* 标题区域 */}
+          <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
+            <div className="text-center">
+              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
+                Style Presets
+              </h1>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+                Transform your images with one-click style presets
+              </p>
+            </div>
+            <div className="w-full">
+              <StylePreset />
+            </div>
           </section>
 
-          <StyleTransfer />
-
-          {/* Style Presets Grid */}
-          <section className="mt-12 scroll-m-20" id="presets">
+          {/* 示例展示区 */}
+          <section id="examples" className="min-h-screen flex-col items-center py-16">
             <div className="mb-12 space-y-4 text-center">
-              <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-                Explore Style Presets
+              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                Explore Style Presets{' '}
+                <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+                  AI Image Generator
+                </span>
               </h2>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
                 Browse our collection of professionally designed presets. Click any preset to see a preview of how it
                 transforms your image.
               </p>
@@ -189,7 +195,7 @@ export default function StylePresetPage() {
           </section>
 
           {/* How to Use Section */}
-          <section className="py-16 md:py-24" id="how-to-use">
+          <section id="how-to-use" className="flex min-h-screen items-center py-16">
             <div className="container px-2 md:px-4 lg:px-6">
               <div className="mx-auto max-w-4xl">
                 <div className="mb-12 space-y-4 text-center">
@@ -244,7 +250,7 @@ export default function StylePresetPage() {
           </section>
 
           {/* FAQ Section */}
-          <section className="py-16 md:py-24 lg:py-32" id="faq">
+          <section id="faq" className="flex min-h-screen items-center py-16">
             <div className="container px-2 md:px-4 lg:px-6">
               <div className="mx-auto max-w-6xl">
                 <div className="mb-16 space-y-4 text-center">

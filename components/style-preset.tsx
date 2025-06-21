@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Download, Loader2, Palette, RefreshCw, Sparkles } from 'lucide-react';
@@ -11,26 +11,33 @@ import { z } from 'zod';
 
 import { ImageSlider } from '@/components/image-slider';
 import { ImageUploader } from '@/components/image-uploader';
+import { StyleSelector } from '@/components/style-selector';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/use-polling-request';
+import { StyleOption } from '@/lib/actions/options';
 import { cn, downloadImage } from '@/lib/utils';
 
-export function StyleTransfer() {
+export function StylePreset() {
   const router = useRouter();
 
   const imageRef = useRef<HTMLImageElement>(null);
+  const [styleOptions, setStyleOptions] = useState<StyleOption[]>([]);
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
     image: z.instanceof(File, { message: 'Please upload an image' }),
-    styleImage: z.instanceof(File, { message: 'Please upload a style image' }),
+    style: z.string().min(1, { message: 'Please select a style' }),
+    prompt: z.string().optional(),
   });
 
   // Initialize react-hook-form with Zod validation
   const form = useForm<z.infer<typeof styleTransformSchema>>({
     resolver: zodResolver(styleTransformSchema),
-    defaultValues: {},
+    defaultValues: {
+      prompt: '',
+      style: '',
+    },
   });
 
   const {
@@ -38,11 +45,12 @@ export function StyleTransfer() {
     data: generatedImage,
     status,
     reset: resetPolling,
-  } = usePollingRequest<{ image: File; styleImage: File }, Prediction>({
+  } = usePollingRequest<{ image: File; prompt: string; style: string }, Prediction>({
     request: async (data) => {
       const formData = new FormData();
       formData.append('image', data.image);
-      formData.append('styleImage', data.styleImage);
+      formData.append('prompt', data.prompt || '');
+      formData.append('style', data.style);
 
       const response = await fetch('/api/style-transform', {
         method: 'POST',
@@ -76,10 +84,24 @@ export function StyleTransfer() {
     timeoutMessage: 'Request timed out',
   });
 
+  useEffect(() => {
+    const fetchStyleOptions = async () => {
+      try {
+        const { getStyleOptions } = await import('@/lib/actions/options');
+        const data = await getStyleOptions();
+        setStyleOptions(data);
+      } catch (error) {
+        console.error('Failed to fetch style options:', error);
+      }
+    };
+
+    fetchStyleOptions();
+  }, []);
+
   const onSubmit = useCallback(
     (data: z.infer<typeof styleTransformSchema>) => {
       resetPolling();
-      submitTransform({ image: data.image, styleImage: data.styleImage });
+      submitTransform({ image: data.image, prompt: data.prompt || '', style: data.style });
     },
     [submitTransform, resetPolling]
   );
@@ -90,7 +112,8 @@ export function StyleTransfer() {
       resetPolling();
       submitTransform({
         image: values.image,
-        styleImage: values.styleImage,
+        prompt: values.prompt || '',
+        style: values.style,
       });
     }
   }, [form, submitTransform, resetPolling]);
@@ -141,15 +164,24 @@ export function StyleTransfer() {
 
               <FormField
                 control={form.control}
-                name="styleImage"
-                render={({ field: { onChange } }) => (
+                name="style"
+                render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-purple-700 dark:text-purple-400">Style Image</FormLabel>
-                      <p className="text-muted-foreground text-xs">Choose a style image to apply to your image</p>
+                      <FormLabel className="font-medium text-purple-700 dark:text-purple-400">Style</FormLabel>
+                      <p className="text-muted-foreground text-xs">Choose a style to apply to your image</p>
                     </div>
                     <FormControl>
-                      <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
+                      <StyleSelector
+                        options={styleOptions}
+                        value={field.value}
+                        onSelect={(style) => {
+                          field.onChange(style.id);
+                          form.setValue('prompt', style.prompt);
+                        }}
+                        placeholder="Select a style"
+                        disabled={status === 'loading' || status === 'polling'}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

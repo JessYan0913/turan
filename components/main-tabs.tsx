@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { CreateAvatar } from '@/components/create-avatar';
 import { ImageEdit } from '@/components/image-edit';
-import { StyleTransfer } from '@/components/style-transfer';
+import { StylePreset } from '@/components/style-preset';
 import { TextToImage } from '@/components/text-to-image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useScopedI18n } from '@/locales/client';
@@ -51,7 +51,7 @@ export function MainTabs() {
         </TabsContent>
 
         <TabsContent value="style" className="mt-0">
-          <StyleTransfer />
+          <StylePreset />
         </TabsContent>
 
         <TabsContent value="avatar" className="mt-0">
