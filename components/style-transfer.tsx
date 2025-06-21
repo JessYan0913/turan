@@ -134,7 +134,7 @@ export function StyleTransfer() {
   }, [generatedImage]);
 
   return (
-    <div className="grid h-full min-h-[calc(100vh-250px)] grid-cols-1 gap-8 lg:grid-cols-2">
+    <div className="grid h-full min-h-[calc(100vh-320px)] grid-cols-1 gap-8 lg:grid-cols-2">
       {/* Left Column - Form */}
       <div className="flex flex-col">
         <Form {...form}>

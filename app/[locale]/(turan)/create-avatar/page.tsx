@@ -40,24 +40,26 @@ const faqItems = [
 
 export default function CreateAvatarPage() {
   return (
-    <div className="min-h-screen py-8 transition-colors duration-300 md:py-12 lg:py-16">
+    <div className="min-h-screen transition-colors duration-300">
       <div className="container px-4 md:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           {/* 标题区域 */}
-          <section className="mb-12 space-y-4 text-center">
-            <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
-              Turan AI Avatar Generator
-            </h1>
-            <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-              Create personalized avatars with AI
-            </p>
+          <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
+            <div className="text-center">
+              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
+                Turan AI Avatar Generator
+              </h1>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+                Create personalized avatars with AI
+              </p>
+            </div>
+            <div className="w-full">
+              <CreateAvatar />
+            </div>
           </section>
 
-          {/* 主生成区域 */}
-          <CreateAvatar />
-
           {/* AI Avatar Generation Features */}
-          <section className="mt-24 scroll-m-20" id="features">
+          <section id="features" className="flex min-h-screen items-center py-16">
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
               {/* Left side - Text content */}
               <div className="flex flex-col justify-center space-y-6">
@@ -229,7 +231,7 @@ export default function CreateAvatarPage() {
           </section>
 
           {/* How to Use Section */}
-          <section className="py-16 md:py-24" id="how-to-use">
+          <section id="how-to-use" className="flex min-h-screen items-center py-16">
             <div className="container px-2 md:px-4 lg:px-6">
               <div className="mx-auto max-w-4xl">
                 <div className="mb-12 space-y-4 text-center">
@@ -284,7 +286,7 @@ export default function CreateAvatarPage() {
           </section>
 
           {/* FAQ Section */}
-          <section className="py-16 md:py-24 lg:py-32" id="faq">
+          <section id="faq" className="flex min-h-screen items-center py-16">
             <div className="container px-2 md:px-4 lg:px-6">
               <div className="mx-auto max-w-6xl">
                 <div className="mb-16 space-y-4 text-center">

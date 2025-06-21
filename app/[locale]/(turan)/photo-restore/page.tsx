@@ -1,203 +1,315 @@
+import { Code, Download, Globe, ScanLine, SmilePlus, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+
 import { ImageSlider } from '@/components/image-slider';
-import { StyleTransfer } from '@/components/style-transfer';
+import { PhotoRestore } from '@/components/photo-restore';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const faqItems = [
   {
-    question: 'What are Style Presets?',
+    question: 'What is Photo Restoration?',
     answer:
-      'Style Presets are pre-configured style templates that you can apply to your images with a single click. Each preset contains a combination of filters, effects, and adjustments to achieve a specific look.',
+      'Photo Restoration is a digital process that repairs and enhances old, damaged, or faded photographs. Our AI-powered tool can fix scratches, tears, stains, color fading, and other common issues that affect vintage photos.',
   },
   {
-    question: 'Can I create my own Style Presets?',
+    question: 'What types of damage can be restored?',
     answer:
-      'Yes! Pro users can create and save their own Style Presets. You can customize existing presets or create new ones from scratch to match your unique style.',
+      'Our restoration tool can fix many common issues including scratches, tears, stains, fading, discoloration, water damage, mold spots, missing pieces, and general aging effects that occur in old photographs.',
   },
   {
-    question: 'How do I apply a Style Preset?',
+    question: 'How does the restoration process work?',
     answer:
-      'Simply click on any Style Preset to apply it to your image. You can adjust the intensity using the slider and make additional tweaks as needed.',
+      'Simply upload your old photo, and our AI will analyze the damage and apply appropriate restoration techniques. You can adjust the restoration intensity and fine-tune specific aspects as needed.',
   },
   {
-    question: 'Can I combine multiple Style Presets?',
+    question: 'Can I restore black and white photos in color?',
     answer:
-      'Yes, you can layer multiple Style Presets to create unique combinations. Adjust the opacity of each layer to control how they blend together.',
+      "Yes, our advanced colorization feature can add natural-looking color to black and white photographs while maintaining historical accuracy and the photo's original character.",
   },
   {
-    question: 'Are Style Presets non-destructive?',
+    question: 'Will my original photo be altered?',
     answer:
-      'Yes, all Style Presets are applied non-destructively, meaning your original image remains unchanged. You can remove or adjust any preset at any time.',
+      'No, the restoration process is non-destructive. Your original photo remains unchanged, and you can download both the original and restored versions.',
   },
   {
-    question: 'Do Style Presets work with all image types?',
+    question: 'What file formats are supported?',
     answer:
-      'Style Presets work with most common image formats including JPEG, PNG, and WebP. For best results, use high-quality images with good lighting.',
+      'Our restoration tool works with most common image formats including JPEG, PNG, TIFF, and WebP. For best results, scan your old photos at a high resolution (at least 300 DPI).',
   },
 ];
 
-const stylePresets = [
-  {
-    id: 1,
-    name: 'Cinematic',
-    description: 'Dramatic lighting and high contrast for a film-like quality',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
-    category: 'Photography',
-  },
-  {
-    id: 2,
-    name: 'Cyberpunk',
-    description: 'Neon lights and futuristic color grading',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/18/094dd5c0-cdb5-44ae-af08-af31d46e5dad_11053931.png',
-    category: 'Digital Art',
-  },
-  {
-    id: 3,
-    name: 'Vintage Film',
-    description: 'Classic film grain and faded colors',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/16/ba6cad48-f3d9-4222-b1f6-989cd0315884_11016625.jpeg',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/19/b40cc473-9f2a-4a72-afed-34f3389df0c7_11015153.png',
-    category: 'Vintage',
-  },
-  {
-    id: 4,
-    name: 'Watercolor',
-    description: 'Soft, artistic watercolor painting effect',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/16/c6628fb3-0cc1-4026-a308-06420e600891_11038925.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png',
-    category: 'Artistic',
-  },
-  {
-    id: 5,
-    name: 'Minimalist',
-    description: 'Clean lines and reduced color palette',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
-    category: 'Design',
-  },
-  {
-    id: 6,
-    name: 'Fantasy',
-    description: 'Ethereal glow and magical atmosphere',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
-    category: 'Artistic',
-  },
-  {
-    id: 7,
-    name: 'Noir',
-    description: 'High contrast black and white with deep shadows',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/18/094dd5c0-cdb5-44ae-af08-af31d46e5dad_11053931.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/16/ba6cad48-f3d9-4222-b1f6-989cd0315884_11016625.jpeg',
-    category: 'Photography',
-  },
-  {
-    id: 8,
-    name: 'Pastel Dreams',
-    description: 'Soft, dreamy pastel colors',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/16/c6628fb3-0cc1-4026-a308-06420e600891_11038925.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/19/b40cc473-9f2a-4a72-afed-34f3389df0c7_11015153.png',
-    category: 'Artistic',
-  },
-  {
-    id: 9,
-    name: 'Oil Painting',
-    description: 'Classic oil painting texture and brush strokes',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/16/ba6cad48-f3d9-4222-b1f6-989cd0315884_11016625.jpeg',
-    category: 'Artistic',
-  },
-  {
-    id: 10,
-    name: 'Neon Glow',
-    description: 'Vibrant neon colors and glow effects',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
-    category: 'Digital Art',
-  },
-];
-
-export default function StylePresetPage() {
+export default function PhotoRestorePage() {
   return (
-    <div className="min-h-screen py-8 transition-colors duration-300 md:py-12 lg:py-16">
+    <div className="min-h-screen transition-colors duration-300">
       <div className="container px-4 md:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           {/* Header Section */}
-          <section className="mb-12 space-y-4 text-center">
-            <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
-              Photo Restore
-            </h1>
-            <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-              Restore your photos with one-click photo restore
-            </p>
-          </section>
-
-          <StyleTransfer />
-
-          {/* Style Presets Grid */}
-          <section className="mt-12 scroll-m-20" id="presets">
-            <div className="mb-12 space-y-4 text-center">
-              <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-                Explore Photo Restore
-              </h2>
+          <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
+            <div className="text-center">
+              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
+                Old Photo Restoration
+              </h1>
               <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-                Browse our collection of professionally designed presets. Click any preset to see a preview of how it
-                transforms your image.
+                Breathe new life into your cherished memories with our AI-powered photo restoration
               </p>
             </div>
+            <div className="w-full">
+              <PhotoRestore />
+            </div>
+          </section>
 
-            {/* Style Presets Grid */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {stylePresets.map((preset) => (
-                <Card
-                  key={preset.id}
-                  className="border-border bg-card group overflow-hidden rounded-xl border shadow-sm transition-all hover:shadow-md"
-                >
-                  <div className="relative aspect-square">
-                    <ImageSlider
-                      beforeImage={preset.beforeImage}
-                      afterImage={preset.afterImage}
-                      beforeLabel="Original"
-                      afterLabel="With Preset"
-                      className="size-full"
+          {/* FLUX Kontext Feature Section */}
+          <section id="features" className="flex min-h-screen items-center from-transparent py-16">
+            <div className="container px-4">
+              <div className="mx-auto max-w-6xl">
+                <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
+                  <div className="space-y-6">
+                    <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+                      Powered by{' '}
+                      <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+                        FLUX Kontext
+                      </span>
+                    </h2>
+                    <p className="text-muted-foreground text-lg">
+                      Our advanced AI restoration technology brings your old photographs back to life with incredible
+                      detail and accuracy.
+                    </p>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500">
+                          <Code className="size-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">Fix Scratches & Damage</h3>
+                          <p className="text-muted-foreground">
+                            Automatically repair tears, creases, stains, and other physical damage that has accumulated
+                            over time.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500">
+                          <Globe className="size-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">Colorize Black & White Photos</h3>
+                          <p className="text-muted-foreground">
+                            Transform monochrome memories into vibrant color images with historically accurate and
+                            natural-looking results.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500">
+                          <Download className="size-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">Enhance Resolution</h3>
+                          <p className="text-muted-foreground">
+                            Upscale low-resolution scans to reveal hidden details and create print-worthy restorations
+                            of your family heirlooms.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative overflow-hidden rounded-2xl shadow-xl">
+                    <div className="absolute inset-0 z-10 bg-gradient-to-br from-blue-500/20 to-cyan-400/20"></div>
+                    <Image
+                      src="https://img.artiversehub.ai/online/2025/6/16/ba6cad48-f3d9-4222-b1f6-989cd0315884_11016625.jpeg"
+                      alt="Before and after photo restoration"
+                      width={800}
+                      height={600}
+                      className="h-auto w-full object-cover"
+                      priority
                     />
                   </div>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="text-foreground text-lg font-semibold">{preset.name}</h3>
-                        <p className="text-muted-foreground mt-1 text-sm">{preset.description}</p>
-                      </div>
-                      <span className="border-border bg-secondary/30 text-muted-foreground inline-flex shrink-0 items-center rounded-full border px-2.5 py-0.5 text-xs font-medium">
-                        {preset.category}
-                      </span>
-                    </div>
-                    <Button variant="outline" size="sm" className="mt-3 w-full">
-                      Apply Preset
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+                </div>
+              </div>
             </div>
-            <div className="mt-10 flex justify-center">
-              <Button className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-600 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Load More Presets
-              </Button>
+          </section>
+
+          {/* Technology Showcase Section */}
+          <section id="technology" className="flex min-h-screen items-center overflow-hidden py-16">
+            <div className="container px-4">
+              <div className="mx-auto max-w-6xl">
+                <div className="mb-12 text-center">
+                  <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                    Advanced Restoration{' '}
+                    <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+                      Technology
+                    </span>
+                  </h2>
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
+                    Our AI-powered restoration process uses cutting-edge techniques to bring your memories back to life
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                  <div className="bg-card border-border rounded-xl border p-6 shadow-sm transition-all hover:shadow-md">
+                    <div className="mb-4 inline-block rounded-lg bg-blue-500/10 p-3 text-blue-500">
+                      <ScanLine className="size-6" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold">Smart Damage Detection</h3>
+                    <p className="text-muted-foreground">
+                      Our AI automatically identifies different types of damage in your photos, from scratches and tears
+                      to fading and discoloration, applying the appropriate restoration techniques to each area.
+                    </p>
+                  </div>
+
+                  <div className="bg-card border-border rounded-xl border p-6 shadow-sm transition-all hover:shadow-md">
+                    <div className="mb-4 inline-block rounded-lg bg-blue-500/10 p-3 text-blue-500">
+                      <Sparkles className="size-6" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold">Historical Color Accuracy</h3>
+                    <p className="text-muted-foreground">
+                      When colorizing black and white photos, our AI has been trained on thousands of historical images
+                      to ensure period-accurate colors for clothing, objects, and environments.
+                    </p>
+                  </div>
+
+                  <div className="bg-card border-border rounded-xl border p-6 shadow-sm transition-all hover:shadow-md">
+                    <div className="mb-4 inline-block rounded-lg bg-blue-500/10 p-3 text-blue-500">
+                      <SmilePlus className="size-6" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold">Face Enhancement</h3>
+                    <p className="text-muted-foreground">
+                      Special attention is given to faces in your photos, with advanced facial recognition that
+                      preserves the identity and expressions of your loved ones while enhancing clarity and detail.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Before & After Showcase Section */}
+          <section className="my-12 py-16">
+            <div className="container px-4">
+              <div className="mx-auto max-w-6xl">
+                <div className="mb-12 text-center">
+                  <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                    Before & After{' '}
+                    <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+                      Showcase
+                    </span>
+                  </h2>
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
+                    See the remarkable transformations our AI restoration technology can achieve
+                  </p>
+                </div>
+
+                <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+                  <div className="bg-card border-border overflow-hidden rounded-xl border shadow-md transition-all hover:shadow-lg">
+                    <div className="relative aspect-[4/3]">
+                      <ImageSlider
+                        beforeImage="https://img.artiversehub.ai/online/2025/6/16/c6628fb3-0cc1-4026-a308-06420e600891_11038925.png"
+                        afterImage="https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png"
+                        beforeLabel="Original"
+                        afterLabel="Restored"
+                        className="size-full"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="mb-2 text-xl font-semibold">Damaged Family Portrait from 1940s</h3>
+                      <p className="text-muted-foreground">
+                        This heavily scratched and faded family portrait was restored with our scratch repair
+                        technology, bringing back the clarity and detail of this precious memory.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-card border-border overflow-hidden rounded-xl border shadow-md transition-all hover:shadow-lg">
+                    <div className="relative aspect-[4/3]">
+                      <ImageSlider
+                        beforeImage="https://img.artiversehub.ai/online/2025/6/16/ba6cad48-f3d9-4222-b1f6-989cd0315884_11016625.jpeg"
+                        afterImage="https://img.artiversehub.ai/online/2025/6/19/b40cc473-9f2a-4a72-afed-34f3389df0c7_11015153.png"
+                        beforeLabel="Original"
+                        afterLabel="Restored"
+                        className="size-full"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="mb-2 text-xl font-semibold">Black & White to Color Transformation</h3>
+                      <p className="text-muted-foreground">
+                        This black and white photograph from the 1920s was not only restored but also colorized with
+                        historically accurate tones to bring this moment back to life.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  <div className="bg-card border-border overflow-hidden rounded-xl border shadow-md transition-all hover:shadow-lg">
+                    <div className="relative aspect-square">
+                      <ImageSlider
+                        beforeImage="https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png"
+                        afterImage="https://img.artiversehub.ai/online/2025/6/18/094dd5c0-cdb5-44ae-af08-af31d46e5dad_11053931.png"
+                        beforeLabel="Original"
+                        afterLabel="Restored"
+                        className="size-full"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="mb-1 text-lg font-semibold">Faded Color Photo</h3>
+                      <p className="text-muted-foreground text-sm">Color enhancement and vibrancy restoration</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-card border-border overflow-hidden rounded-xl border shadow-md transition-all hover:shadow-lg">
+                    <div className="relative aspect-square">
+                      <ImageSlider
+                        beforeImage="https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png"
+                        afterImage="https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg"
+                        beforeLabel="Original"
+                        afterLabel="Restored"
+                        className="size-full"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="mb-1 text-lg font-semibold">Water Damaged Photo</h3>
+                      <p className="text-muted-foreground text-sm">Stain removal and texture restoration</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-card border-border overflow-hidden rounded-xl border shadow-md transition-all hover:shadow-lg">
+                    <div className="relative aspect-square">
+                      <ImageSlider
+                        beforeImage="https://img.artiversehub.ai/online/2025/6/16/c6628fb3-0cc1-4026-a308-06420e600891_11038925.png"
+                        afterImage="https://img.artiversehub.ai/online/2025/6/19/b40cc473-9f2a-4a72-afed-34f3389df0c7_11015153.png"
+                        beforeLabel="Original"
+                        afterLabel="Restored"
+                        className="size-full"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="mb-1 text-lg font-semibold">Torn Family Photo</h3>
+                      <p className="text-muted-foreground text-sm">Tear repair and detail reconstruction</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-12 text-center">
+                  <Button className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-600 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Upload Your Photo Now
+                  </Button>
+                </div>
+              </div>
             </div>
           </section>
 
           {/* How to Use Section */}
-          <section className="py-16 md:py-24" id="how-to-use">
+          <section className="flex min-h-screen items-center py-16" id="how-to-use">
             <div className="container px-2 md:px-4 lg:px-6">
               <div className="mx-auto max-w-4xl">
                 <div className="mb-12 space-y-4 text-center">
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-                    How to Use Style Presets
+                    How to Restore Your Old Photos
                   </h2>
                   <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
-                    Transform your images in just a few clicks with our easy-to-use style presets
+                    Bring your cherished memories back to life in just a few simple steps
                   </p>
                 </div>
 
@@ -205,27 +317,27 @@ export default function StylePresetPage() {
                   {[
                     {
                       step: 1,
-                      title: 'Upload Your Image',
+                      title: 'Upload Your Old Photo',
                       description:
-                        'Start by uploading an image you want to enhance. You can drag and drop an image or click to browse your files.',
+                        'Start by uploading the old photograph you want to restore. You can scan your physical photo, drag and drop an image file, or click to browse your files.',
                     },
                     {
                       step: 2,
-                      title: 'Browse Style Presets',
+                      title: 'Select Restoration Type',
                       description:
-                        'Explore our collection of style presets. Hover over each preset to see a preview of how it will transform your image.',
+                        "Choose the type of restoration that best suits your photo's condition. Our AI will analyze the damage and suggest the most appropriate restoration techniques.",
                     },
                     {
                       step: 3,
-                      title: 'Apply & Customize',
+                      title: 'Review & Refine',
                       description:
-                        'Click on any preset to apply it to your image. Adjust the intensity and make additional tweaks to perfect the look.',
+                        'Preview the restored photo and make any adjustments. Fine-tune the restoration intensity, color balance, sharpness, and other parameters to achieve the perfect result.',
                     },
                     {
                       step: 4,
                       title: 'Save & Share',
                       description:
-                        'Download your styled image or save your favorite combinations as custom presets for future use.',
+                        'Download your beautifully restored photograph in high resolution. Share your revitalized memories with family and friends or print them for display.',
                     },
                   ].map((item, index) => (
                     <div key={index} className="flex flex-col items-start gap-4 md:flex-row md:items-center">
@@ -244,7 +356,7 @@ export default function StylePresetPage() {
           </section>
 
           {/* FAQ Section */}
-          <section className="py-16 md:py-24 lg:py-32" id="faq">
+          <section className="flex min-h-screen items-center py-16" id="faq">
             <div className="container px-2 md:px-4 lg:px-6">
               <div className="mx-auto max-w-6xl">
                 <div className="mb-16 space-y-4 text-center">
@@ -252,7 +364,7 @@ export default function StylePresetPage() {
                     Frequently Asked Questions
                   </h2>
                   <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-                    Find answers to common questions about our AI image generator
+                    Find answers to common questions about our AI photo restoration technology
                   </p>
                 </div>
 
@@ -267,6 +379,69 @@ export default function StylePresetPage() {
                       </CardContent>
                     </Card>
                   ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Before & After Showcase */}
+          <section id="showcase" className="flex min-h-screen items-center py-16">
+            <div className="container px-4">
+              <div className="mx-auto max-w-6xl">
+                <div className="mb-12 text-center">
+                  <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                    See the{' '}
+                    <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+                      Transformation
+                    </span>
+                  </h2>
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
+                    Witness the remarkable difference our restoration technology makes
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
+                  <div className="bg-card border-border overflow-hidden rounded-xl border shadow-sm transition-all hover:shadow-md">
+                    <div className="relative aspect-square overflow-hidden">
+                      <Image
+                        src="https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png"
+                        alt="Before restoration"
+                        width={500}
+                        height={500}
+                        className="size-full object-cover"
+                        priority
+                      />
+                    </div>
+                    <div className="bg-muted/30 p-4 text-center">
+                      <h3 className="text-lg font-medium">Before Restoration</h3>
+                    </div>
+                  </div>
+
+                  <div className="bg-card border-border overflow-hidden rounded-xl border shadow-sm transition-all hover:shadow-md">
+                    <div className="relative aspect-square overflow-hidden">
+                      <Image
+                        src="https://img.artiversehub.ai/online/2025/6/18/094dd5c0-cdb5-44ae-af08-af31d46e5dad_11053931.png"
+                        alt="After restoration"
+                        width={500}
+                        height={500}
+                        className="size-full object-cover"
+                        priority
+                      />
+                    </div>
+                    <div className="bg-blue-50 p-4 text-center dark:bg-blue-950/30">
+                      <h3 className="text-lg font-medium text-blue-600 dark:text-blue-400">After Restoration</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-12 text-center">
+                  <p className="text-muted-foreground mb-6">Ready to restore your own treasured memories?</p>
+                  <Link
+                    href="#header"
+                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-8 py-6 font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-600 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    Upload Your Photo Now
+                  </Link>
                 </div>
               </div>
             </div>

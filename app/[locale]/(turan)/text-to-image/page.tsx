@@ -103,28 +103,36 @@ const examples = [
 
 export default function TextToImagePage() {
   return (
-    <div className="min-h-screen py-8 transition-colors duration-300 md:py-12 lg:py-16">
+    <div className="min-h-screen transition-colors duration-300">
       <div className="container px-4 md:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           {/* 标题区域 */}
-          <section className="mb-12 space-y-4 text-center">
-            <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
-              Turan AI Image Generator
-            </h1>
-            <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-              Input text description, AI will generate beautiful images for you
-            </p>
+          <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
+            <div className="text-center">
+              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
+                Turan AI Image Generator
+              </h1>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+                Input text description, AI will generate beautiful images for you
+              </p>
+            </div>
+            <div className="w-full">
+              <TextToImage />
+            </div>
           </section>
 
-          {/* 主生成区域 */}
-          <TextToImage />
-
           {/* 示例展示区 */}
-          <section className="mt-24 scroll-m-20" id="examples">
+          <section id="examples" className="min-h-screen flex-col items-center py-16">
             <div className="mb-12 space-y-4 text-center">
-              <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-                Explore Prompts for the AI Image Generator
+              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                Explore Prompts for the{' '}
+                <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+                  AI Image Generator
+                </span>
               </h2>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
+                Input text description, AI will generate beautiful images for you
+              </p>
             </div>
 
             {/* Example Grid */}
@@ -158,7 +166,7 @@ export default function TextToImagePage() {
           </section>
 
           {/* FAQ Section */}
-          <section className="py-16 md:py-24 lg:py-32" id="faq">
+          <section id="faq" className="flex min-h-screen items-center py-16">
             <div className="container px-2 md:px-4 lg:px-6">
               <div className="mx-auto max-w-6xl">
                 <div className="mb-16 space-y-4 text-center">
