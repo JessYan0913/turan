@@ -105,58 +105,58 @@ export default function StylePresetPage() {
               </p>
             </div>
 
-            {/* Image to Prompt Examples Grid */}
-            <div className="mb-16 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {promptExamples.map((example) => (
-                <Card key={example.id} className="h-[420px] overflow-hidden border shadow-md">
-                  <div className="grid h-full grid-cols-1 md:grid-cols-2">
-                    <div className="relative h-[420px] md:h-full">
-                      <Image
-                        src={example.image}
-                        alt="Example image"
-                        width={400}
-                        height={400}
-                        className="size-full object-cover"
-                        style={{ height: '100%', width: '100%' }}
-                      />
-                      <div className="absolute left-2 top-2 flex flex-wrap gap-2">
-                        {example.tags.map((tag, index) => (
-                          <span key={index} className="rounded-md bg-black/70 px-2 py-1 text-xs text-white">
-                            {tag}
-                          </span>
-                        ))}
+            <div className="container px-4 md:px-6">
+              <div className="mx-auto max-w-6xl">
+                <div className="mb-16 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  {promptExamples.map((example) => (
+                    <Card key={example.id} className="h-[420px] overflow-hidden border shadow-md">
+                      <div className="grid h-full grid-cols-1 md:grid-cols-2">
+                        <div className="relative h-[420px] md:h-full">
+                          <Image
+                            src={example.image}
+                            alt="Example image"
+                            width={400}
+                            height={400}
+                            className="size-full object-cover"
+                            style={{ height: '100%', width: '100%' }}
+                          />
+                          <div className="absolute left-2 top-2 flex flex-wrap gap-2">
+                            {example.tags.map((tag, index) => (
+                              <span key={index} className="rounded-md bg-black/70 px-2 py-1 text-xs text-white">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex h-full flex-col p-4">
+                          <div className="mb-3 flex items-center justify-between">
+                            <h3 className="text-lg font-semibold">Generated Prompt</h3>
+                            <Button variant="ghost" size="icon" className="size-8" title="Copy prompt">
+                              <Copy className="size-4" />
+                            </Button>
+                          </div>
+                          <div className="bg-muted/50 grow overflow-auto rounded-lg p-4">
+                            <p
+                              className="text-muted-foreground whitespace-pre-wrap font-mono text-sm opacity-80"
+                              style={{ userSelect: 'none' }}
+                            >
+                              {example.prompt.split(',').map((term, i) => (
+                                <span key={i} className={i % 3 === 0 ? 'opacity-60' : i % 2 === 0 ? 'opacity-75' : ''}>
+                                  {term}
+                                  {i < example.prompt.split(',').length - 1 ? ',' : ''}
+                                  {i % 4 === 3 ? ' ' : ''}
+                                </span>
+                              ))}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex h-full flex-col p-4">
-                      <div className="mb-3 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold">Generated Prompt</h3>
-                        <Button variant="ghost" size="icon" className="size-8" title="Copy prompt">
-                          <Copy className="size-4" />
-                        </Button>
-                      </div>
-                      <div className="bg-muted/50 grow overflow-auto rounded-lg p-4">
-                        <p
-                          className="text-muted-foreground whitespace-pre-wrap font-mono text-sm opacity-80"
-                          style={{ userSelect: 'none' }}
-                        >
-                          {example.prompt.split(',').map((term, i) => (
-                            <span key={i} className={i % 3 === 0 ? 'opacity-60' : i % 2 === 0 ? 'opacity-75' : ''}>
-                              {term}
-                              {i < example.prompt.split(',').length - 1 ? ',' : ''}
-                              {i % 4 === 3 ? ' ' : ''}
-                            </span>
-                          ))}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </div>
-          </section>
 
-          {/* Image to Prompt Generator Feature */}
-          <section className="min-h-screen" id="image-to-prompt">
             <div className="container px-4 md:px-6">
               <div className="mx-auto max-w-6xl rounded-xl bg-black/90 p-6 shadow-xl md:p-8 lg:p-10">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
