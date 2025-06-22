@@ -146,31 +146,7 @@ export default function MyWorksPage() {
       </div>
 
       <div className="masonry-grid-container">
-        <MasonryInfiniteGrid
-          className="masonry-container"
-          gap={5}
-          autoResize={true}
-          observeChildren={true}
-          align="stretch"
-          maxStretchColumnSize={300}
-          resizeDebounce={0}
-          threshold={100}
-          placeholder={
-            <div className="masonry-item bg-card animate-pulse overflow-hidden rounded-lg border shadow-sm">
-              <div className="aspect-square w-full bg-gray-200"></div>
-            </div>
-          }
-          onRequestAppend={async (e) => {
-            if (hasMore && !isLoading) {
-              const nextGroupKey = (page || 0) + 1;
-              e.wait();
-              e.currentTarget.appendPlaceholders(5, nextGroupKey);
-              setLoadingMore(true);
-              await new Promise((resolve) => setTimeout(resolve, 300));
-              setPage((prevPage) => prevPage + 1);
-            }
-          }}
-        >
+        <div className="mt-8 columns-1 gap-4 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 [&>div]:mb-4">
           {!isLoading && gridItems.length === 0 ? (
             <div className="flex w-full flex-col items-center justify-center py-12 text-center">
               <ImageIcon className="mb-4 size-12 text-gray-400" />
@@ -184,20 +160,17 @@ export default function MyWorksPage() {
             gridItems.map((item: any) => (
               <div
                 key={item.key}
-                data-grid-groupkey={item.groupKey}
-                className="masonry-item bg-card group relative overflow-hidden rounded-lg border shadow-sm transition-shadow hover:shadow-md"
+                className="bg-card group relative mb-4 break-inside-avoid overflow-hidden rounded-lg border shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="relative w-full overflow-hidden">
                   <Image
                     src={item.processedImage}
                     alt={item.title}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
+                    width={800}
+                    height={600}
                     className="h-auto w-full object-contain"
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
                   />
-
-                  {/* Hover overlay with information */}
                   <div className="absolute inset-0 flex flex-col justify-between bg-black/60 p-4 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                     <div className="flex items-start justify-between">
                       <h3 className="font-medium text-white">{item.title}</h3>
@@ -259,7 +232,7 @@ export default function MyWorksPage() {
               </div>
             ))
           )}
-        </MasonryInfiniteGrid>
+        </div>
       </div>
 
       <AlertDialog open={!!workToDelete} onOpenChange={(open) => !open && setWorkToDelete(null)}>
