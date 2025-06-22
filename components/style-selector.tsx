@@ -81,7 +81,7 @@ export function StyleSelector({
           disabled={disabled}
           className={cn(
             'relative h-auto w-full justify-between rounded-lg border bg-transparent px-4 py-6 text-left shadow-sm transition-all',
-            'hover:bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2',
+            'hover:bg-blue-50/50 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-2 dark:hover:bg-blue-900/20 dark:focus:ring-blue-800/50',
             disabled && 'pointer-events-none opacity-50'
           )}
         >
@@ -105,13 +105,14 @@ export function StyleSelector({
               </>
             ) : (
               <div className="flex items-center gap-3">
-                <Paintbrush className="size-5 text-purple-500" />
+                <Paintbrush className="size-5 bg-blue-100 text-blue-900 dark:bg-blue-800/50 dark:text-cyan-100" />
                 <span className="text-base text-gray-500">{placeholder}</span>
               </div>
             )}
           </div>
           <ChevronDown
             className={cn(
+              'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-cyan-200',
               'size-4 text-gray-400 transition-transform duration-200 ease-in-out',
               open ? 'rotate-180 transform' : ''
             )}
@@ -136,7 +137,7 @@ export function StyleSelector({
                   className={cn(
                     'flex flex-col items-start overflow-hidden rounded-lg p-0',
                     'border transition-all duration-200 hover:scale-[1.02] hover:shadow-md',
-                    selectedOption?.id === option.id ? 'border-purple-500 ring-1 ring-purple-200' : ''
+                    selectedOption?.id === option.id ? 'border-blue-500 ring-1 ring-blue-200' : ''
                   )}
                 >
                   <div className="relative aspect-[3/2] w-full overflow-hidden bg-gray-50">
@@ -148,7 +149,7 @@ export function StyleSelector({
                       className="object-cover transition-transform duration-300 hover:scale-105"
                     />
                     {selectedOption?.id === option.id && (
-                      <div className="absolute right-2 top-2 rounded-full bg-purple-500 p-1 shadow-sm">
+                      <div className="absolute right-2 top-2 rounded-full bg-blue-500 p-1 shadow-sm">
                         <Check className="size-3 text-white" />
                       </div>
                     )}

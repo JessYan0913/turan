@@ -76,12 +76,6 @@ const examples = [
     style: 'Digital Art',
   },
   {
-    id: 10,
-    prompt: 'A magical forest with glowing mushrooms',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
-    style: 'Fantasy',
-  },
-  {
     id: 4,
     prompt: 'An astronaut floating in space with Earth in the background',
     imageUrl: 'https://img.artiversehub.ai/online/2025/6/16/c6628fb3-0cc1-4026-a308-06420e600891_11038925.png',
@@ -208,8 +202,10 @@ export default function TextToImagePage() {
                     },
                   ].map((item, index) => (
                     <div key={index} className="flex flex-col items-start gap-4 md:flex-row md:items-center">
-                      <div className="bg-primary/10 text-primary flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-bold">
-                        {item.step}
+                      <div className="flex size-12 shrink-0 items-center justify-center rounded-full border border-blue-500/20 bg-gradient-to-r from-blue-600/10 to-cyan-500/10 bg-clip-text text-lg font-bold text-transparent">
+                        <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                          {item.step}
+                        </span>
                       </div>
                       <div>
                         <h3 className="text-foreground text-lg font-semibold">{item.title}</h3>
@@ -237,7 +233,10 @@ export default function TextToImagePage() {
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-10">
                   {faqItems.map((item, index) => (
-                    <Card key={index} className="h-full transition-all hover:shadow-lg">
+                    <Card
+                      key={index}
+                      className="h-full transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
+                    >
                       <CardHeader className="pb-4">
                         <CardTitle className="text-lg font-semibold md:text-xl">{item.question}</CardTitle>
                       </CardHeader>

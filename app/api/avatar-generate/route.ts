@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const imageFile = formData.get('image') as File | null;
     const background = formData.get('background') as string | null;
+    const size = formData.get('size') as string | null;
 
     // Validate required fields
     if (!imageFile) {
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
         background,
         output_format: 'png',
         input_image: blobData.url,
-        aspect_ratio: '1:1',
+        aspect_ratio: size,
         seed: 2,
         safety_tolerance: 2,
       },

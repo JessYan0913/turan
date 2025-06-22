@@ -127,7 +127,7 @@ export function ImageEdit() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-teal-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-teal-950/20 dark:ring-white/10"
+            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
           >
             <div className="space-y-6">
               <FormField
@@ -136,7 +136,7 @@ export function ImageEdit() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-teal-700 dark:text-teal-400">Upload Image</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Upload Image</FormLabel>
                       <p className="text-muted-foreground text-xs">Drag and drop an image here, or click to select</p>
                     </div>
                     <FormControl>
@@ -153,7 +153,7 @@ export function ImageEdit() {
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-teal-700 dark:text-teal-400">Edit Instructions</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Edit Instructions</FormLabel>
                       <p className="text-muted-foreground text-xs">
                         Enter a description of the changes you want to make to the image.
                       </p>
@@ -163,7 +163,7 @@ export function ImageEdit() {
                         placeholder="Describe the changes you want to make to the image..."
                         disabled={status === 'loading' || status === 'polling'}
                         rows={6}
-                        className="min-h-[160px] w-full resize-none rounded-lg border border-gray-200 bg-white/80 p-3 transition-colors hover:border-teal-400 focus:border-teal-400 focus:shadow-[0_8px_30px_rgba(13,148,136,0.15)] dark:border-gray-700 dark:bg-gray-950/50"
+                        className="min-h-[160px] w-full resize-none rounded-lg border border-gray-200 bg-white/80 p-3 transition-colors hover:border-blue-400 focus:border-blue-500 focus:shadow-[0_8px_30px_rgba(37,99,235,0.15)] dark:border-gray-700 dark:bg-gray-950/50"
                         {...field}
                       />
                     </FormControl>
@@ -176,8 +176,8 @@ export function ImageEdit() {
             <div className="mt-8">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-teal-600 to-emerald-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-teal-700 hover:to-emerald-600 hover:shadow-md disabled:from-teal-400 disabled:to-emerald-400"
-                disabled={status === 'loading' || status === 'polling'}
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-blue-700 hover:to-cyan-600 hover:shadow-md disabled:from-blue-400 disabled:to-cyan-400"
+                disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
               >
                 {status === 'loading' || status === 'polling' ? (
                   <>
@@ -197,12 +197,12 @@ export function ImageEdit() {
       </div>
 
       {/* Right Column - Result Display */}
-      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-teal-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-teal-950/20 dark:ring-white/10">
+      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-blue-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
         <Button
           onClick={handleRegenerate}
           disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
           <RefreshCw className="size-4" />
@@ -212,7 +212,7 @@ export function ImageEdit() {
         <Button
           onClick={handleDownload}
           disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
           <Download className="size-4" />
@@ -228,8 +228,8 @@ export function ImageEdit() {
               status === 'idle' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            <div className="rounded-full bg-teal-50 p-6 dark:bg-teal-900/20">
-              <ImageIcon className="size-16 text-teal-400" />
+            <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
+              <ImageIcon className="size-16 text-blue-400" />
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Edit</h3>
@@ -245,7 +245,7 @@ export function ImageEdit() {
             )}
           >
             <div className="scale-100 animate-[pulse_1s_ease-in-out_infinite] transition-all hover:scale-110">
-              <Sparkles className="size-16 text-teal-500" />
+              <Sparkles className="size-16 text-cyan-500" />
             </div>
             <div className="text-center">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
@@ -273,7 +273,7 @@ export function ImageEdit() {
                 We encountered an error while processing your request. Please try again.
               </p>
               <Button
-                className="mt-4 bg-gradient-to-r from-teal-600 to-emerald-500 text-white hover:from-teal-700 hover:to-emerald-600"
+                className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
                 Try Again

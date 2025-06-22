@@ -53,19 +53,19 @@ export default async function PricingPage() {
       <div className="container px-4 md:px-6 lg:px-8">
         {/* 标题区域 */}
         <div className="mb-12 space-y-6 text-center">
-          <h1 className="gradient-text leading-heading-sm md:leading-heading lg:leading-heading-lg text-4xl font-bold tracking-tight md:text-6xl lg:text-6xl">
+          <h1 className="leading-heading-sm md:leading-heading lg:leading-heading-lg bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl lg:text-6xl">
             {t('title')}
           </h1>
           <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">{t('subtitle')}</p>
         </div>
 
         {/* 价格卡片 */}
-        <div className="max-w-8xl mx-auto grid gap-6 md:grid-cols-4">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 md:grid-cols-4 md:px-8 lg:px-12">
           {plans.map((plan, index) => (
             <div key={plan.name} className="relative">
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 z-10 -translate-x-1/2">
-                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-1 text-xs font-medium text-white shadow-lg">
+                  <Badge className="bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-1 text-xs font-medium text-white shadow-lg">
                     {t('popularBadge')}
                   </Badge>
                 </div>
@@ -73,7 +73,7 @@ export default async function PricingPage() {
               <Card
                 className={`card-base h-full transition-all duration-300 hover:shadow-lg ${
                   plan.popular
-                    ? 'ring-offset-background ring-2 ring-blue-500 ring-offset-2 dark:shadow-[0_0_0_4px_#38bdf8] dark:ring-blue-500'
+                    ? 'ring-offset-background ring-2 ring-cyan-500 ring-offset-2 dark:shadow-[0_0_0_4px_#22d3ee] dark:ring-cyan-500'
                     : ''
                 }`}
               >
@@ -81,10 +81,10 @@ export default async function PricingPage() {
                   <div
                     className={`mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-gradient-to-r ${
                       index === 0
-                        ? 'from-gray-400 to-gray-600'
+                        ? 'from-blue-600 to-cyan-500'
                         : index === 1
-                          ? 'from-blue-500 to-purple-600'
-                          : 'from-purple-500 to-pink-600'
+                          ? 'from-blue-500 to-cyan-400'
+                          : 'from-blue-400 to-cyan-300'
                     } text-white shadow-lg`}
                   >
                     {plan.icon}
@@ -106,8 +106,7 @@ export default async function PricingPage() {
                         variant: plan.popular ? 'default' : 'outline',
                         className: 'w-full',
                       }),
-                      plan.popular &&
-                        'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+                      plan.popular && 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600'
                     )}
                   >
                     {plan.buttonText}
@@ -118,7 +117,7 @@ export default async function PricingPage() {
                     <ul className="space-y-3">
                       {plan.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start gap-3">
-                          <Check className="mt-0.5 size-4 shrink-0 text-green-500" />
+                          <Check className="mt-0.5 size-4 shrink-0 text-cyan-500" />
                           <span className="text-sm">{feature}</span>
                         </li>
                       ))}

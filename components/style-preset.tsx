@@ -140,7 +140,7 @@ export function StylePreset() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-purple-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10"
+            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
           >
             <div className="space-y-6">
               <FormField
@@ -149,7 +149,7 @@ export function StylePreset() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-purple-700 dark:text-purple-400">Prompt</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Prompt</FormLabel>
                       <p className="text-muted-foreground text-xs">
                         Describe the style transformation you want to apply
                       </p>
@@ -168,7 +168,7 @@ export function StylePreset() {
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-purple-700 dark:text-purple-400">Style</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Style</FormLabel>
                       <p className="text-muted-foreground text-xs">Choose a style to apply to your image</p>
                     </div>
                     <FormControl>
@@ -192,7 +192,7 @@ export function StylePreset() {
             <div className="mt-8">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-purple-700 hover:to-indigo-700 hover:shadow-md disabled:from-purple-400 disabled:to-indigo-400"
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-blue-700 hover:to-cyan-600 hover:shadow-md disabled:from-blue-400 disabled:to-cyan-400"
                 disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
               >
                 {status === 'loading' || status === 'polling' ? (
@@ -213,12 +213,12 @@ export function StylePreset() {
       </div>
 
       {/* Right Column - Result Display */}
-      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-purple-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10">
+      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-blue-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
         <Button
           onClick={handleRegenerate}
           disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
           <RefreshCw className="size-4" />
@@ -228,7 +228,7 @@ export function StylePreset() {
         <Button
           onClick={handleDownload}
           disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
           <Download className="size-4" />
@@ -244,8 +244,8 @@ export function StylePreset() {
               status === 'idle' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            <div className="rounded-full bg-purple-50 p-6 dark:bg-purple-900/20">
-              <Palette className="size-16 text-purple-400" />
+            <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
+              <Palette className="size-16 text-blue-400" />
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Transform</h3>
@@ -261,7 +261,7 @@ export function StylePreset() {
             )}
           >
             <div className="scale-100 animate-[pulse_1s_ease-in-out_infinite] transition-all hover:scale-110">
-              <Sparkles className="size-16 text-purple-500" />
+              <Sparkles className="size-16 text-cyan-500" />
             </div>
             <div className="text-center">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
@@ -289,7 +289,7 @@ export function StylePreset() {
                 We encountered an error while processing your request. Please try again.
               </p>
               <Button
-                className="mt-4 bg-gradient-to-r from-purple-600 to-indigo-500 text-white hover:from-purple-700 hover:to-indigo-600"
+                className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
                 Try Again

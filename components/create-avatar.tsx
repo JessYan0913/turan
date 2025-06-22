@@ -149,7 +149,7 @@ export function CreateAvatar() {
       <div className="flex flex-col">
         <Form {...form}>
           <form
-            className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10"
+            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="space-y-6">
@@ -159,7 +159,7 @@ export function CreateAvatar() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-teal-700 dark:text-teal-400">Upload Photo</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Upload Photo</FormLabel>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -175,7 +175,7 @@ export function CreateAvatar() {
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-teal-700 dark:text-teal-400">Background Style</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Background Style</FormLabel>
                       <p className="text-muted-foreground text-xs">Choose a style for your avatar background</p>
                     </div>
                     <FormControl>
@@ -199,7 +199,7 @@ export function CreateAvatar() {
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-teal-700 dark:text-teal-400">Image Size</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Image Size</FormLabel>
                       <p className="text-muted-foreground text-xs">Select the dimensions for your generated avatar</p>
                     </div>
                     <FormControl>
@@ -213,9 +213,9 @@ export function CreateAvatar() {
                             key={option.value}
                             className={cn(
                               'flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 p-4 transition-all',
-                              'hover:border-teal-300 hover:bg-teal-50/50 dark:hover:bg-teal-950/20',
+                              'hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/20',
                               field.value === option.value
-                                ? 'border-teal-500 bg-teal-50/80 dark:border-teal-400 dark:bg-teal-950/40'
+                                ? 'border-blue-500 bg-blue-50/80 dark:border-cyan-400 dark:bg-blue-950/40'
                                 : 'border-gray-200 bg-white/80 dark:border-gray-700 dark:bg-gray-900/50',
                               (status === 'loading' || status === 'polling') && 'cursor-not-allowed opacity-50'
                             )}
@@ -227,10 +227,10 @@ export function CreateAvatar() {
                           >
                             <div className="relative mb-3 flex items-center justify-center">
                               <div
-                                className="flex items-center justify-center overflow-hidden rounded-md bg-gradient-to-br from-teal-100 to-emerald-200 dark:from-teal-800/30 dark:to-emerald-900/30"
+                                className="flex items-center justify-center overflow-hidden rounded-md bg-gradient-to-br from-blue-100 to-cyan-200 dark:from-blue-800/30 dark:to-cyan-900/30"
                                 style={{ width: option.width, height: option.height }}
                               >
-                                <User className="size-5 text-teal-600 dark:text-teal-400" />
+                                <User className="size-5 text-blue-600 dark:text-cyan-400" />
                               </div>
                             </div>
                             <div className="text-center">
@@ -250,7 +250,7 @@ export function CreateAvatar() {
             <div className="mt-8">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-teal-600 to-emerald-500 text-white hover:from-teal-700 hover:to-emerald-600"
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-blue-700 hover:to-cyan-600 hover:shadow-md disabled:from-blue-400 disabled:to-cyan-400"
                 disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
               >
                 {status === 'loading' || status === 'polling' ? (
@@ -271,12 +271,12 @@ export function CreateAvatar() {
       </div>
 
       {/* Right Column - Result Display */}
-      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-teal-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-teal-950/20 dark:ring-white/10">
+      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-blue-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
         <Button
           onClick={handleRegenerate}
           disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
           <RefreshCw className="size-4" />
@@ -286,7 +286,7 @@ export function CreateAvatar() {
         <Button
           onClick={handleDownload}
           disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
           <Download className="size-4" />
@@ -302,8 +302,8 @@ export function CreateAvatar() {
               status === 'idle' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            <div className="rounded-full bg-teal-50 p-6 dark:bg-teal-900/20">
-              <User className="size-16 text-teal-400" />
+            <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
+              <User className="size-16 text-blue-400" />
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Generate</h3>
@@ -321,7 +321,7 @@ export function CreateAvatar() {
             )}
           >
             <div className="scale-100 animate-[pulse_1s_ease-in-out_infinite] transition-all hover:scale-110">
-              <Sparkles className="size-16 text-teal-500" />
+              <Sparkles className="size-16 text-cyan-500" />
             </div>
             <div className="text-center">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
@@ -351,7 +351,7 @@ export function CreateAvatar() {
                 We couldn&apos;t generate your avatar. Please try again with a different image.
               </p>
               <Button
-                className="mt-4 bg-gradient-to-r from-teal-600 to-emerald-500 text-white hover:from-teal-700 hover:to-emerald-600"
+                className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
                 Try Again

@@ -56,7 +56,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       title: t('tools.image-edit.title'),
       description: t('tools.image-edit.description'),
       href: '/image-edit',
-      color: 'from-violet-500 to-purple-500',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
       id: 'style-preset',
@@ -64,15 +64,15 @@ export function Navigation({ user }: { user: User | undefined }) {
       title: t('tools.style-preset.title'),
       description: t('tools.style-preset.description'),
       href: '/style-preset',
-      color: 'from-pink-500 to-rose-500',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
       id: 'create-avatar',
-      icon: Palette,
+      icon: UserIcon,
       title: t('tools.create-avatar.title'),
       description: t('tools.create-avatar.description'),
       href: '/create-avatar',
-      color: 'from-pink-500 to-rose-500',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
       id: 'photo-restore',
@@ -80,7 +80,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       title: t('tools.photo-restore.title'),
       description: t('tools.photo-restore.description'),
       href: '/photo-restore',
-      color: 'from-amber-500 to-orange-500',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
       id: 'style-transfer',
@@ -88,7 +88,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       title: t('tools.style-transfer.title'),
       description: t('tools.style-transfer.description'),
       href: '/style-transfer',
-      color: 'from-emerald-500 to-teal-500',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
       id: 'style-extract',
@@ -96,7 +96,7 @@ export function Navigation({ user }: { user: User | undefined }) {
       title: t('tools.style-extract.title'),
       description: t('tools.style-extract.description'),
       href: '/style-extract',
-      color: 'from-indigo-500 to-blue-500',
+      color: 'from-blue-500 to-cyan-500',
     },
   ];
 
@@ -106,7 +106,7 @@ export function Navigation({ user }: { user: User | undefined }) {
         {/* Logo and Main Nav */}
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="flex size-8 items-center justify-center rounded-md bg-gradient-to-r from-blue-600 to-purple-600">
+            <div className="flex size-8 items-center justify-center rounded-md bg-gradient-to-r from-blue-600 to-cyan-500">
               <Palette className="size-4 text-white" />
             </div>
             <span className="text-lg font-semibold tracking-tight">Turan</span>
@@ -135,10 +135,8 @@ export function Navigation({ user }: { user: User | undefined }) {
                             href={href}
                             className="hover:bg-accent group flex items-start gap-3 rounded-lg p-3 transition-colors"
                           >
-                            <div
-                              className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${color}`}
-                            >
-                              <Icon className="size-5 text-white" />
+                            <div className="bg-accent mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg">
+                              <Icon className="text-foreground/80 size-5" />
                             </div>
                             <div className="flex-1">
                               <div className="text-foreground font-medium">{title}</div>

@@ -109,14 +109,6 @@ const stylePresets = [
     afterImage: 'https://img.artiversehub.ai/online/2025/6/16/ba6cad48-f3d9-4222-b1f6-989cd0315884_11016625.jpeg',
     category: 'Artistic',
   },
-  {
-    id: 10,
-    name: 'Neon Glow',
-    description: 'Vibrant neon colors and glow effects',
-    beforeImage: 'https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png',
-    afterImage: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
-    category: 'Digital Art',
-  },
 ];
 
 export default function StylePresetPage() {
