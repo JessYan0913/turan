@@ -3,7 +3,7 @@
 import { useCallback, useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Download, Loader2, Palette, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertCircle, Brush, Download, Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
@@ -170,8 +170,8 @@ export function StyleTransfer() {
                   </>
                 ) : (
                   <>
-                    <Palette className="mr-2 size-5" />
-                    Transform Style
+                    <Brush className="mr-2 size-5" />
+                    Apply Style Transfer
                   </>
                 )}
               </Button>
@@ -213,11 +213,13 @@ export function StyleTransfer() {
             )}
           >
             <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
-              <Palette className="size-16 text-blue-400" />
+              <Brush className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Transform</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">Your transformed image will appear here</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Apply Style Transfer</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
+                Your style-transferred image will appear here
+              </p>
             </div>
           </div>
 

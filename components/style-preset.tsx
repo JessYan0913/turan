@@ -203,7 +203,7 @@ export function StylePreset() {
                 ) : (
                   <>
                     <Palette className="mr-2 size-5" />
-                    Transform Style
+                    Apply Style Preset
                   </>
                 )}
               </Button>
@@ -248,8 +248,10 @@ export function StylePreset() {
               <Palette className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Transform</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">Your transformed image will appear here</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Style Preset Ready</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
+                Your image will be transformed with the selected style preset
+              </p>
             </div>
           </div>
 

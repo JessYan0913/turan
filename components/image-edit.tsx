@@ -187,7 +187,7 @@ export function ImageEdit() {
                 ) : (
                   <>
                     <Sparkles className="mr-2 size-4" />
-                    Generate
+                    Generate Image
                   </>
                 )}
               </Button>

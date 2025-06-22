@@ -1,8 +1,7 @@
 import { Copy } from 'lucide-react';
 import Image from 'next/image';
 
-import { ImageSlider } from '@/components/image-slider';
-import { StylePreset } from '@/components/style-preset';
+import { StyleExtract } from '@/components/style-extract';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -78,15 +77,15 @@ export default function StylePresetPage() {
           {/* Header Section */}
           <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
             <div className="text-center">
-              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
+              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold leading-normal tracking-tight text-transparent md:text-5xl md:leading-normal lg:text-6xl lg:leading-normal">
                 Style Extract
               </h1>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
                 Extract style from images with one-click style presets
               </p>
             </div>
             <div className="w-full">
-              <StylePreset />
+              <StyleExtract />
             </div>
           </section>
 

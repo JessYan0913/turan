@@ -1,23 +1,23 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Download, Loader2, Palette, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertCircle, Check, Copy, LetterText, Loader2, Palette, Pickaxe, RefreshCw, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
 import { z } from 'zod';
 
-import { ImageSlider } from '@/components/image-slider';
 import { ImageUploader } from '@/components/image-uploader';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/use-polling-request';
-import { cn, downloadImage } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export function StyleExtract() {
   const router = useRouter();
+  const [isCopied, setIsCopied] = useState(false);
 
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -34,7 +34,7 @@ export function StyleExtract() {
 
   const {
     execute: submitTransform,
-    data: generatedImage,
+    data: extractText,
     status,
     reset: resetPolling,
   } = usePollingRequest<{ image: File }, Prediction>({
@@ -92,20 +92,31 @@ export function StyleExtract() {
     }
   }, [form, submitTransform, resetPolling]);
 
-  const handleDownload = useCallback(() => {
-    if (!imageRef.current || !generatedImage) return;
+  const handleCopy = useCallback(() => {
+    if (!extractText) return;
 
-    let imageUrl = '';
-    if (typeof generatedImage === 'string') {
-      imageUrl = generatedImage;
-    } else if (generatedImage?.output?.[0]) {
-      imageUrl = generatedImage.output[0] as string;
+    let textToCopy = '';
+    if (typeof extractText === 'string') {
+      textToCopy = extractText;
     } else {
-      return;
+      textToCopy = JSON.stringify(extractText, null, 2);
     }
 
-    downloadImage(imageUrl, `styled-image-${Date.now()}.png`);
-  }, [generatedImage]);
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        // 显示复制成功状态
+        setIsCopied(true);
+
+        // 1.5秒后恢复原始图标
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.error('复制失败:', err);
+      });
+  }, [extractText]);
 
   return (
     <div className="grid h-full min-h-[calc(100vh-320px)] grid-cols-1 gap-8 lg:grid-cols-2">
@@ -114,7 +125,7 @@ export function StyleExtract() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-purple-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10"
+            className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
           >
             <div className="space-y-6">
               <FormField
@@ -123,7 +134,7 @@ export function StyleExtract() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-purple-700 dark:text-purple-400">Prompt</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Prompt</FormLabel>
                       <p className="text-muted-foreground text-xs">
                         Describe the style transformation you want to apply
                       </p>
@@ -140,7 +151,7 @@ export function StyleExtract() {
             <div className="mt-8">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-purple-700 hover:to-indigo-700 hover:shadow-md disabled:from-purple-400 disabled:to-indigo-400"
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-blue-700 hover:to-cyan-600 hover:shadow-md disabled:from-blue-400 disabled:to-cyan-400"
                 disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
               >
                 {status === 'loading' || status === 'polling' ? (
@@ -150,8 +161,8 @@ export function StyleExtract() {
                   </>
                 ) : (
                   <>
-                    <Palette className="mr-2 size-5" />
-                    Transform Style
+                    <Pickaxe className="mr-2 size-5" />
+                    Extract Style
                   </>
                 )}
               </Button>
@@ -161,12 +172,12 @@ export function StyleExtract() {
       </div>
 
       {/* Right Column - Result Display */}
-      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-purple-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-purple-950/20 dark:ring-white/10">
+      <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-blue-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
         <Button
           onClick={handleRegenerate}
-          disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          disabled={status !== 'success' || !extractText}
+          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
           <RefreshCw className="size-4" />
@@ -174,13 +185,22 @@ export function StyleExtract() {
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
-          onClick={handleDownload}
-          disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          onClick={handleCopy}
+          disabled={status !== 'success' || !extractText}
+          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
           variant="ghost"
         >
-          <Download className="size-4" />
-          Download
+          {isCopied ? (
+            <>
+              <Check className="size-4 text-green-500" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy className="size-4" />
+              Copy Text
+            </>
+          )}
         </Button>
 
         {/* Result Content */}
@@ -192,12 +212,12 @@ export function StyleExtract() {
               status === 'idle' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            <div className="rounded-full bg-purple-50 p-6 dark:bg-purple-900/20">
-              <Palette className="size-16 text-purple-400" />
+            <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
+              <LetterText className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Transform</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">Your transformed image will appear here</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Extract</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">Your extracted style will appear here</p>
             </div>
           </div>
 
@@ -249,20 +269,15 @@ export function StyleExtract() {
           <div
             className={cn(
               'absolute inset-0 flex items-center justify-center transition-all duration-500',
-              status === 'success' && generatedImage ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              status === 'success' && extractText ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            {status === 'success' && generatedImage && (
+            {status === 'success' && extractText && (
               <div className="relative size-full p-4">
-                <div className="relative size-full overflow-hidden rounded-lg shadow-md">
-                  <ImageSlider
-                    ref={imageRef}
-                    beforeImage={URL.createObjectURL(form.getValues('image'))}
-                    afterImage={generatedImage}
-                    beforeLabel="Original"
-                    afterLabel="Transformed"
-                    className="size-full"
-                  />
+                <div className="relative size-full overflow-auto rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+                  <div className="whitespace-pre-wrap rounded-md bg-gray-50 p-4 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                    {typeof extractText === 'string' ? extractText : JSON.stringify(extractText, null, 2)}
+                  </div>
                 </div>
               </div>
             )}

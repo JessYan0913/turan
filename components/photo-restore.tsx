@@ -3,7 +3,7 @@
 import { useCallback, useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Download, Loader2, Palette, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertCircle, Camera, Download, Loader2, PaintRoller, RefreshCw, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
@@ -12,8 +12,8 @@ import { z } from 'zod';
 import { ImageSlider } from '@/components/image-slider';
 import { ImageUploader } from '@/components/image-uploader';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
 import { usePollingRequest } from '@/hooks/use-polling-request';
 import { cn, downloadImage } from '@/lib/utils';
 
@@ -129,10 +129,8 @@ export function PhotoRestore() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Prompt</FormLabel>
-                      <p className="text-muted-foreground text-xs">
-                        Describe the style transformation you want to apply
-                      </p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Image</FormLabel>
+                      <p className="text-muted-foreground text-xs">Upload an image to restore</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -148,15 +146,22 @@ export function PhotoRestore() {
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Color</FormLabel>
-                      <p className="text-muted-foreground text-xs">Choose a style to apply to your image</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Colorize</FormLabel>
+                      <p className="text-muted-foreground text-xs">Whether to colorize the restored image</p>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        disabled={status === 'loading' || status === 'polling'}
-                      />
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="colorize"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={status === 'loading' || status === 'polling'}
+                          className="border-blue-600 data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-600 data-[state=checked]:to-cyan-500 dark:border-cyan-400"
+                        />
+                        <label htmlFor="colorize" className="text-sm text-blue-700 dark:text-cyan-400">
+                          Colorize restored image
+                        </label>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -177,7 +182,7 @@ export function PhotoRestore() {
                   </>
                 ) : (
                   <>
-                    <Palette className="mr-2 size-5" />
+                    <PaintRoller className="mr-2 size-5" />
                     Transform Style
                   </>
                 )}
@@ -220,11 +225,13 @@ export function PhotoRestore() {
             )}
           >
             <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
-              <Palette className="size-16 text-blue-400" />
+              <Camera className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Transform</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">Your transformed image will appear here</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Restore</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
+                Upload your old photo to restore it with AI. Your restored image will appear here.
+              </p>
             </div>
           </div>
 

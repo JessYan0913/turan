@@ -109,10 +109,10 @@ export default function TextToImagePage() {
           {/* 标题区域 */}
           <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
             <div className="text-center">
-              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
+              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold leading-normal tracking-tight text-transparent md:text-5xl md:leading-normal lg:text-6xl lg:leading-normal">
                 Turan AI Image Generator
               </h1>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
                 Input text description, AI will generate beautiful images for you
               </p>
             </div>

@@ -119,10 +119,10 @@ export default function StylePresetPage() {
           {/* 标题区域 */}
           <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
             <div className="text-center">
-              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl">
+              <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold leading-normal tracking-tight text-transparent md:text-5xl md:leading-normal lg:text-6xl lg:leading-normal">
                 Style Presets
               </h1>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
                 Transform your images with one-click style presets
               </p>
             </div>
@@ -194,7 +194,7 @@ export default function StylePresetPage() {
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
                     How to Use Style Presets
                   </h2>
-                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed">
                     Transform your images in just a few clicks with our easy-to-use style presets
                   </p>
                 </div>
@@ -232,7 +232,7 @@ export default function StylePresetPage() {
                       </div>
                       <div>
                         <h3 className="text-foreground text-lg font-semibold">{item.title}</h3>
-                        <p className="text-muted-foreground mt-1">{item.description}</p>
+                        <p className="text-muted-foreground mt-1 leading-relaxed">{item.description}</p>
                       </div>
                     </div>
                   ))}
@@ -249,7 +249,7 @@ export default function StylePresetPage() {
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl md:text-5xl">
                     Frequently Asked Questions
                   </h2>
-                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
                     Find answers to common questions about our AI image generator
                   </p>
                 </div>
@@ -261,7 +261,7 @@ export default function StylePresetPage() {
                         <CardTitle className="text-lg font-semibold md:text-xl">{item.question}</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-muted-foreground leading-relaxed">{item.answer}</p>
+                        <p className="text-muted-foreground leading-loose">{item.answer}</p>
                       </CardContent>
                     </Card>
                   ))}
