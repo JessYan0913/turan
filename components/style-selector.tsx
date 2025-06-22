@@ -105,14 +105,14 @@ export function StyleSelector({
               </>
             ) : (
               <div className="flex items-center gap-3">
-                <Paintbrush className="size-5 bg-blue-100 text-blue-900 dark:bg-blue-800/50 dark:text-cyan-100" />
+                <Paintbrush className="size-5 text-blue-900 dark:text-cyan-100" />
                 <span className="text-base text-gray-500">{placeholder}</span>
               </div>
             )}
           </div>
           <ChevronDown
             className={cn(
-              'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-cyan-200',
+              'text-blue-600 dark:text-cyan-200',
               'size-4 text-gray-400 transition-transform duration-200 ease-in-out',
               open ? 'rotate-180 transform' : ''
             )}

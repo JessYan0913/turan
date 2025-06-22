@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
 import { z } from 'zod';
 
+import { AspectRatioSelector } from '@/components/aspect-ratio-selector';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,8 +24,8 @@ export function TextToImage() {
   // Define the form schema using Zod
   const imageGenerationSchema = z.object({
     prompt: z.string().min(1, { message: 'Please enter a prompt' }),
-    size: z.enum(['512x512', '768x768', '1024x1024'], {
-      required_error: 'Please select an image size',
+    aspectRatio: z.string({
+      required_error: 'Please select an aspect ratio',
     }),
   });
 
@@ -33,7 +34,7 @@ export function TextToImage() {
     resolver: zodResolver(imageGenerationSchema),
     defaultValues: {
       prompt: '',
-      size: '512x512',
+      aspectRatio: '1:1',
     },
   });
 
@@ -42,13 +43,16 @@ export function TextToImage() {
     data: generatedImage,
     status,
     reset,
-  } = usePollingRequest<{ prompt: string; size: string }, Prediction>({
+  } = usePollingRequest<{ prompt: string; aspectRatio: string }, Prediction>({
     // 发起生成图片的请求
     request: async (data) => {
       const response = await fetch('/api/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          prompt: data.prompt,
+          size: data.aspectRatio, // 后端API仍然使用size参数名
+        }),
       });
 
       if (response.status === 401) {
@@ -100,12 +104,13 @@ export function TextToImage() {
 
   const handleSubmit = form.handleSubmit((data: z.infer<typeof imageGenerationSchema>) => {
     reset();
-    generateImage({ prompt: data.prompt, size: data.size });
+    generateImage({ prompt: data.prompt, aspectRatio: data.aspectRatio });
   });
 
   const handleRegenerate = () => {
     reset();
-    generateImage({ prompt: form.getValues('prompt'), size: form.getValues('size') });
+    const { prompt, aspectRatio } = form.getValues();
+    generateImage({ prompt, aspectRatio });
   };
 
   return (
@@ -142,51 +147,19 @@ export function TextToImage() {
               />
               <FormField
                 control={form.control}
-                name="size"
+                name="aspectRatio"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-blue-400">Image Size</FormLabel>
-                      <p className="text-muted-foreground text-xs">Select the dimensions for your generated image</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-blue-400">Aspect Ratio</FormLabel>
+                      <p className="text-muted-foreground text-xs">Select the aspect ratio for your generated image</p>
                     </div>
                     <FormControl>
-                      <div className="grid grid-cols-3 gap-4">
-                        {[
-                          { value: '512x512', label: 'Small', size: '512×512', width: 40, height: 40 },
-                          { value: '768x768', label: 'Medium', size: '768×768', width: 60, height: 60 },
-                          { value: '1024x1024', label: 'Large', size: '1024×1024', width: 80, height: 80 },
-                        ].map((option) => (
-                          <div
-                            key={option.value}
-                            className={cn(
-                              'flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 p-4 transition-all',
-                              'hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/20',
-                              field.value === option.value
-                                ? 'border-blue-500 bg-blue-50/80 dark:border-blue-400 dark:bg-blue-950/40'
-                                : 'border-gray-200 bg-white/80 dark:border-gray-700 dark:bg-gray-900/50',
-                              (status === 'loading' || status === 'polling') && 'cursor-not-allowed opacity-50'
-                            )}
-                            onClick={() => {
-                              if (status !== 'loading' && status !== 'polling') {
-                                field.onChange(option.value);
-                              }
-                            }}
-                          >
-                            <div className="relative mb-3 flex items-center justify-center">
-                              <div
-                                className="flex items-center justify-center overflow-hidden rounded-md bg-gradient-to-br from-blue-100 to-cyan-200 dark:from-blue-800/30 dark:to-cyan-900/30"
-                                style={{ width: option.width, height: option.height }}
-                              >
-                                <ImageIcon className="size-5 text-blue-600 dark:text-blue-400" />
-                              </div>
-                            </div>
-                            <div className="text-center">
-                              <div className="font-medium text-gray-900 dark:text-white">{option.label}</div>
-                              <div className="text-muted-foreground text-xs">{option.size}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <AspectRatioSelector
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={status === 'loading' || status === 'polling'}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
