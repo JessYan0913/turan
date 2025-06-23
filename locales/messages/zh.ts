@@ -400,6 +400,17 @@ export default {
       },
     },
   },
+  'photo-restore': {
+    header: {
+      title: '旧照片修复',
+      subtitle: '让珍贵记忆焕发新生',
+    },
+    features: {
+      title01: '',
+      title02: '',
+      subtitle: '',
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: '每一次生成，都是用心呈现',

@@ -9,34 +9,54 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const faqItems = [
   {
-    question: 'What is Photo Restoration?',
+    question: 'What types of photo damage can this tool repair?',
     answer:
-      'Photo Restoration is a digital process that repairs and enhances old, damaged, or faded photographs. Our AI-powered tool can fix scratches, tears, stains, color fading, and other common issues that affect vintage photos.',
+      'Our AI-powered restoration tool can effectively repair various types of photo damage including scratches, dust spots, tears, creases, water stains, and general wear and tear. It also handles fading, yellowing, and discoloration that commonly occur in old photographs.',
   },
   {
-    question: 'What types of damage can be restored?',
+    question: 'How does the AI handle colorization of black and white photos?',
     answer:
-      'Our restoration tool can fix many common issues including scratches, tears, stains, fading, discoloration, water damage, mold spots, missing pieces, and general aging effects that occur in old photographs.',
+      'The FLUX Kontext Pro model uses advanced AI to add realistic colors to black and white photos. It analyzes the content and context of your image to apply historically accurate colors while maintaining the natural look and feel of the original photograph.',
   },
   {
-    question: 'How does the restoration process work?',
+    question: 'Will the restoration process change the original photo?',
     answer:
-      'Simply upload your old photo, and our AI will analyze the damage and apply appropriate restoration techniques. You can adjust the restoration intensity and fine-tune specific aspects as needed.',
+      'No, the original photo remains completely untouched. The restoration process creates a new, enhanced version of your photo while preserving the original file exactly as it was uploaded.',
   },
   {
-    question: 'Can I restore black and white photos in color?',
+    question: 'What is the recommended image quality for best results?',
     answer:
-      "Yes, our advanced colorization feature can add natural-looking color to black and white photographs while maintaining historical accuracy and the photo's original character.",
+      'For optimal restoration, we recommend using high-quality scans or digital copies of your photos. Ideal specifications are: minimum 300 DPI resolution, well-lit conditions, and saved in lossless formats like TIFF or PNG when possible.',
   },
   {
-    question: 'Will my original photo be altered?',
+    question: 'Can the tool restore severely damaged or partial photos?',
     answer:
-      'No, the restoration process is non-destructive. Your original photo remains unchanged, and you can download both the original and restored versions.',
+      'While the tool can reconstruct missing or heavily damaged areas, results may vary depending on the extent of damage. For photos with significant portions missing, some manual editing might be needed for optimal results.',
   },
   {
-    question: 'What file formats are supported?',
+    question: 'How long does the restoration process take?',
     answer:
-      'Our restoration tool works with most common image formats including JPEG, PNG, TIFF, and WebP. For best results, scan your old photos at a high resolution (at least 300 DPI).',
+      'Processing time depends on the image size and complexity of restoration needed. Most standard photos are processed within 30-90 seconds. Higher resolution images or those requiring extensive repairs may take longer.',
+  },
+  {
+    question: 'What file formats are supported for upload?',
+    answer:
+      'The tool supports common image formats including JPEG, PNG, and WebP. For best results, especially with professional scanning, we recommend using TIFF format as it preserves maximum image quality.',
+  },
+  {
+    question: 'Can I adjust the intensity of the restoration?',
+    answer:
+      'Yes, the tool provides adjustment options to control the strength of restoration effects, allowing you to balance between preserving the original character of the photo and applying restoration enhancements.',
+  },
+  {
+    question: 'Is there a limit to the photo size I can upload?',
+    answer:
+      'The system can process photos up to 50MB in size. For very large images, we recommend resizing to a maximum of 5000 pixels on the longest side for optimal performance.',
+  },
+  {
+    question: 'How do I get the best results from the restoration?',
+    answer:
+      'For best results: 1) Use the highest quality scan possible 2) Ensure good lighting when photographing prints 3) Clean the photo surface before scanning 4) Save in a lossless format 5) For physical photos, scan at 600 DPI or higher if possible.',
   },
 ];
 
