@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 // Custom scrollbar styles
 const scrollbarStyles = `
@@ -47,17 +48,11 @@ interface StyleSelectorProps {
   options: StyleOption[];
   value?: string;
   onSelect: (style: StyleOption) => void;
-  placeholder?: string;
   disabled?: boolean;
 }
 
-export function StyleSelector({
-  options,
-  value,
-  onSelect,
-  placeholder = 'Select a style',
-  disabled = false,
-}: StyleSelectorProps) {
+export function StyleSelector({ options, value, onSelect, disabled = false }: StyleSelectorProps) {
+  const t = useScopedI18n('style-selector');
   // Add scrollbar styles to document
   if (typeof document !== 'undefined') {
     const styleEl = document.createElement('style');
@@ -106,7 +101,7 @@ export function StyleSelector({
             ) : (
               <div className="flex items-center gap-3">
                 <Paintbrush className="size-5 text-blue-900 dark:text-cyan-100" />
-                <span className="text-base text-gray-500">{placeholder}</span>
+                <span className="text-base text-gray-500">{t('placeholder')}</span>
               </div>
             )}
           </div>

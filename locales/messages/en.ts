@@ -85,6 +85,9 @@ export default {
     proportion: 'proportion',
     placeholder: 'Select aspect ratio',
   },
+  'style-selector': {
+    placeholder: 'Select style',
+  },
   'image-uploader': {
     placeholder: 'Click to upload or drag and drop',
     limit: 'SVG, PNG, JPG or GIF (max. 5MB)',
@@ -299,6 +302,121 @@ export default {
             question: 'How do I maintain certain elements while editing?',
             answer:
               'To preserve specific elements, mention what you want to keep in your prompt. For example, "Change the background to a cityscape while keeping the person exactly as they are" or "Modify the hair color but keep the facial features unchanged."',
+          },
+        ],
+      },
+    },
+  },
+  'style-preset': {
+    header: {
+      title: 'Style Presets',
+      subtitle: 'Transform your images with one-click style presets',
+    },
+    tool: {
+      form: {
+        image: {
+          label: 'Upload Image',
+          discription: 'Describe the style transformation you want to apply',
+          message: 'Please upload an image',
+        },
+        style: {
+          label: 'Style',
+          discription: 'Choose a style to apply to your image',
+          message: 'Please select a style',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Apply Style Preset',
+        },
+      },
+      regenerate: 'Regenerate',
+      download: 'Download',
+      idle: {
+        title: 'Style Preset Ready',
+        subtitle: 'Your image will be transformed with the selected style preset',
+      },
+      error: {
+        title: 'Something went wrong',
+        subtitle: 'We encountered an error while processing your request. Please try again.',
+        try: 'Try Again',
+      },
+    },
+    examples: {
+      title01: 'Explore Style Presets',
+      title02: 'AI Image Generator',
+      subtitle:
+        'Browse our collection of professionally designed presets. Click any preset to see a preview of how it transforms your image.',
+      apply: 'Apply Preset',
+      more: 'Load More Examples',
+    },
+    'how-to-use': {
+      title: 'How to Use Style Presets',
+      subtitle: 'Transform your images in just a few clicks with our easy-to-use style presets',
+      steps: {
+        total: '4',
+        list: [
+          {
+            step: 1,
+            title: 'Upload Your Image',
+            description:
+              'Start by uploading an image you want to enhance. You can drag and drop an image or click to browse your files.',
+          },
+          {
+            step: 2,
+            title: 'Browse Style Presets',
+            description:
+              'Explore our collection of style presets. Hover over each preset to see a preview of how it will transform your image.',
+          },
+          {
+            step: 3,
+            title: 'Apply & Customize',
+            description:
+              'Click on any preset to apply it to your image. Adjust the intensity and make additional tweaks to perfect the look.',
+          },
+          {
+            step: 4,
+            title: 'Save & Share',
+            description:
+              'Download your styled image or save your favorite combinations as custom presets for future use.',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Find answers to common questions about our AI image generator',
+      questions: {
+        total: '6',
+        list: [
+          {
+            question: 'What are Style Presets?',
+            answer:
+              'Style Presets are professionally crafted AI-powered style templates that apply industry-standard visual treatments to your images. Each preset is carefully designed by our team to deliver production-quality results with a single click, saving you time while ensuring professional-grade output.',
+          },
+          {
+            question: 'What kind of styles can I apply?',
+            answer:
+              'Our collection includes a wide range of styles from cinematic looks and professional photography styles to artistic interpretations and commercial-grade visual treatments. Each style is optimized to work across various image types while preserving important details and quality.',
+          },
+          {
+            question: 'Can I adjust the intensity of the styles?',
+            answer:
+              'Yes, every Style Preset includes an intensity slider, allowing you to fine-tune the effect to perfectly match your vision while maintaining the professional quality of the preset.',
+          },
+          {
+            question: 'Will these presets work on any image?',
+            answer:
+              'Our presets are designed to work well with most images, but for optimal results, we recommend using well-lit, high-resolution photos. The AI will automatically adapt the style to best suit your specific image content.',
+          },
+          {
+            question: 'Can I use these for commercial projects?',
+            answer:
+              'Absolutely! All styles applied using our presets are royalty-free and can be used in both personal and commercial projects. The enhanced images are yours to use as you see fit.',
+          },
+          {
+            question: 'How do I get the best results?',
+            answer:
+              'For best results, start with high-quality source images. Experiment with different presets to find the perfect style for your content, and use the intensity slider to fine-tune the effect to your liking.',
           },
         ],
       },

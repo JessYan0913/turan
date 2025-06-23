@@ -17,8 +17,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { usePollingRequest } from '@/hooks/use-polling-request';
 import { StyleOption } from '@/lib/actions/options';
 import { cn, downloadImage } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 export function StylePreset() {
+  const t = useScopedI18n('style-preset');
   const router = useRouter();
 
   const imageRef = useRef<HTMLImageElement>(null);
@@ -26,8 +28,8 @@ export function StylePreset() {
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
-    image: z.instanceof(File, { message: 'Please upload an image' }),
-    style: z.string().min(1, { message: 'Please select a style' }),
+    image: z.instanceof(File, { message: t('tool.form.image.message') }),
+    style: z.string().min(1, { message: t('tool.form.style.message') }),
     prompt: z.string().optional(),
   });
 
@@ -149,10 +151,10 @@ export function StylePreset() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Prompt</FormLabel>
-                      <p className="text-muted-foreground text-xs">
-                        Describe the style transformation you want to apply
-                      </p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.image.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.image.discription')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -168,8 +170,10 @@ export function StylePreset() {
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Style</FormLabel>
-                      <p className="text-muted-foreground text-xs">Choose a style to apply to your image</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.style.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.style.discription')}</p>
                     </div>
                     <FormControl>
                       <StyleSelector
@@ -198,12 +202,12 @@ export function StylePreset() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
-                    Processing...
+                    {t('tool.form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <Palette className="mr-2 size-5" />
-                    Apply Style Preset
+                    {t('tool.form.submit.default')}
                   </>
                 )}
               </Button>
@@ -222,7 +226,7 @@ export function StylePreset() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          Regenerate
+          {t('tool.regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -232,7 +236,7 @@ export function StylePreset() {
           variant="ghost"
         >
           <Download className="size-4" />
-          Download
+          {t('tool.download')}
         </Button>
 
         {/* Result Content */}
@@ -248,10 +252,8 @@ export function StylePreset() {
               <Palette className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Style Preset Ready</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
-                Your image will be transformed with the selected style preset
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('tool.idle.subtitle')}</p>
             </div>
           </div>
 
@@ -286,10 +288,8 @@ export function StylePreset() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something went wrong</h3>
-              <p className="text-muted-foreground mt-2 text-sm">
-                We encountered an error while processing your request. Please try again.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('tool.error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}

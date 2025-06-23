@@ -32,8 +32,8 @@ export function ImageEdit() {
 
   // Define the form schema using Zod
   const imageEditSchema = z.object({
-    image: z.instanceof(File, { message: 'Please upload an image' }),
-    prompt: z.string().min(1, { message: 'Please enter a prompt' }),
+    image: z.instanceof(File, { message: t('tool.form.image.message') }),
+    prompt: z.string().min(1, { message: t('tool.form.prompt.message') }),
   });
 
   // Initialize react-hook-form with Zod validation

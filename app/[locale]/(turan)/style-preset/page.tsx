@@ -1,40 +1,8 @@
 import { ImageSlider } from '@/components/image-slider';
 import { StylePreset } from '@/components/style-preset';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-
-const faqItems = [
-  {
-    question: 'What are Style Presets?',
-    answer:
-      'Style Presets are pre-configured style templates that you can apply to your images with a single click. Each preset contains a combination of filters, effects, and adjustments to achieve a specific look.',
-  },
-  {
-    question: 'Can I create my own Style Presets?',
-    answer:
-      'Yes! Pro users can create and save their own Style Presets. You can customize existing presets or create new ones from scratch to match your unique style.',
-  },
-  {
-    question: 'How do I apply a Style Preset?',
-    answer:
-      'Simply click on any Style Preset to apply it to your image. You can adjust the intensity using the slider and make additional tweaks as needed.',
-  },
-  {
-    question: 'Can I combine multiple Style Presets?',
-    answer:
-      'Yes, you can layer multiple Style Presets to create unique combinations. Adjust the opacity of each layer to control how they blend together.',
-  },
-  {
-    question: 'Are Style Presets non-destructive?',
-    answer:
-      'Yes, all Style Presets are applied non-destructively, meaning your original image remains unchanged. You can remove or adjust any preset at any time.',
-  },
-  {
-    question: 'Do Style Presets work with all image types?',
-    answer:
-      'Style Presets work with most common image formats including JPEG, PNG, and WebP. For best results, use high-quality images with good lighting.',
-  },
-];
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getScopedI18n } from '@/locales/server';
 
 const stylePresets = [
   {
@@ -111,7 +79,18 @@ const stylePresets = [
   },
 ];
 
-export default function StylePresetPage() {
+export default async function StylePresetPage() {
+  const t = await getScopedI18n('style-preset');
+  const faqTotal = t('faq.questions.total') as unknown as number;
+  const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
+    question: t(`faq.questions.list.${index}.question` as any),
+    answer: t(`faq.questions.list.${index}.answer` as any),
+  }));
+  const howToUseTotal = t('how-to-use.steps.total') as unknown as number;
+  const howToUse = Array.from({ length: howToUseTotal }).map((_, index) => ({
+    title: t(`how-to-use.steps.list.${index}.title` as any),
+    description: t(`how-to-use.steps.list.${index}.description` as any),
+  }));
   return (
     <div className="min-h-screen transition-colors duration-300">
       <div className="container px-4 md:px-6 lg:px-8">
@@ -120,10 +99,10 @@ export default function StylePresetPage() {
           <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
             <div className="text-center">
               <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold leading-normal tracking-tight text-transparent md:text-5xl md:leading-normal lg:text-6xl lg:leading-normal">
-                Style Presets
+                {t('header.title')}
               </h1>
               <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
-                Transform your images with one-click style presets
+                {t('header.subtitle')}
               </p>
             </div>
             <div className="w-full">
@@ -135,15 +114,12 @@ export default function StylePresetPage() {
           <section id="examples" className="min-h-screen flex-col items-center py-16">
             <div className="mb-12 space-y-4 text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-                Explore Style Presets{' '}
+                {t('examples.title01')}{' '}
                 <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
-                  AI Image Generator
+                  {t('examples.title02')}
                 </span>
               </h2>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
-                Browse our collection of professionally designed presets. Click any preset to see a preview of how it
-                transforms your image.
-              </p>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.subtitle')}</p>
             </div>
 
             {/* Style Presets Grid */}
@@ -173,7 +149,7 @@ export default function StylePresetPage() {
                       </span>
                     </div>
                     <Button variant="outline" size="sm" className="mt-3 w-full">
-                      Apply Preset
+                      {t('examples.apply')}
                     </Button>
                   </div>
                 </Card>
@@ -181,7 +157,7 @@ export default function StylePresetPage() {
             </div>
             <div className="mt-10 flex justify-center">
               <Button className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-600 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Load More Presets
+                {t('examples.more')}
               </Button>
             </div>
           </section>
@@ -192,43 +168,18 @@ export default function StylePresetPage() {
               <div className="mx-auto max-w-4xl">
                 <div className="mb-12 space-y-4 text-center">
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-                    How to Use Style Presets
+                    {t('how-to-use.title')}
                   </h2>
                   <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed">
-                    Transform your images in just a few clicks with our easy-to-use style presets
+                    {t('how-to-use.subtitle')}
                   </p>
                 </div>
 
                 <div className="space-y-8">
-                  {[
-                    {
-                      step: 1,
-                      title: 'Upload Your Image',
-                      description:
-                        'Start by uploading an image you want to enhance. You can drag and drop an image or click to browse your files.',
-                    },
-                    {
-                      step: 2,
-                      title: 'Browse Style Presets',
-                      description:
-                        'Explore our collection of style presets. Hover over each preset to see a preview of how it will transform your image.',
-                    },
-                    {
-                      step: 3,
-                      title: 'Apply & Customize',
-                      description:
-                        'Click on any preset to apply it to your image. Adjust the intensity and make additional tweaks to perfect the look.',
-                    },
-                    {
-                      step: 4,
-                      title: 'Save & Share',
-                      description:
-                        'Download your styled image or save your favorite combinations as custom presets for future use.',
-                    },
-                  ].map((item, index) => (
+                  {howToUse.map((item, index) => (
                     <div key={index} className="flex flex-col items-start gap-4 md:flex-row md:items-center">
                       <div className="bg-primary/10 text-primary flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-bold">
-                        {item.step}
+                        {index + 1}
                       </div>
                       <div>
                         <h3 className="text-foreground text-lg font-semibold">{item.title}</h3>
@@ -247,15 +198,15 @@ export default function StylePresetPage() {
               <div className="mx-auto max-w-6xl">
                 <div className="mb-16 space-y-4 text-center">
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl md:text-5xl">
-                    Frequently Asked Questions
+                    {t('faq.title')}
                   </h2>
                   <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
-                    Find answers to common questions about our AI image generator
+                    {t('faq.subtitle')}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-10">
-                  {faqItems.map((item, index) => (
+                  {faqs.map((item, index) => (
                     <Card key={index} className="h-full transition-all hover:shadow-lg">
                       <CardHeader className="pb-4">
                         <CardTitle className="text-lg font-semibold md:text-xl">{item.question}</CardTitle>
