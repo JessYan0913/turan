@@ -85,6 +85,12 @@ export default {
     proportion: 'proportion',
     placeholder: 'Select aspect ratio',
   },
+  'image-uploader': {
+    placeholder: 'Click to upload or drag and drop',
+    limit: 'SVG, PNG, JPG or GIF (max. 5MB)',
+    uploading: 'Uploading...',
+    change: 'Change',
+  },
   'text-to-image': {
     header: {
       title: 'Turan AI Image Generator',
@@ -208,21 +214,6 @@ export default {
         description: 'Save and share your creation',
       },
     },
-  },
-  resultDisplay: {
-    altText: 'Generated image',
-    completed: 'Ready!',
-    processing: 'Generating your image...',
-    defaultMessage: 'Your creation will appear here',
-    download: 'Download',
-    downloadSuccess: 'Download complete!',
-    downloadError: 'Download failed',
-  },
-  imageUploader: {
-    changeImage: 'Change photo',
-    uploadImage: 'Choose an image',
-    supportedFormats: 'JPG, PNG, or WebP',
-    altText: 'Uploaded image preview',
   },
   works: {
     title: 'My Creations',

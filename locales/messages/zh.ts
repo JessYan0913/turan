@@ -81,6 +81,12 @@ export default {
     proportion: '比例',
     placeholder: '选择宽高比',
   },
+  'image-uploader': {
+    placeholder: '点击上传或拖放文件到此处',
+    limit: '支持 SVG、PNG、JPG 或 GIF 格式（最大 5MB）',
+    uploading: '上传中...',
+    change: '更换',
+  },
   'text-to-image': {
     header: {
       title: 'Turan AI 图片生成器',
@@ -198,19 +204,6 @@ export default {
         description: '保存您的创作成果',
       },
     },
-  },
-  resultDisplay: {
-    altText: '处理结果图片',
-    completed: '处理完成',
-    processing: '正在处理您的图片...',
-    defaultMessage: '在这里查看生成结果',
-    download: '下载图片',
-  },
-  imageUploader: {
-    changeImage: '更换图片',
-    uploadImage: '上传图片',
-    supportedFormats: '支持 JPG、PNG、WebP 格式',
-    altText: '已上传的图片',
   },
   works: {
     title: '我的作品',

@@ -85,6 +85,12 @@ export default {
     proportion: '比率',
     placeholder: 'アスペクト比を選択',
   },
+  'image-uploader': {
+    placeholder: 'クリックしてアップロードまたはドラッグしてファイルをドロップ',
+    limit: 'SVG、PNG、JPG、またはGIF（最大5MB）',
+    uploading: 'アップロード中...',
+    change: '変更',
+  },
   'text-to-image': {
     header: {
       title: 'Turan AI 画像生成ツール',
@@ -208,21 +214,6 @@ export default {
         description: '作品を保存しましょう',
       },
     },
-  },
-  resultDisplay: {
-    altText: '生成された画像',
-    completed: '生成が完了しました',
-    processing: '画像を生成中です...',
-    defaultMessage: '生成された画像がここに表示されます',
-    download: '画像をダウンロード',
-    downloadSuccess: 'ダウンロードが完了しました',
-    downloadError: 'ダウンロードに失敗しました',
-  },
-  imageUploader: {
-    changeImage: '画像を変更',
-    uploadImage: '画像をアップロード',
-    supportedFormats: 'JPG、PNG、WebP 形式に対応',
-    altText: 'アップロードされた画像',
   },
   works: {
     title: 'マイ作品',
