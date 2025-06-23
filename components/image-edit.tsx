@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Textarea } from '@/components/ui/textarea';
 import { usePollingRequest } from '@/hooks/use-polling-request';
 import { cn, downloadImage } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 // Define the Prediction type
 interface Prediction {
@@ -25,6 +26,7 @@ interface Prediction {
 }
 
 export function ImageEdit() {
+  const t = useScopedI18n('image-edit');
   const router = useRouter();
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -136,8 +138,10 @@ export function ImageEdit() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Upload Image</FormLabel>
-                      <p className="text-muted-foreground text-xs">Drag and drop an image here, or click to select</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.image.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.image.discription')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -153,10 +157,10 @@ export function ImageEdit() {
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Edit Instructions</FormLabel>
-                      <p className="text-muted-foreground text-xs">
-                        Enter a description of the changes you want to make to the image.
-                      </p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.prompt.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.prompt.discription')}</p>
                     </div>
                     <FormControl>
                       <Textarea
@@ -182,12 +186,12 @@ export function ImageEdit() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
-                    Processing...
+                    {t('tool.form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="mr-2 size-4" />
-                    Generate Image
+                    {t('tool.form.submit.default')}
                   </>
                 )}
               </Button>
@@ -206,7 +210,7 @@ export function ImageEdit() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          Regenerate
+          {t('tool.regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -216,7 +220,7 @@ export function ImageEdit() {
           variant="ghost"
         >
           <Download className="size-4" />
-          Download
+          {t('tool.download')}
         </Button>
 
         {/* Result Content */}
@@ -232,8 +236,8 @@ export function ImageEdit() {
               <ImageIcon className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Edit</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">Your edited image will appear here</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('tool.idle.subtitle')}</p>
             </div>
           </div>
 
@@ -268,15 +272,13 @@ export function ImageEdit() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something went wrong</h3>
-              <p className="text-muted-foreground mt-2 text-sm">
-                We encountered an error while processing your request. Please try again.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('tool.error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
-                Try Again
+                {t('tool.error.try')}
               </Button>
             </div>
           </div>

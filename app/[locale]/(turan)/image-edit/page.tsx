@@ -3,40 +3,8 @@ import type React from 'react';
 import { ImageEdit } from '@/components/image-edit';
 import { ImageSlider } from '@/components/image-slider';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-
-const faqItems = [
-  {
-    question: 'How does the AI image generator work?',
-    answer:
-      'Our AI uses advanced machine learning models to generate images based on your text prompts. Simply describe what you want to see, and the AI will create it for you.',
-  },
-  {
-    question: 'Is there a limit to how many images I can generate?',
-    answer:
-      'Free users can generate up to 10 images per day. For unlimited generations and additional features, consider upgrading to our Pro plan.',
-  },
-  {
-    question: 'Can I use the generated images commercially?',
-    answer:
-      'Yes, all images generated are royalty-free and can be used for both personal and commercial projects. However, you may not resell or redistribute the images as-is.',
-  },
-  {
-    question: 'How can I get better results from the AI?',
-    answer:
-      'For best results, be specific with your prompts. Include details about style, colors, composition, and mood. You can also try different variations of your prompt to see different results.',
-  },
-  {
-    question: 'What image formats are supported?',
-    answer:
-      'Our AI supports generating images in various formats including JPEG, PNG, and WebP. You can choose your preferred format in the download options.',
-  },
-  {
-    question: 'Can I customize the image resolution?',
-    answer:
-      'Yes, you can select from various resolution options before generating your image. Higher resolutions may take slightly longer to process.',
-  },
-];
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getScopedI18n } from '@/locales/server';
 
 const examples = [
   {
@@ -95,7 +63,18 @@ const examples = [
   },
 ];
 
-export default function TextToImagePage() {
+export default async function TextToImagePage() {
+  const t = await getScopedI18n('image-edit');
+  const faqTotal = t('faq.questions.total') as unknown as number;
+  const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
+    question: t(`faq.questions.list.${index}.question` as any),
+    answer: t(`faq.questions.list.${index}.answer` as any),
+  }));
+  const howToUseTotal = t('how-to-use.steps.total') as unknown as number;
+  const howToUse = Array.from({ length: howToUseTotal }).map((_, index) => ({
+    title: t(`how-to-use.steps.list.${index}.title` as any),
+    description: t(`how-to-use.steps.list.${index}.description` as any),
+  }));
   return (
     <div className="min-h-screen transition-colors duration-300">
       <div className="container px-4 md:px-6 lg:px-8">
@@ -104,10 +83,10 @@ export default function TextToImagePage() {
           <section id="header" className="flex min-h-screen flex-col items-center justify-center space-y-8 py-16 ">
             <div className="text-center">
               <h1 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-4xl font-bold leading-normal tracking-tight text-transparent md:text-5xl md:leading-normal lg:text-6xl lg:leading-normal">
-                Turan AI Image Editor
+                {t('header.title')}
               </h1>
               <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
-                Edit your images with AI
+                {t('header.subtitle')}
               </p>
             </div>
             <div className="w-full">
@@ -119,14 +98,12 @@ export default function TextToImagePage() {
           <section id="examples" className="min-h-screen flex-col items-center py-16">
             <div className="mb-12 space-y-4 text-center">
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-                Explore Pre-made Prompts for the{' '}
+                {t('examples.title01')}{' '}
                 <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
-                  AI Image Editor
+                  {t('examples.title02')}
                 </span>
               </h2>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
-                Input text description, AI will edit your images for you
-              </p>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.subtitle')}</p>
             </div>
 
             {/* Example Grid */}
@@ -158,7 +135,7 @@ export default function TextToImagePage() {
             </div>
             <div className="mt-10 flex justify-center">
               <Button className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-medium text-white shadow-lg transition-all hover:from-blue-700 hover:to-cyan-600 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Load More Examples
+                {t('examples.more')}
               </Button>
             </div>
           </section>
@@ -169,44 +146,17 @@ export default function TextToImagePage() {
               <div className="mx-auto max-w-4xl">
                 <div className="mb-12 space-y-4 text-center">
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-                    How to Use
+                    {t('how-to-use.title')}
                   </h2>
-                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
-                    Follow these simple steps to create amazing AI-generated images
-                  </p>
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('how-to-use.subtitle')}</p>
                 </div>
 
                 <div className="space-y-8">
-                  {[
-                    {
-                      step: 1,
-                      title: 'Choose an Example or Start Fresh',
-                      description:
-                        'Browse through our example prompts or start with your own creative idea. Click on any example to use it as a starting point.',
-                    },
-                    {
-                      step: 2,
-                      title: 'Customize Your Prompt',
-                      description:
-                        'Refine your prompt with specific details about the image you want to generate. The more descriptive you are, the better the results will be.',
-                    },
-                    {
-                      step: 3,
-                      title: 'Select Image Style',
-                      description:
-                        'Choose from various artistic styles like Realistic, Fantasy, or Watercolor to give your image the perfect look and feel.',
-                    },
-                    {
-                      step: 4,
-                      title: 'Generate & Download',
-                      description:
-                        'Click the generate button and wait a few moments. Once your image is ready, you can download it or make further adjustments.',
-                    },
-                  ].map((item, index) => (
+                  {howToUse.map((item, index) => (
                     <div key={index} className="flex flex-col items-start gap-4 md:flex-row md:items-center">
                       <div className="flex size-12 shrink-0 items-center justify-center rounded-full border border-blue-500/20 bg-gradient-to-r from-blue-600/10 to-cyan-500/10 bg-clip-text text-lg font-bold text-transparent">
                         <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                          {item.step}
+                          {index + 1}
                         </span>
                       </div>
                       <div>
@@ -226,15 +176,13 @@ export default function TextToImagePage() {
               <div className="mx-auto max-w-6xl">
                 <div className="mb-16 space-y-4 text-center">
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl md:text-5xl">
-                    Frequently Asked Questions
+                    {t('faq.title')}
                   </h2>
-                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-                    Find answers to common questions about our AI image generator
-                  </p>
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">{t('faq.subtitle')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-10">
-                  {faqItems.map((item, index) => (
+                  {faqs.map((item, index) => (
                     <Card
                       key={index}
                       className="h-full transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"

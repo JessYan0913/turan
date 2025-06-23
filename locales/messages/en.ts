@@ -181,6 +181,129 @@ export default {
       },
     },
   },
+  'image-edit': {
+    header: {
+      title: 'Turan AI Image Editor',
+      subtitle: 'Edit your images with AI',
+    },
+    tool: {
+      form: {
+        image: {
+          label: 'Upload Image',
+          discription: 'Drag and drop an image here, or click to select',
+          message: 'Please upload an imag',
+        },
+        prompt: {
+          label: 'Edit Instructions',
+          discription: 'Enter a description of the changes you want to make to the image.',
+          message: 'Please enter a prompt',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Generate Image',
+        },
+      },
+      regenerate: 'Regenerate',
+      download: 'Download',
+      idle: {
+        title: 'Ready to Edit',
+        subtitle: 'Your edited image will appear here',
+      },
+      error: {
+        title: 'Something went wrong',
+        subtitle: 'We encountered an error while processing your request. Please try again.',
+        try: 'Try Again',
+      },
+    },
+    examples: {
+      title01: 'Explore Pre-made Prompts for the',
+      title02: 'AI Image Editor',
+      subtitle: 'Input text description, AI will edit your images for you',
+      more: 'Load More Examples',
+    },
+    'how-to-use': {
+      title: 'How to Use',
+      subtitle: 'Follow these simple steps to create amazing AI-generated images',
+      steps: {
+        total: 4,
+        list: [
+          {
+            step: 1,
+            title: 'Choose an Example or Start Fresh',
+            description:
+              'Browse through our example prompts or start with your own creative idea. Click on any example to use it as a starting point.',
+          },
+          {
+            step: 2,
+            title: 'Customize Your Prompt',
+            description:
+              'Refine your prompt with specific details about the image you want to generate. The more descriptive you are, the better the results will be.',
+          },
+          {
+            step: 3,
+            title: 'Select Image Style',
+            description:
+              'Choose from various artistic styles like Realistic, Fantasy, or Watercolor to give your image the perfect look and feel.',
+          },
+          {
+            step: 4,
+            title: 'Generate & Download',
+            description:
+              'Click the generate button and wait a few moments. Once your image is ready, you can download it or make further adjustments.',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Find answers to common questions about our AI image generator',
+      questions: {
+        total: '8',
+        list: [
+          {
+            question: 'How does the image editing tool work?',
+            answer:
+              'Our tool uses advanced AI to help you edit images using text prompts. Simply upload an image and describe the changes you want to make, and our system will apply your edits while maintaining image quality.',
+          },
+          {
+            question: 'What kind of edits can I make with this tool?',
+            answer:
+              'You can perform various edits including style transfers, object modifications, text changes, and background replacements. The tool is particularly good at maintaining consistency while making precise edits to specific elements in your images.',
+          },
+          {
+            question: 'How can I get the best editing results?',
+            answer:
+              'For optimal results, be specific in your prompts. Instead of "make it better," describe exactly what you want to change. For example, "Change the background to a beach at sunset while keeping the subject in focus" or "Convert this to a watercolor painting with visible brushstrokes."',
+          },
+          {
+            question: 'Can I edit text within images?',
+            answer:
+              "Yes, you can edit text in images. Use quotation marks to specify the exact text you want to change. For example: \"change 'Welcome' to 'Hello' in the sign\".",
+          },
+          {
+            question: 'Is there a limit to the number of edits I can make?',
+            answer:
+              'Free users can make up to 10 edits per day. For unlimited edits and access to premium features, consider upgrading to our Pro plan.',
+          },
+          {
+            question: 'Can I use the edited images commercially?',
+            answer:
+              'Yes, all images edited using our tool are royalty-free and can be used for both personal and commercial projects. You own the rights to the edited images you create.',
+          },
+          {
+            question: 'What file formats are supported?',
+            answer:
+              'You can upload and download images in various formats including JPEG, PNG, and WebP. The tool preserves the original quality of your uploads while applying the requested edits.',
+          },
+          {
+            question: 'How do I maintain certain elements while editing?',
+            answer:
+              'To preserve specific elements, mention what you want to keep in your prompt. For example, "Change the background to a cityscape while keeping the person exactly as they are" or "Modify the hair color but keep the facial features unchanged."',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: 'Transform Your Images with AI',
