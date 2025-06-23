@@ -418,6 +418,151 @@ export default {
       },
     },
   },
+  'photo-restore': {
+    header: {
+      title: '旧照片修复',
+      subtitle: '让珍贵记忆焕发新生',
+    },
+    features: {
+      title01: '',
+      title02: '',
+      subtitle: '',
+    },
+  },
+  'create-avatar': {
+    header: {
+      title: 'Turan AI Avatar Generator',
+      subtitle: 'Create personalized avatars with AI',
+    },
+    tool: {
+      form: {
+        image: {
+          label: 'Upload Photo',
+          message: 'Please upload an image',
+        },
+        background: {
+          label: 'Background Style',
+          description: 'Choose a style for your avatar background',
+          message: 'Please select a background style',
+        },
+        aspectRatio: {
+          label: 'Image Aspect Ratio',
+          description: 'Select the aspect ratio for your generated avatar',
+          message: 'Please select an aspect ratio',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Generate Avatar',
+        },
+      },
+      regenerate: 'Regenerate',
+      download: 'Download',
+      idle: {
+        title: 'Ready to Generate',
+        subtitle: 'Upload your photo and select a background style to create your AI avatar.',
+      },
+      error: {
+        title: 'Something Went Wrong',
+        subtitle: "We couldn't generate your avatar. Please try again with a different image.",
+        try: 'Try Again',
+      },
+    },
+    features: {
+      title: 'AI Avatar Generation',
+      description:
+        'Easily create personalized avatars: simply upload your photo, and the AI will preserve your defining features while seamlessly altering the background or adding decorative elements.',
+      items: {
+        total: '4',
+        list: [
+          {
+            title: 'Professional ID Photos',
+            description: 'Create perfect passport, visa, and employee ID photos that meet official requirements.',
+          },
+          {
+            title: 'Social Media Profiles',
+            description: 'Stand out on LinkedIn, Instagram, Twitter, and other platforms with eye-catching avatars.',
+          },
+          {
+            title: 'Corporate Team Photos',
+            description: 'Create consistent, professional avatars for your entire team or company directory.',
+          },
+          {
+            title: 'Gaming and Virtual Worlds',
+            description: 'Design unique avatars for gaming platforms, metaverse spaces, and virtual communities.',
+          },
+        ],
+      },
+      try: 'Try It Now',
+    },
+    'how-to-use': {
+      title: 'How to Create Your Avatar',
+      subtitle: 'Follow these simple steps to generate your perfect AI avatar',
+      steps: {
+        total: '4',
+        list: [
+          {
+            title: 'Choose an Avatar Style',
+            description:
+              'Browse through our example avatar styles or start with a blank canvas. Select a style that best represents your personality or brand.',
+          },
+          {
+            title: 'Customize Your Avatar',
+            description:
+              'Adjust features like facial characteristics, hairstyle, accessories, and background to create a unique avatar that represents you.',
+          },
+          {
+            title: 'Select Artistic Style',
+            description:
+              'Choose from various artistic styles like Realistic, Anime, Corporate, or Fantasy to give your avatar the perfect look and feel.',
+          },
+          {
+            title: 'Generate & Download',
+            description:
+              'Click the generate button and wait a few moments. Once your avatar is ready, you can download it in various formats for use across platforms.',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Find answers to common questions about our AI avatar generator',
+      questions: {
+        total: '6',
+        list: [
+          {
+            question: 'How does the AI avatar generator work?',
+            answer:
+              'Our AI uses advanced machine learning models to generate personalized avatars based on your preferences. Simply select your desired style and features, and the AI will create a unique avatar for you.',
+          },
+          {
+            question: 'Is there a limit to how many avatars I can generate?',
+            answer:
+              'Free users can generate up to 10 avatars per day. For unlimited generations and additional customization options, consider upgrading to our Pro plan.',
+          },
+          {
+            question: 'Can I use the generated avatars commercially?',
+            answer:
+              'Yes, all avatars generated are royalty-free and can be used for both personal and commercial projects such as social media profiles, gaming accounts, or business presentations.',
+          },
+          {
+            question: 'How can I get better results from the avatar generator?',
+            answer:
+              'For best results, be specific with your customization choices. Try different combinations of styles, features, and accessories to create your perfect avatar representation.',
+          },
+          {
+            question: 'What image formats are supported for my avatar?',
+            answer:
+              'Our AI generates avatars in various formats including JPEG, PNG, and WebP. You can choose your preferred format in the download options, with PNG recommended for maintaining transparency.',
+          },
+          {
+            question: 'Can I customize specific features of my avatar?',
+            answer:
+              'Yes, you can customize facial features, hairstyles, accessories, expressions, and background elements to create a truly personalized avatar that represents you.',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: 'Transform Your Images with AI',

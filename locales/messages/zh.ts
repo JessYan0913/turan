@@ -407,6 +407,132 @@ export default {
       subtitle: '',
     },
   },
+  'create-avatar': {
+    header: {
+      title: 'Turan AI 头像生成器',
+      subtitle: '用AI创建个性化头像',
+    },
+    tool: {
+      form: {
+        image: {
+          label: '上传照片',
+          message: '请上传一张图片',
+        },
+        background: {
+          label: '背景风格',
+          description: '选择您想要的背景风格',
+          message: '请选择背景风格',
+        },
+        aspectRatio: {
+          label: '图片宽高比',
+          description: '选择生成头像的宽高比',
+          message: '请选择宽高比',
+        },
+        submit: {
+          loading: '处理中...',
+          default: '生成头像',
+        },
+      },
+      regenerate: '重新生成',
+      download: '下载',
+      idle: {
+        title: '准备就绪',
+        subtitle: '上传照片并选择背景风格，创建您的AI头像。',
+      },
+      error: {
+        title: '出错了',
+        subtitle: '生成头像失败，请尝试使用其他图片。',
+        try: '重试',
+      },
+    },
+    features: {
+      title: 'AI 头像生成',
+      description: '轻松创建个性化头像：只需上传照片，AI将保留您的特征，同时无缝更改背景或添加装饰元素。',
+      items: {
+        total: '4',
+        list: [
+          {
+            title: '专业证件照',
+            description: '创建符合官方要求的完美护照、签证和员工证件照片。',
+          },
+          {
+            title: '社交媒体资料',
+            description: '在领英、Instagram、Twitter等平台上使用吸睛头像脱颖而出。',
+          },
+          {
+            title: '企业团队照片',
+            description: '为整个团队或公司目录创建统一专业的头像。',
+          },
+          {
+            title: '游戏与虚拟世界',
+            description: '为游戏平台、元宇宙空间和虚拟社区设计独特头像。',
+          },
+        ],
+      },
+      try: '立即体验',
+    },
+    'how-to-use': {
+      title: '如何创建您的头像',
+      subtitle: '按照以下简单步骤生成完美的AI头像',
+      steps: {
+        total: '4',
+        list: [
+          {
+            title: '选择头像风格',
+            description: '浏览我们的示例头像风格或从空白画布开始。选择最能代表您个性或品牌的风格。',
+          },
+          {
+            title: '自定义头像',
+            description: '调整面部特征、发型、配饰和背景等，创建代表您独特风格的头像。',
+          },
+          {
+            title: '选择艺术风格',
+            description: '从写实、动漫、商务或奇幻等多种艺术风格中选择，为头像打造完美外观。',
+          },
+          {
+            title: '生成与下载',
+            description: '点击生成按钮并稍等片刻。头像准备就绪后，您可以下载多种格式，在各平台使用。',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: '常见问题',
+      subtitle: '关于AI头像生成器的常见问题解答',
+      questions: {
+        total: '6',
+        list: [
+          {
+            question: 'AI头像生成器是如何工作的？',
+            answer:
+              '我们的AI使用先进的机器学习模型，根据您的偏好生成个性化头像。只需选择您想要的风格和特征，AI将为您创建独特的头像。',
+          },
+          {
+            question: '我可以生成多少个头像？',
+            answer: '免费用户每天最多可以生成10个头像。如需无限次数生成和更多自定义选项，请考虑升级到专业版。',
+          },
+          {
+            question: '生成的头像可以商用吗？',
+            answer:
+              '是的，所有生成的头像都可以免版税使用，适用于个人和商业项目，如社交媒体资料、游戏账号或商务演示等。',
+          },
+          {
+            question: '如何获得更好的头像生成效果？',
+            answer: '为了获得最佳效果，请具体说明您的定制选择。尝试不同的风格、特征和配饰组合，创建完美的头像。',
+          },
+          {
+            question: '支持哪些图片格式？',
+            answer:
+              '我们的AI支持生成多种格式的头像，包括JPEG、PNG和WebP。您可以在下载选项中选择首选格式，推荐使用PNG格式以保持透明度。',
+          },
+          {
+            question: '可以自定义头像的特定特征吗？',
+            answer: '是的，您可以自定义面部特征、发型、配饰、表情和背景元素，创建真正代表您个性的个性化头像。',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: '每一次生成，都是用心呈现',

@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/use-polling-request';
 import { cn, downloadImage } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 export interface StyleOption {
   id: string;
@@ -29,15 +30,16 @@ export interface StyleOption {
 export function CreateAvatar() {
   const router = useRouter();
   const imageRef = useRef<HTMLImageElement>(null);
+  const t = useScopedI18n('create-avatar');
 
   // Define the form schema using Zod
   const avatarGenerationSchema = z.object({
-    image: z.instanceof(File, { message: 'Please upload an image' }),
-    background: z.string({ required_error: 'Please select a background style' }),
+    image: z.instanceof(File, { message: t('tool.form.image.message') }),
+    background: z.string({ required_error: t('tool.form.background.message') }),
     aspectRatio: z.enum(
       ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3', '4:5', '5:4', '21:9', '9:21', '2:1', '1:2'],
       {
-        required_error: 'Please select an aspect ratio',
+        required_error: t('tool.form.aspectRatio.message'),
       }
     ),
   });
@@ -163,7 +165,9 @@ export function CreateAvatar() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Upload Photo</FormLabel>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.image.label')}
+                      </FormLabel>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -179,8 +183,10 @@ export function CreateAvatar() {
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Background Style</FormLabel>
-                      <p className="text-muted-foreground text-xs">Choose a style for your avatar background</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.background.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.background.description')}</p>
                     </div>
                     <FormControl>
                       <StyleSelector
@@ -189,7 +195,6 @@ export function CreateAvatar() {
                         onSelect={(background) => {
                           field.onChange(background.id);
                         }}
-                        placeholder="Select a background style"
                       />
                     </FormControl>
                     <FormMessage />
@@ -203,8 +208,10 @@ export function CreateAvatar() {
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Image Aspect Ratio</FormLabel>
-                      <p className="text-muted-foreground text-xs">Select the aspect ratio for your generated avatar</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.aspectRatio.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.aspectRatio.description')}</p>
                     </div>
                     <FormControl>
                       <AspectRatioSelector
@@ -228,12 +235,12 @@ export function CreateAvatar() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
-                    Processing...
+                    {t('tool.form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <User className="mr-2 size-4" />
-                    Generate Avatar
+                    {t('tool.form.submit.default')}
                   </>
                 )}
               </Button>
@@ -252,7 +259,7 @@ export function CreateAvatar() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          Regenerate
+          {t('tool.regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -262,7 +269,7 @@ export function CreateAvatar() {
           variant="ghost"
         >
           <Download className="size-4" />
-          Download
+          {t('tool.download')}
         </Button>
 
         {/* Result Content */}
@@ -278,10 +285,8 @@ export function CreateAvatar() {
               <User className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Generate</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
-                Upload your photo and select a background style to create your AI avatar.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('tool.idle.subtitle')}</p>
             </div>
           </div>
 
@@ -318,15 +323,13 @@ export function CreateAvatar() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something Went Wrong</h3>
-              <p className="text-muted-foreground mt-2 text-sm">
-                We couldn&apos;t generate your avatar. Please try again with a different image.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('tool.error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
-                Try Again
+                {t('tool.error.try')}
               </Button>
             </div>
           </div>
