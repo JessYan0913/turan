@@ -228,28 +228,24 @@ export default {
       title: 'How to Use',
       subtitle: 'Follow these simple steps to create amazing AI-generated images',
       steps: {
-        total: 4,
+        total: '4',
         list: [
           {
-            step: 1,
             title: 'Choose an Example or Start Fresh',
             description:
               'Browse through our example prompts or start with your own creative idea. Click on any example to use it as a starting point.',
           },
           {
-            step: 2,
             title: 'Customize Your Prompt',
             description:
               'Refine your prompt with specific details about the image you want to generate. The more descriptive you are, the better the results will be.',
           },
           {
-            step: 3,
             title: 'Select Image Style',
             description:
               'Choose from various artistic styles like Realistic, Fantasy, or Watercolor to give your image the perfect look and feel.',
           },
           {
-            step: 4,
             title: 'Generate & Download',
             description:
               'Click the generate button and wait a few moments. Once your image is ready, you can download it or make further adjustments.',
