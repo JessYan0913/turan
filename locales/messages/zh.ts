@@ -76,6 +76,95 @@ export default {
       },
     },
   },
+  'aspect-ratio-selector': {
+    'aspect-ratio': '宽高比',
+    proportion: '比例',
+    placeholder: '选择宽高比',
+  },
+  'text-to-image': {
+    header: {
+      title: 'Turan AI 图片生成器',
+      subtitle: '输入文字描述，AI 将为您生成精美图片',
+    },
+    tool: {
+      form: {
+        prompt: {
+          label: '提示词',
+          discription: '详细描述您想要生成的图片',
+          message: '请输入提示词',
+        },
+        aspectRatio: {
+          label: '宽高比',
+          discription: '选择生成图片的宽高比',
+          message: '请选择宽高比',
+        },
+        submit: {
+          loading: '处理中...',
+          default: '生成图片',
+        },
+      },
+      regenerate: '重新生成',
+      download: '下载',
+      idle: {
+        title: '准备生成',
+        subtitle: '输入提示词并点击生成按钮创建您的图片',
+      },
+      error: {
+        title: '出错了',
+        subtitle: '无法生成您的图片，请尝试使用不同的提示词重试。',
+        try: '重试',
+      },
+    },
+    examples: {
+      title01: '探索',
+      title02: 'AI 图片生成器提示词',
+      subtitle: '输入文字描述，AI 将为您生成精美图片',
+      more: '加载更多示例',
+    },
+    faq: {
+      title: '常见问题',
+      subtitle: '了解关于我们的 AI 图片生成器的常见问题解答',
+      questions: {
+        total: '8',
+        list: [
+          {
+            question: '文字转图片工具是如何工作的？',
+            answer:
+              '我们的工具使用先进的 AI 模型将您的文字描述转换为图片。只需输入您想要看到的内容描述，我们的系统就会使用尖端 AI 技术为您生成图片。',
+          },
+          {
+            question: '这个工具使用什么 AI 模型？',
+            answer: '我们使用 FLUX.1 [schnell] 模型，这是一个拥有 120 亿参数的强大 AI，只需 1-4 步就能生成高质量图片。',
+          },
+          {
+            question: '我可以生成多少张图片？',
+            answer: '免费用户每天最多可以生成 10 张图片。如需无限制生成和更多功能，请考虑升级到专业版计划。',
+          },
+          {
+            question: '我可以将生成的图片用于商业用途吗？',
+            answer: '可以，根据我们的服务条款，通过我们的工具生成的所有图片都是免版税的，可以用于个人和商业项目。',
+          },
+          {
+            question: '如何获得最佳效果？',
+            answer:
+              '为了获得最佳效果，请提供详细的提示词。包括风格、颜色、构图和情绪等细节。我们的系统在处理清晰、结构良好的描述时效果最佳。',
+          },
+          {
+            question: '支持下载哪些文件格式？',
+            answer: '您可以下载多种格式的生成图片，包括 JPEG、PNG 和 WebP。请在下载选项中选择您喜欢的格式。',
+          },
+          {
+            question: '你们会存储我生成的图片吗？',
+            answer: '我们会临时存储生成的图片，以便您下载。有关隐私详情，请参阅我们的隐私政策。',
+          },
+          {
+            question: '有哪些内容限制？',
+            answer: '我们的工具不得用于生成有害、非法或未经同意的内容。请查看我们的可接受使用政策以获取完整指南。',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: '每一次生成，都是用心呈现',
@@ -108,99 +197,6 @@ export default {
         title: '下载结果',
         description: '保存您的创作成果',
       },
-    },
-  },
-  imageEdit: {
-    title: '图片编辑',
-    description: '上传图片并描述您想要的修改',
-    upload: {
-      label: '上传图片',
-    },
-    prompt: {
-      label: '编辑要求',
-      description: '您希望如何修改这张图片？',
-      placeholder: '例如："将背景改为海滩日落" 或 "把头发变长"',
-    },
-    button: {
-      processing: '正在处理您的图片...',
-      generate: '应用修改',
-    },
-    result: {
-      title: '编辑效果预览',
-      description: '查看修改后的效果',
-      success: '编辑完成！',
-      error: '无法处理您的图片',
-      timeout: '请求超时',
-      checkFailed: '无法验证状态',
-    },
-  },
-  styleTransform: {
-    title: '艺术风格转换',
-    description: '为您的照片应用艺术风格',
-    upload: {
-      label: '上传照片',
-    },
-    prompt: {
-      label: '风格要求',
-      description: '请选择您希望转换的艺术风格',
-      placeholder: '选择艺术风格',
-    },
-    button: {
-      processing: '正在应用风格...',
-      generate: '应用风格',
-    },
-    result: {
-      title: '风格转换效果',
-      description: '风格转换后的图片预览',
-      success: '风格转换成功',
-      error: '无法应用风格',
-      timeout: '请求超时',
-      checkFailed: '无法验证状态',
-    },
-  },
-  avatarGeneration: {
-    title: 'AI 头像创作',
-    description: '将照片转换为独特头像',
-    upload: {
-      label: '上传照片',
-    },
-    prompt: {
-      label: '选择风格',
-      description: '为您的头像选择背景风格',
-      placeholder: '选择背景',
-    },
-    button: {
-      processing: '生成中...',
-      generate: '生成头像',
-    },
-    result: {
-      title: '头像',
-      description: '生成的头像预览',
-      success: '头像生成成功',
-      error: '头像生成失败',
-      timeout: '头像生成超时',
-      checkFailed: '检查状态失败',
-    },
-  },
-  imageGeneration: {
-    title: 'AI 图片生成',
-    description: '用 AI 将您的想象变为现实',
-    prompt: {
-      label: '描述您想要的图片',
-      description: '请尽可能详细描述',
-      placeholder: '例如："雪夜森林中的温馨小屋，窗内透出温暖灯光，数字艺术风格"',
-    },
-    button: {
-      processing: '生成中...',
-      generate: '生成图片',
-    },
-    result: {
-      title: 'AI 生成图片',
-      description: '图片生成结果',
-      success: '图片生成成功',
-      error: '图片生成失败',
-      timeout: '图片生成超时',
-      checkFailed: '检查状态失败',
     },
   },
   resultDisplay: {

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 // Custom scrollbar styles
 const scrollbarStyles = `
@@ -64,6 +65,8 @@ interface AspectRatioSelectorProps {
 }
 
 export function AspectRatioSelector({ value, onValueChange, disabled = false }: AspectRatioSelectorProps) {
+  const t = useScopedI18n('aspect-ratio-selector');
+
   // Add scrollbar styles to document
   if (typeof document !== 'undefined') {
     const styleEl = document.createElement('style');
@@ -121,16 +124,18 @@ export function AspectRatioSelector({ value, onValueChange, disabled = false }: 
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 text-left">
-                  <div className="text-base font-medium tracking-tight">{selectedOption.label} Aspect Ratio</div>
+                  <div className="text-base font-medium tracking-tight">
+                    {selectedOption.label} {t('aspect-ratio')}
+                  </div>
                   <div className="text-sm text-gray-600">
-                    {selectedOption.width}:{selectedOption.height} proportion
+                    {selectedOption.width}:{selectedOption.height} {t('proportion')}
                   </div>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-3">
                 <LayoutGrid className="size-5 text-blue-900 dark:text-cyan-100" />
-                <span className="text-base text-gray-500">Select aspect ratio</span>
+                <span className="text-base text-gray-500">{t('placeholder')}</span>
               </div>
             )}
           </div>

@@ -16,16 +16,19 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Textarea } from '@/components/ui/textarea';
 import { usePollingRequest } from '@/hooks/use-polling-request';
 import { cn, downloadImage } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 export function TextToImage() {
   const router = useRouter();
   const imageRef = useRef<HTMLImageElement>(null);
 
+  const t = useScopedI18n('text-to-image');
+
   // Define the form schema using Zod
   const imageGenerationSchema = z.object({
-    prompt: z.string().min(1, { message: 'Please enter a prompt' }),
+    prompt: z.string().min(1, { message: t('tool.form.prompt.message') }),
     aspectRatio: z.string({
-      required_error: 'Please select an aspect ratio',
+      required_error: t('tool.form.aspectRatio.message'),
     }),
   });
 
@@ -129,8 +132,10 @@ export function TextToImage() {
                 render={({ field }) => (
                   <FormItem>
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-blue-400">Prompt</FormLabel>
-                      <p className="text-xs text-muted-foreground">Describe the image you want to generate in detail</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-blue-400">
+                        {t('tool.form.prompt.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.prompt.discription')}</p>
                     </div>
                     <FormControl>
                       <Textarea
@@ -151,8 +156,10 @@ export function TextToImage() {
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-blue-400">Aspect Ratio</FormLabel>
-                      <p className="text-xs text-muted-foreground">Select the aspect ratio for your generated image</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-blue-400">
+                        {t('tool.form.aspectRatio.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.aspectRatio.discription')}</p>
                     </div>
                     <FormControl>
                       <AspectRatioSelector
@@ -176,12 +183,12 @@ export function TextToImage() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
-                    Processing...
+                    {t('tool.form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="mr-2 size-4" />
-                    Generate Image
+                    {t('tool.form.submit.default')}
                   </>
                 )}
               </Button>
@@ -200,7 +207,7 @@ export function TextToImage() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          Regenerate
+          {t('tool.regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -210,7 +217,7 @@ export function TextToImage() {
           variant="ghost"
         >
           <Download className="size-4" />
-          Download
+          {t('tool.download')}
         </Button>
 
         {/* Result Content */}
@@ -226,10 +233,8 @@ export function TextToImage() {
               <ImageIcon className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Generate</h3>
-              <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-                Enter a prompt and click generate to create your image
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('tool.idle.subtitle')}</p>
             </div>
           </div>
 
@@ -247,7 +252,7 @@ export function TextToImage() {
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 {status === 'loading' ? 'Creating Your Image' : 'Almost Ready'}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-sm">
                 {status === 'loading' ? 'Generating your masterpiece...' : 'Processing final details...'}
               </p>
             </div>
@@ -264,15 +269,13 @@ export function TextToImage() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something Went Wrong</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                We couldn&apos;t generate your image. Please try again with a different prompt.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('tool.error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
-                Try Again
+                {t('tool.error.try')}
               </Button>
             </div>
           </div>
@@ -325,7 +328,7 @@ export function TextToImage() {
                     </div>
                     <div>
                       <h3 className="text-xl font-medium text-gray-900 dark:text-white">Missing Image Data</h3>
-                      <p className="mt-2 text-sm text-muted-foreground">
+                      <p className="text-muted-foreground mt-2 text-sm">
                         The image couldn&apos;t be displayed properly.
                       </p>
                     </div>

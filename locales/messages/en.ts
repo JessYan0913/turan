@@ -80,6 +80,101 @@ export default {
       },
     },
   },
+  'aspect-ratio-selector': {
+    'aspect-ratio': 'Aspect Ratio',
+    proportion: 'proportion',
+    placeholder: 'Select aspect ratio',
+  },
+  'text-to-image': {
+    header: {
+      title: 'Turan AI Image Generator',
+      subtitle: 'Input text description, AI will generate beautiful images for you',
+    },
+    tool: {
+      form: {
+        prompt: {
+          label: 'Prompt',
+          discription: 'Describe the image you want to generate in detail',
+          message: 'Please enter a prompt',
+        },
+        aspectRatio: {
+          label: 'Aspect Ratio',
+          discription: 'Select the aspect ratio for your generated image',
+          message: 'Please select an aspect ratio',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Generate Image',
+        },
+      },
+      regenerate: 'Regenerate',
+      download: 'Download',
+      idle: {
+        title: 'Ready to Generate',
+        subtitle: 'Enter a prompt and click generate to create your image',
+      },
+      error: {
+        title: 'Something Went Wrong',
+        subtitle: 'We couldn&apos;t generate your image. Please try again with a different prompt.',
+        try: 'Try Again',
+      },
+    },
+    examples: {
+      title01: 'Explore Prompts for the',
+      title02: 'AI Image Generator',
+      subtitle: 'Input text description, AI will generate beautiful images for you',
+      more: 'Load More Examples',
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Find answers to common questions about our AI image generator',
+      questions: {
+        total: '8',
+        list: [
+          {
+            question: 'How does the text-to-image tool work?',
+            answer:
+              'Our tool uses advanced AI models to transform your text descriptions into images. Simply enter a description of what you want to see, and our system will generate the image for you using cutting-edge AI technology.',
+          },
+          {
+            question: 'What AI model does this tool use?',
+            answer:
+              'We utilize the FLUX.1 [schnell] model, a powerful 12 billion parameter AI that can generate high-quality images in just 1-4 steps.',
+          },
+          {
+            question: 'Is there a limit to how many images I can generate?',
+            answer:
+              'Free users can generate up to 10 images per day. For unlimited generations and additional features, consider upgrading to our Pro plan.',
+          },
+          {
+            question: 'Can I use the generated images commercially?',
+            answer:
+              'Yes, all images generated through our tool are royalty-free and can be used for both personal and commercial projects, in accordance with our terms of service.',
+          },
+          {
+            question: 'How can I get the best results?',
+            answer:
+              'For optimal results, be specific with your prompts. Include details about style, colors, composition, and mood. Our system works best with clear, well-structured descriptions.',
+          },
+          {
+            question: 'What file formats are supported for downloads?',
+            answer:
+              'You can download your generated images in various formats including JPEG, PNG, and WebP. Choose your preferred format in the download options.',
+          },
+          {
+            question: 'Do you store the images I generate?',
+            answer:
+              'We temporarily store generated images to provide you with download access. For privacy details, please refer to our privacy policy.',
+          },
+          {
+            question: 'What content restrictions apply?',
+            answer:
+              'Our tool must not be used to generate harmful, illegal, or non-consensual content. Please review our acceptable use policy for complete guidelines.',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: 'Transform Your Images with AI',
@@ -112,99 +207,6 @@ export default {
         title: 'Download',
         description: 'Save and share your creation',
       },
-    },
-  },
-  imageEdit: {
-    title: 'Edit Image',
-    description: 'Upload an image and describe your desired changes',
-    upload: {
-      label: 'Upload Image',
-    },
-    prompt: {
-      label: 'Edit Instructions',
-      description: 'What changes would you like to make?',
-      placeholder: 'E.g., "Change the background to a beach sunset" or "Make my hair longer"',
-    },
-    button: {
-      processing: 'Processing your image...',
-      generate: 'Apply Changes',
-    },
-    result: {
-      title: 'Your Edited Image',
-      description: 'Preview your changes',
-      success: 'Edit complete!',
-      error: 'Could not process your image',
-      timeout: 'Request timed out',
-      checkFailed: 'Unable to verify status',
-    },
-  },
-  styleTransform: {
-    title: 'Style Transfer',
-    description: 'Transform your photos with artistic styles',
-    upload: {
-      label: 'Upload Photo',
-    },
-    prompt: {
-      label: 'Choose a Style',
-      description: 'Select an artistic style to apply',
-      placeholder: 'Browse styles...',
-    },
-    button: {
-      processing: 'Applying style...',
-      generate: 'Transform Image',
-    },
-    result: {
-      title: 'Stylized Image',
-      description: 'Your transformed image',
-      success: 'Style applied successfully!',
-      error: 'Failed to apply style',
-      timeout: 'Processing took too long',
-      checkFailed: 'Unable to check status',
-    },
-  },
-  avatarGeneration: {
-    title: 'AI Avatar Creator',
-    description: 'Turn your photo into a unique avatar',
-    upload: {
-      label: 'Upload Your Photo',
-    },
-    prompt: {
-      label: 'Avatar Style',
-      description: 'Choose your preferred look',
-      placeholder: 'Select a style',
-    },
-    button: {
-      processing: 'Creating your avatar...',
-      generate: 'Generate Avatar',
-    },
-    result: {
-      title: 'Your New Avatar',
-      description: 'Your personalized creation',
-      success: 'Avatar ready!',
-      error: 'Could not create avatar',
-      timeout: 'Taking longer than expected',
-      checkFailed: 'Unable to check status',
-    },
-  },
-  imageGeneration: {
-    title: 'AI Image Generator',
-    description: 'Bring your ideas to life with AI',
-    prompt: {
-      label: 'Describe Your Image',
-      description: 'Be as detailed as possible',
-      placeholder: 'E.g., "A cozy cabin in a snowy forest at night, warm lights in the windows, digital art style"',
-    },
-    button: {
-      processing: 'Creating your image...',
-      generate: 'Generate',
-    },
-    result: {
-      title: 'Your AI Creation',
-      description: 'Generated just for you',
-      success: 'Image generated successfully!',
-      error: 'Failed to generate image',
-      timeout: 'Generation taking longer than usual',
-      checkFailed: 'Unable to check generation status',
     },
   },
   resultDisplay: {

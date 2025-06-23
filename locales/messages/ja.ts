@@ -80,6 +80,101 @@ export default {
       },
     },
   },
+  'aspect-ratio-selector': {
+    'aspect-ratio': 'アスペクト比',
+    proportion: '比率',
+    placeholder: 'アスペクト比を選択',
+  },
+  'text-to-image': {
+    header: {
+      title: 'Turan AI 画像生成ツール',
+      subtitle: 'テキストを入力するだけで、AIが美しい画像を生成します',
+    },
+    tool: {
+      form: {
+        prompt: {
+          label: 'プロンプト',
+          discription: '生成したい画像を詳しく説明してください',
+          message: 'プロンプトを入力してください',
+        },
+        aspectRatio: {
+          label: 'アスペクト比',
+          discription: '生成する画像のアスペクト比を選択してください',
+          message: 'アスペクト比を選択してください',
+        },
+        submit: {
+          loading: '処理中...',
+          default: '画像を生成',
+        },
+      },
+      regenerate: '再生成',
+      download: 'ダウンロード',
+      idle: {
+        title: '生成の準備ができました',
+        subtitle: 'プロンプトを入力して「画像を生成」をクリックしてください',
+      },
+      error: {
+        title: 'エラーが発生しました',
+        subtitle: '画像の生成に失敗しました。別のプロンプトでお試しください。',
+        try: '再試行',
+      },
+    },
+    examples: {
+      title01: 'AI画像生成のための',
+      title02: 'プロンプト例',
+      subtitle: 'テキストを入力するだけで、AIが美しい画像を生成します',
+      more: 'もっと例を見る',
+    },
+    faq: {
+      title: 'よくある質問',
+      subtitle: 'AI画像生成ツールに関するよくある質問と回答',
+      questions: {
+        total: '8',
+        list: [
+          {
+            question: 'テキストから画像への変換ツールはどのように機能しますか？',
+            answer:
+              '当ツールは高度なAIモデルを使用して、テキストの説明を画像に変換します。見たいものを説明文で入力するだけで、最先端のAI技術を使って画像を生成します。',
+          },
+          {
+            question: 'このツールはどのAIモデルを使用していますか？',
+            answer:
+              'FLUX.1 [schnell] モデルを採用しており、わずか1〜4ステップで高品質な画像を生成できる120億パラメータの強力なAIです。',
+          },
+          {
+            question: '1日に生成できる画像の数に制限はありますか？',
+            answer:
+              '無料ユーザーは1日最大10枚まで画像を生成できます。無制限の生成や追加機能をご利用の場合は、Proプランへのアップグレードをご検討ください。',
+          },
+          {
+            question: '生成した画像を商用利用できますか？',
+            answer:
+              'はい、当ツールで生成された画像は、利用規約に従って個人・商用プロジェクトで自由にお使いいただけます。ロイヤリティフリーです。',
+          },
+          {
+            question: 'より良い結果を得るにはどうすればいいですか？',
+            answer:
+              '最適な結果を得るには、具体的なプロンプトを入力してください。スタイル、色、構図、雰囲気などの詳細を加えると、より期待通りの画像が生成されます。',
+          },
+          {
+            question: 'どのようなファイル形式でダウンロードできますか？',
+            answer:
+              'JPEG、PNG、WebPなどの形式で画像をダウンロードできます。ダウンロードオプションからお好みの形式をお選びください。',
+          },
+          {
+            question: '生成した画像は保存されますか？',
+            answer:
+              'ダウンロードを可能にするため、生成された画像は一時的に保存されます。プライバシーに関する詳細は、プライバシーポリシーをご確認ください。',
+          },
+          {
+            question: 'コンテンツの制限事項はありますか？',
+            answer:
+              '当ツールは、有害なコンテンツや違法なコンテンツ、同意のないコンテンツの生成には使用できません。詳細なガイドラインについては、利用規約をご確認ください。',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'トゥラン',
     subtitle: 'AIで叶える、あなたのイメージ',
@@ -112,100 +207,6 @@ export default {
         title: '結果をダウンロード',
         description: '作品を保存しましょう',
       },
-    },
-  },
-  imageEdit: {
-    title: '画像編集',
-    description: '画像をアップロードして、希望の編集効果を説明してください',
-    upload: {
-      label: '画像をアップロード',
-    },
-    prompt: {
-      label: '編集の説明',
-      description: '希望の編集効果を説明してください',
-      placeholder: '希望の編集内容を説明してください。例：「背景を青空と白い雲に変更」「髪型をショートヘアに変更」...',
-    },
-    button: {
-      processing: '処理中...',
-      generate: '編集を開始',
-    },
-    result: {
-      title: '編集済み画像',
-      description: '編集された画像のプレビュー',
-      success: '編集が完了しました',
-      error: '編集に失敗しました',
-      timeout: '編集がタイムアウトしました',
-      checkFailed: '状態の確認に失敗しました',
-    },
-  },
-  styleTransform: {
-    title: 'スタイル変換',
-    description: '画像をアップロードして、適用したいアートスタイルを選択してください',
-    upload: {
-      label: '画像をアップロード',
-    },
-    prompt: {
-      label: 'スタイル選択',
-      description: '適用したいアートスタイルを選択してください',
-      placeholder: 'アートスタイルを選択',
-    },
-    button: {
-      processing: '変換中...',
-      generate: 'スタイルを適用',
-    },
-    result: {
-      title: 'スタイル変換の結果',
-      description: 'スタイル変換後の画像のプレビュー',
-      success: 'スタイル変換が完了しました',
-      error: 'スタイル変換に失敗しました',
-      timeout: '処理がタイムアウトしました',
-      checkFailed: '状態の確認に失敗しました',
-    },
-  },
-  avatarGeneration: {
-    title: 'アバター生成',
-    description: '写真をアップロードして、アバターを作成するスタイルを選択してください',
-    upload: {
-      label: '写真をアップロード',
-    },
-    prompt: {
-      label: 'スタイル選択',
-      description: 'アバターの背景スタイルを選択してください',
-      placeholder: '背景を選択',
-    },
-    button: {
-      processing: '生成中...',
-      generate: 'アバターを生成',
-    },
-    result: {
-      title: 'アバター',
-      description: '生成されたアバターのプレビュー',
-      success: 'アバターの生成が完了しました',
-      error: 'アバターの生成に失敗しました',
-      timeout: 'アバター生成がタイムアウトしました',
-      checkFailed: '状態の確認に失敗しました',
-    },
-  },
-  imageGeneration: {
-    title: '画像生成',
-    description: 'AIで作成したい画像を記述してください',
-    prompt: {
-      label: 'プロンプト入力',
-      description: '生成したい内容を詳しく記述してください',
-      placeholder:
-        '生成したい画像を説明してください。例：「草原を走るゴールデンレトリバー」、「夕焼けのビーチ風景」...',
-    },
-    button: {
-      processing: '生成中...',
-      generate: '画像を生成',
-    },
-    result: {
-      title: '生成画像',
-      description: 'AIが生成した画像のプレビュー',
-      success: '画像生成が成功しました',
-      error: '画像生成に失敗しました',
-      timeout: '画像生成がタイムアウトしました',
-      checkFailed: '画像生成の確認に失敗しました',
     },
   },
   resultDisplay: {
