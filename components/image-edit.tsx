@@ -107,14 +107,16 @@ export function ImageEdit() {
   }, [form, reset, submitEdit]);
 
   const handleDownload = useCallback(() => {
+    console.log('!!!!!!!', generatedImage);
     if (!imageRef.current || !generatedImage) return;
 
     // 确定图片URL
     let imageUrl = '';
     if (typeof generatedImage === 'string') {
+      console.log('======>', generatedImage);
       imageUrl = generatedImage;
-    } else if (generatedImage?.output?.[0]) {
-      imageUrl = generatedImage.output[0] as string;
+    } else if (generatedImage?.output) {
+      imageUrl = generatedImage.output as string;
     } else {
       return; // 没有有效的图片URL
     }

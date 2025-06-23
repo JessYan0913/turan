@@ -8,57 +8,40 @@ import { getScopedI18n } from '@/locales/server';
 
 const examples = [
   {
-    id: 6,
-    prompt: 'A magical forest with glowing mushrooms',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
+    prompt: 'Give the person in this photo a pair of gold-rimmed glasses',
+    originalImageUrl: '/glasses-original.webp',
+    editedImageUrl: '/glasses-edited.png',
     style: 'Fantasy',
   },
   {
-    id: 2,
-    prompt: 'A futuristic city with flying cars and neon lights',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png',
-    style: 'Cyberpunk',
-  },
-  {
-    id: 9,
-    prompt: 'A magical forest with glowing mushrooms',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/18/094dd5c0-cdb5-44ae-af08-af31d46e5dad_11053931.png',
+    prompt: 'The background is changed to a castle on a full moon night',
+    originalImageUrl: '/moon-original.webp',
+    editedImageUrl: '/moon-edited.png',
     style: 'Fantasy',
   },
   {
-    id: 5,
-    prompt: 'A beautiful sunset over the ocean',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/16/ba6cad48-f3d9-4222-b1f6-989cd0315884_11016625.jpeg',
-    style: 'Oil Painting',
-  },
-  {
-    id: 7,
-    prompt: 'A magical forest with glowing mushrooms',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/18/81c9f16e-e392-4ec8-8556-6e248a09b788_11020959.png',
+    prompt: 'Background changed to blue sky and white clouds',
+    originalImageUrl: '/caw-original.webp',
+    editedImageUrl: '/caw-edited.png',
     style: 'Fantasy',
   },
   {
-    id: 1,
-    prompt: 'A serene landscape with mountains and a lake at sunset',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png',
-    style: 'Digital Art',
+    prompt: 'The scenery remains the same, but the weather changes to rainy day',
+    originalImageUrl: '/lake-original.webp',
+    editedImageUrl: '/lake-edited.png',
+    style: 'Fantasy',
   },
   {
-    id: 4,
-    prompt: 'An astronaut floating in space with Earth in the background',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/16/c6628fb3-0cc1-4026-a308-06420e600891_11038925.png',
-    style: 'Realistic',
+    prompt:
+      'The characters in the scene remain the same, but the Eiffel Tower is replaced by the Coliseum as the background.',
+    originalImageUrl: '/coliseum-original.webp',
+    editedImageUrl: '/coliseum-edited.png',
+    style: 'Fantasy',
   },
   {
-    id: 3,
-    prompt: 'A cute panda eating bamboo in a bamboo forest',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/19/b40cc473-9f2a-4a72-afed-34f3389df0c7_11015153.png',
-    style: 'Watercolor',
-  },
-  {
-    id: 8,
-    prompt: 'A magical forest with glowing mushrooms',
-    imageUrl: 'https://img.artiversehub.ai/online/2025/6/20/d65981cb-a619-4b15-8650-dac0137a1b41_11040960.jpeg',
+    prompt: 'Change the tattoo to the word "love"',
+    originalImageUrl: '/tattoo-original.webp',
+    editedImageUrl: '/tattoo-edited.png',
     style: 'Fantasy',
   },
 ];
@@ -108,15 +91,15 @@ export default async function TextToImagePage() {
 
             {/* Example Grid */}
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {examples.map((example) => (
+              {examples.map((example, index) => (
                 <Card
-                  key={example.id}
+                  key={index}
                   className="border-border bg-card group overflow-hidden rounded-xl border shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div className="relative aspect-square">
                     <ImageSlider
-                      beforeImage={example.imageUrl}
-                      afterImage={example.imageUrl}
+                      beforeImage={example.originalImageUrl}
+                      afterImage={example.editedImageUrl}
                       beforeLabel=""
                       afterLabel=""
                       className="size-full"

@@ -9,51 +9,51 @@ import { getScopedI18n } from '@/locales/server';
 const examples = [
   {
     prompt: 'a cat holding a sign that says hello world',
-    imageUrl: '/examples/text-to-image/cat-hello-world.webp',
+    imageUrl: '/text-to-image-04.webp',
   },
   {
     prompt: 'a tiny astronaut hatching from an egg on the moon',
-    imageUrl: '/examples/text-to-image/egg-astronaut.webp',
+    imageUrl: '/text-to-image-07.webp',
   },
   {
     prompt: 'womens street skateboarding final in Paris Olympics 2024',
-    imageUrl: '/examples/text-to-image/paris-olympics.webp',
+    imageUrl: '/text-to-image-11.webp',
   },
   {
     prompt: 'black forest gateau cake spelling out the words "FLUX SCHNELL", tasty, food photography, dynamic shot',
-    imageUrl: '/examples/text-to-image/black-forest-gateau.webp',
+    imageUrl: '/text-to-image-03.webp',
   },
   {
     prompt: 'Lake Papaitonga',
-    imageUrl: '/examples/text-to-image/lake-papaitonga.webp',
+    imageUrl: '/text-to-image-09.webp',
   },
   {
     prompt: 'Guillermo del Toro',
-    imageUrl: '/examples/text-to-image/guillermo-del-toro.webp',
+    imageUrl: '/text-to-image-08.webp',
   },
   {
     prompt: "Baldur's Gate 3 Astarion",
-    imageUrl: '/examples/text-to-image/baldur-Gate-3-Astarion.webp',
+    imageUrl: '/text-to-image-10.webp',
   },
   {
     prompt: 'Trigun Meryl Stryfe',
-    imageUrl: '/examples/text-to-image/Trigun-Meryl-Stryfe.webp',
+    imageUrl: '/text-to-image-01.webp',
   },
   {
     prompt: 'Demon Slayer Nezuko Kamado',
-    imageUrl: '/examples/text-to-image/Demon-Slayer-Nezuko-Kamado.webp',
+    imageUrl: '/text-to-image-06.webp',
   },
   {
     prompt: 'Barista etching latte art with steady milk pouring precision',
-    imageUrl: '/examples/text-to-image/Barista-etching-latte-art-with-steady-milk-pouring-precision.webp',
+    imageUrl: '/text-to-image-02.webp',
   },
   {
     prompt: 'Cow',
-    imageUrl: '/examples/text-to-image/Cow.webp',
+    imageUrl: '/text-to-image-05.webp',
   },
   {
     prompt: 'Neck Small Lotus',
-    imageUrl: '/examples/text-to-image/Neck-Small-Lotus.webp',
+    imageUrl: '/text-to-image-12.webp',
   },
 ];
 

@@ -19,6 +19,7 @@ const SUPPORTED_FILE_TYPES = [
   'text/markdown',
   'image/jpeg',
   'image/png',
+  'image/webp',
 ];
 
 // 最大文件大小 (10MB)
