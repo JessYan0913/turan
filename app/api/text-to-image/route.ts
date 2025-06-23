@@ -1,7 +1,11 @@
+import { eq } from 'drizzle-orm';
+import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
-import { checkUserPoints, createPrediction } from '@/lib/actions/prediction';
+import { createPrediction } from '@/lib/actions/prediction';
 import { auth } from '@/lib/auth';
+import { db } from '@/lib/db/client';
+import { userTable } from '@/lib/db/schema';
 import { replicate } from '@/lib/replicate';
 import { WEBHOOK_HOST } from '@/lib/utils';
 
@@ -15,12 +19,24 @@ export async function POST(request: Request) {
 
     const userId = session.user.id;
 
-    await checkUserPoints(userId, 1);
+    const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
 
-    const { prompt } = await request.json();
+    if (!user) {
+      redirect('/login');
+    }
+
+    if (user.points < 1) {
+      return NextResponse.json({ success: false, message: 'Insufficient points' }, { status: 400 });
+    }
+
+    const { prompt, aspectRatio } = await request.json();
 
     if (!prompt) {
       return NextResponse.json({ success: false, message: 'Prompt is required' }, { status: 400 });
+    }
+
+    if (!aspectRatio) {
+      return NextResponse.json({ success: false, message: 'Aspect ratio is required' }, { status: 400 });
     }
 
     const prediction = await replicate.predictions.create({
@@ -29,12 +45,13 @@ export async function POST(request: Request) {
         userId,
         prompt,
         output_format: 'png',
+        aspect_ratio: aspectRatio,
       },
-      webhook: `${WEBHOOK_HOST}/api/webhook/generate-image`,
+      webhook: `${WEBHOOK_HOST}/api/webhook/text-to-image`,
       webhook_events_filter: ['completed'],
     });
 
-    createPrediction(userId, 1, prediction);
+    createPrediction(user, 1, prediction);
 
     return NextResponse.json({ id: prediction.id, input: prediction.input }, { status: 201 });
   } catch (error) {

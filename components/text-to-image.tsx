@@ -46,12 +46,12 @@ export function TextToImage() {
   } = usePollingRequest<{ prompt: string; aspectRatio: string }, Prediction>({
     // 发起生成图片的请求
     request: async (data) => {
-      const response = await fetch('/api/generate-image', {
+      const response = await fetch('/api/text-to-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: data.prompt,
-          size: data.aspectRatio, // 后端API仍然使用size参数名
+          aspectRatio: data.aspectRatio,
         }),
       });
 
@@ -130,7 +130,7 @@ export function TextToImage() {
                   <FormItem>
                     <div className="mb-2 space-y-1">
                       <FormLabel className="font-medium text-blue-700 dark:text-blue-400">Prompt</FormLabel>
-                      <p className="text-muted-foreground text-xs">Describe the image you want to generate in detail</p>
+                      <p className="text-xs text-muted-foreground">Describe the image you want to generate in detail</p>
                     </div>
                     <FormControl>
                       <Textarea
@@ -152,7 +152,7 @@ export function TextToImage() {
                   <FormItem className="space-y-3">
                     <div className="mb-2 space-y-1">
                       <FormLabel className="font-medium text-blue-700 dark:text-blue-400">Aspect Ratio</FormLabel>
-                      <p className="text-muted-foreground text-xs">Select the aspect ratio for your generated image</p>
+                      <p className="text-xs text-muted-foreground">Select the aspect ratio for your generated image</p>
                     </div>
                     <FormControl>
                       <AspectRatioSelector
@@ -227,7 +227,7 @@ export function TextToImage() {
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Generate</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
+              <p className="mt-2 max-w-xs text-sm text-muted-foreground">
                 Enter a prompt and click generate to create your image
               </p>
             </div>
@@ -247,7 +247,7 @@ export function TextToImage() {
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 {status === 'loading' ? 'Creating Your Image' : 'Almost Ready'}
               </h3>
-              <p className="text-muted-foreground mt-2 text-sm">
+              <p className="mt-2 text-sm text-muted-foreground">
                 {status === 'loading' ? 'Generating your masterpiece...' : 'Processing final details...'}
               </p>
             </div>
@@ -265,7 +265,7 @@ export function TextToImage() {
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something Went Wrong</h3>
-              <p className="text-muted-foreground mt-2 text-sm">
+              <p className="mt-2 text-sm text-muted-foreground">
                 We couldn&apos;t generate your image. Please try again with a different prompt.
               </p>
               <Button
@@ -325,7 +325,7 @@ export function TextToImage() {
                     </div>
                     <div>
                       <h3 className="text-xl font-medium text-gray-900 dark:text-white">Missing Image Data</h3>
-                      <p className="text-muted-foreground mt-2 text-sm">
+                      <p className="mt-2 text-sm text-muted-foreground">
                         The image couldn&apos;t be displayed properly.
                       </p>
                     </div>

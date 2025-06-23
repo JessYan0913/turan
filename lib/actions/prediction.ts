@@ -1,32 +1,14 @@
 'use server';
 
 import { and, count, desc, eq } from 'drizzle-orm';
-import { redirect } from 'next/navigation';
 import { type Prediction } from 'replicate';
 
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
 import { db } from '@/lib/db/client';
-import { predictionTable, transactionTable, userTable, workTable } from '@/lib/db/schema';
+import { predictionTable, transactionTable, type User, userTable, workTable } from '@/lib/db/schema';
 
-export async function checkUserPoints(userId: string, requiredPoints: number) {
-  const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
-  if (!user) {
-    redirect('/login');
-  }
-  if (user.points < requiredPoints) {
-    throw new Error('Insufficient points');
-  }
-}
-
-export async function createPrediction(userId: string, points: number, prediction: Prediction) {
-  const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
-  if (!user) {
-    redirect('/login');
-  }
-  if (user.points < points) {
-    throw new Error('Insufficient points');
-  }
+export async function createPrediction(user: User, points: number, prediction: Prediction) {
   await db.transaction(async (tx) => {
     await tx.insert(predictionTable).values({
       id: prediction.id,
@@ -49,10 +31,10 @@ export async function createPrediction(userId: string, points: number, predictio
     const [updatedUser] = await tx
       .update(userTable)
       .set({ points: user.points - points })
-      .where(eq(userTable.id, userId))
+      .where(eq(userTable.id, user.id))
       .returning();
     await tx.insert(transactionTable).values({
-      userId,
+      userId: user.id,
       amount: -points,
       type: 'payment' as const,
       status: 'completed' as const,

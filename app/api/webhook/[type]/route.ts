@@ -48,7 +48,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const prediction = JSON.parse(body);
 
     switch (type) {
-      case 'generate-image':
+      case 'text-to-image':
         processPrediction(prediction, {
           type: 'generate',
           points: 1,
