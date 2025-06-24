@@ -131,7 +131,7 @@ export default {
     examples: {
       title01: 'Explore Prompts for the',
       title02: 'AI Image Generator',
-      subtitle: 'Input text description, AI will generate beautiful images for you',
+      description: 'Input text description, AI will generate beautiful images for you',
       more: 'Load More Examples',
     },
     faq: {
@@ -139,7 +139,7 @@ export default {
       subtitle: 'Find answers to common questions about our AI image generator',
       questions: {
         total: '8',
-        list: [
+        items: [
           {
             question: 'How does the text-to-image tool work?',
             answer:

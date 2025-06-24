@@ -127,7 +127,7 @@ export default {
     examples: {
       title01: '探索',
       title02: 'AI 图片生成器提示词',
-      subtitle: '输入文字描述，AI 将为您生成精美图片',
+      description: '输入文字描述，AI 将为您生成精美图片',
       more: '加载更多示例',
     },
     faq: {
@@ -135,7 +135,7 @@ export default {
       subtitle: '了解关于我们的 AI 图片生成器的常见问题解答',
       questions: {
         total: '8',
-        list: [
+        items: [
           {
             question: '文字转图片工具是如何工作的？',
             answer:
@@ -681,6 +681,42 @@ export default {
           {
             question: '可以自定义头像的特定特征吗？',
             answer: '是的，您可以自定义面部特征、发型、配饰、表情和背景元素，创建真正代表您个性的个性化头像。',
+          },
+        ],
+      },
+    },
+  },
+  'style-transfer': {
+    header: {
+      title: 'Style Transfer',
+      subtitle: 'Transform any image into your favorite artistic style',
+    },
+    'style-transfer-info': {
+      title: 'Four Major Advantages of Flux Image to Image AI',
+      description: 'Advanced AI models with flexible options to meet your needs.',
+      try: 'Try it now',
+      advantages: {
+        total: '4',
+        items: [
+          {
+            title: 'Multiple Specialized Models',
+            description:
+              'Choose from various models optimized for different tasks - Flux Redux AI, Flux.1 Dev for advanced features like image-to-image transformation.',
+          },
+          {
+            title: 'Intelligent Model Selection',
+            description:
+              'Our system automatically recommends the most suitable model based on your input image and text description, balancing quality and computation costs.',
+          },
+          {
+            title: 'Superior Text Understanding',
+            description:
+              'Advanced natural language processing capabilities allow precise interpretation of text prompts to accurately transform images according to your descriptions.',
+          },
+          {
+            title: 'Cost-Effective Processing',
+            description:
+              'Flexible model options let you choose between lightweight models for simple tasks and advanced models for complex transformations, optimizing both quality and cost.',
           },
         ],
       },

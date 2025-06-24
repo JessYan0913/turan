@@ -61,8 +61,8 @@ export default async function TextToImagePage() {
   const t = await getScopedI18n('text-to-image');
   const faqTotal = t('faq.questions.total') as unknown as number;
   const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
-    question: t(`faq.questions.list.${index}.question` as any),
-    answer: t(`faq.questions.list.${index}.answer` as any),
+    question: t(`faq.questions.items.${index}.question` as any),
+    answer: t(`faq.questions.items.${index}.answer` as any),
   }));
   return (
     <div className="min-h-screen transition-colors duration-300">
@@ -92,7 +92,7 @@ export default async function TextToImagePage() {
                   {t('examples.title02')}
                 </span>
               </h2>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.subtitle')}</p>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.description')}</p>
             </div>
 
             {/* Example Grid */}

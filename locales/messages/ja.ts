@@ -131,7 +131,7 @@ export default {
     examples: {
       title01: 'AI画像生成のための',
       title02: 'プロンプト例',
-      subtitle: 'テキストを入力するだけで、AIが美しい画像を生成します',
+      description: 'テキストを入力するだけで、AIが美しい画像を生成します',
       more: 'もっと例を見る',
     },
     faq: {
@@ -139,7 +139,7 @@ export default {
       subtitle: 'AI画像生成ツールに関するよくある質問と回答',
       questions: {
         total: '8',
-        list: [
+        items: [
           {
             question: 'テキストから画像への変換ツールはどのように機能しますか？',
             answer:
