@@ -10,28 +10,28 @@ import { getScopedI18n } from '@/locales/server';
 export default async function PhotoRestorePage() {
   const t = await getScopedI18n('photo-restore');
   const featureIcons = [Code, Globe, Download];
-  const featureTotal = t('features.items.total') as unknown as number;
+  const featureTotal = t('features.list.total') as unknown as number;
   const features = Array.from({ length: featureTotal }).map((_, index) => ({
     icon: featureIcons[index],
-    title: t(`features.items.list.${index}.title` as any),
-    description: t(`features.items.list.${index}.description` as any),
+    title: t(`features.list.items.${index}.title` as any),
+    description: t(`features.list.items.${index}.description` as any),
   }));
   const technologyIcons = [ScanLine, Sparkles, SmilePlus];
-  const technologyTotal = t('technology.items.total') as unknown as number;
+  const technologyTotal = t('technology.list.total') as unknown as number;
   const technology = Array.from({ length: technologyTotal }).map((_, index) => ({
     icon: technologyIcons[index],
-    title: t(`technology.items.list.${index}.title` as any),
-    description: t(`technology.items.list.${index}.description` as any),
+    title: t(`technology.list.items.${index}.title` as any),
+    description: t(`technology.list.items.${index}.description` as any),
   }));
-  const howToUseTotal = t('how-to-use.steps.total') as unknown as number;
+  const howToUseTotal = t('how-to-use.list.total') as unknown as number;
   const howToUse = Array.from({ length: howToUseTotal }).map((_, index) => ({
-    title: t(`how-to-use.steps.list.${index}.title` as any),
-    description: t(`how-to-use.steps.list.${index}.description` as any),
+    title: t(`how-to-use.list.items.${index}.title` as any),
+    description: t(`how-to-use.list.items.${index}.description` as any),
   }));
-  const faqTotal = t('faq.questions.total') as unknown as number;
+  const faqTotal = t('faq.list.total') as unknown as number;
   const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
-    question: t(`faq.questions.list.${index}.question` as any),
-    answer: t(`faq.questions.list.${index}.answer` as any),
+    question: t(`faq.list.items.${index}.question` as any),
+    answer: t(`faq.list.items.${index}.answer` as any),
   }));
   return (
     <div className="min-h-screen transition-colors duration-300">

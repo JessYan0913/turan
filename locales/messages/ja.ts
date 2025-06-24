@@ -137,7 +137,7 @@ export default {
     faq: {
       title: 'よくある質問',
       subtitle: 'AI画像生成ツールに関するよくある質問と回答',
-      questions: {
+      list: {
         total: '8',
         items: [
           {
@@ -227,7 +227,7 @@ export default {
     'how-to-use': {
       title: '使い方',
       description: 'AIで素晴らしい画像を生成する簡単な手順',
-      steps: {
+      list: {
         total: '4',
         items: [
           {
@@ -256,7 +256,7 @@ export default {
     faq: {
       title: 'よくある質問',
       description: 'AI画像エディターに関するよくある質問と回答',
-      questions: {
+      list: {
         total: '8',
         items: [
           {
@@ -348,7 +348,7 @@ export default {
     'how-to-use': {
       title: '使い方ガイド',
       description: '簡単な操作でプロ並みの画像編集を実現',
-      steps: {
+      list: {
         total: '4',
         items: [
           {
@@ -381,7 +381,7 @@ export default {
     faq: {
       title: 'よくあるご質問',
       description: 'AI画像ジェネレーターに関するよくある質問と回答',
-      questions: {
+      list: {
         total: '6',
         items: [
           {
@@ -433,7 +433,7 @@ export default {
         colorize: {
           label: 'カラー化',
           description: '修復した画像をカラー化するかどうか',
-          sublabel: '修復画像をカラー化する',
+          'sub-label': '修復画像をカラー化する',
         },
         submit: {
           loading: '処理中...',
@@ -456,9 +456,9 @@ export default {
       title01: '提供元',
       title02: 'FLUX Kontext',
       description: '高度なAI修復技術により、古い写真が驚くほどのディテールと正確さでよみがえります。',
-      items: {
+      list: {
         total: '3',
-        list: [
+        items: [
           {
             title: 'キズやダメージの修復',
             description: '時間の経過とともに生じた破れ、折り目、シミなどの物理的なダメージを自動的に修復します。',
@@ -479,9 +479,9 @@ export default {
       title01: '高度な修復',
       title02: 'テクノロジー',
       description: '最先端のAI技術で、大切な思い出をよみがえらせる修復プロセス',
-      items: {
+      list: {
         total: '3',
-        list: [
+        items: [
           {
             title: 'スマートダメージ検出',
             description:
@@ -509,9 +509,9 @@ export default {
     'how-to-use': {
       title: '古い写真の修復方法',
       description: 'わずか数ステップで大切な思い出をよみがえらせましょう',
-      steps: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             step: 1,
             title: '古い写真をアップロード',
@@ -542,9 +542,9 @@ export default {
     faq: {
       title: 'よくある質問',
       description: 'AI写真修復技術に関するよくある質問と回答',
-      questions: {
+      list: {
         total: '8',
-        list: [
+        items: [
           {
             question: 'どのような種類の写真のダメージを修復できますか？',
             answer:
@@ -631,9 +631,9 @@ export default {
       title: 'AIアバター生成',
       description:
         '写真をアップロードするだけで、AIがあなたの特徴を保ちながら、背景をシームレスに変更したり装飾を加えたりして、パーソナライズされたアバターを簡単に作成できます。',
-      items: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             title: '証明写真',
             description: 'パスポート、ビザ、社員証など、公式要件を満たす完璧な証明写真を作成。',
@@ -658,9 +658,9 @@ export default {
     'how-to-use': {
       title: 'アバターの作り方',
       subtitle: '完璧なAIアバターを作成するための簡単な手順',
-      steps: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             title: 'アバタースタイルを選択',
             description:
@@ -687,9 +687,9 @@ export default {
     faq: {
       title: 'よくある質問',
       subtitle: 'AIアバタージェネレーターに関するよくある質問と回答',
-      questions: {
+      list: {
         total: '6',
-        list: [
+        items: [
           {
             question: 'AIアバタージェネレーターはどのように機能しますか？',
             answer:

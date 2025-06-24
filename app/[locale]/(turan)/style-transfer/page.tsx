@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 import { StyleTransfer } from '@/components/style-transfer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,7 +37,7 @@ const faqItems = [
   },
 ];
 
-export default function StyleTransferPage() {
+export default async function StyleTransferPage() {
   return (
     <div className="min-h-screen transition-colors duration-300">
       <div className="container px-4 md:px-6 lg:px-8">
@@ -72,9 +74,11 @@ export default function StyleTransferPage() {
                   </Button>
                 </div>
                 <div className="mt-8 w-full max-w-xs overflow-hidden rounded-2xl shadow-xl lg:max-w-sm">
-                  <img
+                  <Image
                     src="/examples/style-before.jpg"
                     alt="Style Transfer Example"
+                    width={500}
+                    height={300}
                     className="h-auto w-full object-cover"
                   />
                 </div>

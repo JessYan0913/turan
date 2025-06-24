@@ -81,15 +81,15 @@ const stylePresets = [
 
 export default async function StylePresetPage() {
   const t = await getScopedI18n('style-preset');
-  const faqTotal = t('faq.questions.total') as unknown as number;
+  const faqTotal = t('faq.list.total') as unknown as number;
   const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
-    question: t(`faq.questions.items.${index}.question` as any),
-    answer: t(`faq.questions.items.${index}.answer` as any),
+    question: t(`faq.list.items.${index}.question` as any),
+    answer: t(`faq.list.items.${index}.answer` as any),
   }));
-  const howToUseTotal = t('how-to-use.steps.total') as unknown as number;
+  const howToUseTotal = t('how-to-use.list.total') as unknown as number;
   const howToUse = Array.from({ length: howToUseTotal }).map((_, index) => ({
-    title: t(`how-to-use.steps.items.${index}.title` as any),
-    description: t(`how-to-use.steps.items.${index}.description` as any),
+    title: t(`how-to-use.list.items.${index}.title` as any),
+    description: t(`how-to-use.list.items.${index}.description` as any),
   }));
   return (
     <div className="min-h-screen transition-colors duration-300">

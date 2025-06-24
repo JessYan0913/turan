@@ -137,7 +137,7 @@ export default {
     faq: {
       title: 'Frequently Asked Questions',
       subtitle: 'Find answers to common questions about our AI image generator',
-      questions: {
+      list: {
         total: '8',
         items: [
           {
@@ -227,7 +227,7 @@ export default {
     'how-to-use': {
       title: 'How to Use',
       description: 'Follow these simple steps to create amazing AI-generated images',
-      steps: {
+      list: {
         total: '4',
         items: [
           {
@@ -256,7 +256,7 @@ export default {
     faq: {
       title: 'Frequently Asked Questions',
       description: 'Find answers to common questions about our AI image generator',
-      questions: {
+      list: {
         total: '8',
         items: [
           {
@@ -348,7 +348,7 @@ export default {
     'how-to-use': {
       title: 'How to Use Style Presets',
       description: 'Transform your images in just a few clicks with our easy-to-use style presets',
-      steps: {
+      list: {
         total: '4',
         items: [
           {
@@ -381,7 +381,7 @@ export default {
     faq: {
       title: 'Frequently Asked Questions',
       description: 'Find answers to common questions about our AI image generator',
-      questions: {
+      list: {
         total: '6',
         items: [
           {
@@ -433,7 +433,7 @@ export default {
         colorize: {
           label: 'Colorize',
           description: 'Whether to colorize the restored image',
-          sublabel: 'Colorize restored image',
+          'sub-label': 'Colorize restored image',
         },
         submit: {
           loading: 'Processing...',
@@ -457,9 +457,9 @@ export default {
       title02: 'FLUX Kontext',
       description:
         'Our advanced AI restoration technology brings your old photographs back to life with incredible detail and accuracy.',
-      items: {
+      list: {
         total: '3',
-        list: [
+        items: [
           {
             title: 'Fix Scratches & Damage',
             description:
@@ -483,9 +483,9 @@ export default {
       title02: 'Technology',
       description:
         'Our AI-powered restoration process uses cutting-edge techniques to bring your memories back to life',
-      items: {
+      list: {
         total: '3',
-        list: [
+        items: [
           {
             title: 'Smart Damage Detection',
             description:
@@ -513,9 +513,9 @@ export default {
     'how-to-use': {
       title: 'How to Restore Your Old Photos',
       description: 'Bring your cherished memories back to life in just a few simple steps',
-      steps: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             step: 1,
             title: 'Upload Your Old Photo',
@@ -546,9 +546,9 @@ export default {
     faq: {
       title: 'Frequently Asked Questions',
       description: 'Find answers to common questions about our AI photo restoration technology',
-      questions: {
+      list: {
         total: '8',
-        list: [
+        items: [
           {
             question: 'What types of photo damage can this tool repair?',
             answer:
@@ -635,9 +635,9 @@ export default {
       title: 'AI Avatar Generation',
       description:
         'Easily create personalized avatars: simply upload your photo, and the AI will preserve your defining features while seamlessly altering the background or adding decorative elements.',
-      items: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             title: 'Professional ID Photos',
             description: 'Create perfect passport, visa, and employee ID photos that meet official requirements.',
@@ -661,9 +661,9 @@ export default {
     'how-to-use': {
       title: 'How to Create Your Avatar',
       subtitle: 'Follow these simple steps to generate your perfect AI avatar',
-      steps: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             title: 'Choose an Avatar Style',
             description:
@@ -690,9 +690,9 @@ export default {
     faq: {
       title: 'Frequently Asked Questions',
       subtitle: 'Find answers to common questions about our AI avatar generator',
-      questions: {
+      list: {
         total: '6',
-        list: [
+        items: [
           {
             question: 'How does the AI avatar generator work?',
             answer:

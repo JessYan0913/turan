@@ -59,10 +59,10 @@ const examples = [
 
 export default async function TextToImagePage() {
   const t = await getScopedI18n('text-to-image');
-  const faqTotal = t('faq.questions.total') as unknown as number;
+  const faqTotal = t('faq.list.total') as unknown as number;
   const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
-    question: t(`faq.questions.items.${index}.question` as any),
-    answer: t(`faq.questions.items.${index}.answer` as any),
+    question: t(`faq.list.items.${index}.question` as any),
+    answer: t(`faq.list.items.${index}.answer` as any),
   }));
   return (
     <div className="min-h-screen transition-colors duration-300">

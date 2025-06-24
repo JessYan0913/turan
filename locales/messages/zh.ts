@@ -133,7 +133,7 @@ export default {
     faq: {
       title: '常见问题',
       subtitle: '了解关于我们的 AI 图片生成器的常见问题解答',
-      questions: {
+      list: {
         total: '8',
         items: [
           {
@@ -217,7 +217,7 @@ export default {
     'how-to-use': {
       title: '使用指南',
       description: '按照以下简单步骤创建惊艳的AI编辑图片',
-      steps: {
+      list: {
         total: '4',
         items: [
           {
@@ -242,7 +242,7 @@ export default {
     faq: {
       title: '常见问题',
       description: '关于我们的AI图片编辑器的常见问题解答',
-      questions: {
+      list: {
         total: '8',
         items: [
           {
@@ -331,7 +331,7 @@ export default {
     'how-to-use': {
       title: '使用指南',
       description: '简单几步，让您的图片焕然一新',
-      steps: {
+      list: {
         total: '4',
         items: [
           {
@@ -360,7 +360,7 @@ export default {
     faq: {
       title: '常见问题',
       description: '关于AI图像生成器的常见问题解答',
-      questions: {
+      list: {
         total: '6',
         items: [
           {
@@ -411,7 +411,7 @@ export default {
         colorize: {
           label: '上色',
           description: '是否将修复后的图片上色',
-          sublabel: '为修复后的图片上色',
+          'sub-label': '为修复后的图片上色',
         },
         submit: {
           loading: '处理中...',
@@ -434,9 +434,9 @@ export default {
       title01: '由',
       title02: 'FLUX Kontext 提供支持',
       description: '我们先进的AI修复技术能够以惊人的细节和精准度让您的老照片重获新生。',
-      items: {
+      list: {
         total: '3',
-        list: [
+        items: [
           {
             title: '修复划痕和损伤',
             description: '自动修复因时间流逝造成的撕裂、折痕、污渍等物理损伤。',
@@ -456,9 +456,9 @@ export default {
       title01: '先进修复',
       title02: '技术',
       description: '我们的AI驱动修复流程采用尖端技术，让珍贵记忆重获新生',
-      items: {
+      list: {
         total: '3',
-        list: [
+        items: [
           {
             title: '智能损伤检测',
             description:
@@ -485,9 +485,9 @@ export default {
     'how-to-use': {
       title: '如何修复您的老照片',
       description: '仅需简单几步，让珍贵记忆重获新生',
-      steps: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             step: 1,
             title: '上传老照片',
@@ -514,9 +514,9 @@ export default {
     faq: {
       title: '常见问题',
       description: '关于AI照片修复技术的常见问题解答',
-      questions: {
+      list: {
         total: '8',
-        list: [
+        items: [
           {
             question: '这个工具可以修复哪些类型的照片损伤？',
             answer:
@@ -601,9 +601,9 @@ export default {
     features: {
       title: 'AI 头像生成',
       description: '轻松创建个性化头像：只需上传照片，AI将保留您的特征，同时无缝更改背景或添加装饰元素。',
-      items: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             title: '专业证件照',
             description: '创建符合官方要求的完美护照、签证和员工证件照片。',
@@ -627,9 +627,9 @@ export default {
     'how-to-use': {
       title: '如何创建您的头像',
       subtitle: '按照以下简单步骤生成完美的AI头像',
-      steps: {
+      list: {
         total: '4',
-        list: [
+        items: [
           {
             title: '选择头像风格',
             description: '浏览我们的示例头像风格或从空白画布开始。选择最能代表您个性或品牌的风格。',
@@ -652,9 +652,9 @@ export default {
     faq: {
       title: '常见问题',
       subtitle: '关于AI头像生成器的常见问题解答',
-      questions: {
+      list: {
         total: '6',
-        list: [
+        items: [
           {
             question: 'AI头像生成器是如何工作的？',
             answer:

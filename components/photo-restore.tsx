@@ -165,7 +165,7 @@ export function PhotoRestore() {
                           className="border-blue-600 data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-600 data-[state=checked]:to-cyan-500 dark:border-cyan-400"
                         />
                         <label htmlFor="colorize" className="text-sm text-blue-700 dark:text-cyan-400">
-                          {t('tool.form.colorize.sublabel')}
+                          {t('tool.form.colorize.sub-label')}
                         </label>
                       </div>
                     </FormControl>
