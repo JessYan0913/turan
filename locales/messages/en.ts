@@ -103,12 +103,12 @@ export default {
       form: {
         prompt: {
           label: 'Prompt',
-          discription: 'Describe the image you want to generate in detail',
+          description: 'Describe the image you want to generate in detail',
           message: 'Please enter a prompt',
         },
         aspectRatio: {
           label: 'Aspect Ratio',
-          discription: 'Select the aspect ratio for your generated image',
+          description: 'Select the aspect ratio for your generated image',
           message: 'Please select an aspect ratio',
         },
         submit: {
@@ -193,12 +193,12 @@ export default {
       form: {
         image: {
           label: 'Upload Image',
-          discription: 'Drag and drop an image here, or click to select',
+          description: 'Drag and drop an image here, or click to select',
           message: 'Please upload an imag',
         },
         prompt: {
           label: 'Edit Instructions',
-          discription: 'Enter a description of the changes you want to make to the image.',
+          description: 'Enter a description of the changes you want to make to the image.',
           message: 'Please enter a prompt',
         },
         submit: {

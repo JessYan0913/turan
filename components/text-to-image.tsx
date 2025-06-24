@@ -135,7 +135,7 @@ export function TextToImage() {
                       <FormLabel className="font-medium text-blue-700 dark:text-blue-400">
                         {t('tool.form.prompt.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.prompt.discription')}</p>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.prompt.description')}</p>
                     </div>
                     <FormControl>
                       <Textarea
@@ -159,7 +159,7 @@ export function TextToImage() {
                       <FormLabel className="font-medium text-blue-700 dark:text-blue-400">
                         {t('tool.form.aspectRatio.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.aspectRatio.discription')}</p>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.aspectRatio.description')}</p>
                     </div>
                     <FormControl>
                       <AspectRatioSelector

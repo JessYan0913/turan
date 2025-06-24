@@ -99,12 +99,12 @@ export default {
       form: {
         prompt: {
           label: '提示词',
-          discription: '详细描述您想要生成的图片',
+          description: '详细描述您想要生成的图片',
           message: '请输入提示词',
         },
         aspectRatio: {
           label: '宽高比',
-          discription: '选择生成图片的宽高比',
+          description: '选择生成图片的宽高比',
           message: '请选择宽高比',
         },
         submit: {
@@ -183,12 +183,12 @@ export default {
       form: {
         image: {
           label: '上传图片',
-          discription: '拖放图片到此处，或点击选择',
+          description: '拖放图片到此处，或点击选择',
           message: '请上传图片',
         },
         prompt: {
           label: '编辑指令',
-          discription: '输入您想要对图片进行的更改描述',
+          description: '输入您想要对图片进行的更改描述',
           message: '请输入编辑指令',
         },
         submit: {

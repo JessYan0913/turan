@@ -103,12 +103,12 @@ export default {
       form: {
         prompt: {
           label: 'プロンプト',
-          discription: '生成したい画像を詳しく説明してください',
+          description: '生成したい画像を詳しく説明してください',
           message: 'プロンプトを入力してください',
         },
         aspectRatio: {
           label: 'アスペクト比',
-          discription: '生成する画像のアスペクト比を選択してください',
+          description: '生成する画像のアスペクト比を選択してください',
           message: 'アスペクト比を選択してください',
         },
         submit: {
@@ -193,12 +193,12 @@ export default {
       form: {
         image: {
           label: '画像をアップロード',
-          discription: '画像をドラッグ＆ドロップするか、クリックして選択',
+          description: '画像をドラッグ＆ドロップするか、クリックして選択',
           message: '画像をアップロードしてください',
         },
         prompt: {
           label: '編集指示',
-          discription: '画像に加えたい変更内容を入力してください',
+          description: '画像に加えたい変更内容を入力してください',
           message: '編集内容を入力してください',
         },
         submit: {

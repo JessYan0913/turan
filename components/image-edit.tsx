@@ -143,7 +143,7 @@ export function ImageEdit() {
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
                         {t('tool.form.image.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.image.discription')}</p>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.image.description')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -162,7 +162,7 @@ export function ImageEdit() {
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
                         {t('tool.form.prompt.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.prompt.discription')}</p>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.prompt.description')}</p>
                     </div>
                     <FormControl>
                       <Textarea
