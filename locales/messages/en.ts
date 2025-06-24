@@ -727,6 +727,110 @@ export default {
       },
     },
   },
+  'style-transfer': {
+    header: {
+      title: 'Style Transfer',
+      subtitle: 'Transform any image into your favorite artistic style',
+    },
+    tool: {
+      form: {
+        image: {
+          label: 'Image',
+          description: 'Upload an image to transform it',
+          message: 'Please upload an image',
+        },
+        styleImage: {
+          label: 'Style Image',
+          description: 'Upload a style image to transform the image',
+          message: 'Please upload a style image',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Generate Avatar',
+        },
+      },
+      regenerate: 'Regenerate',
+      download: 'Download',
+      idle: {
+        title: 'Ready to Restore',
+        subtitle: 'Upload your old photo and restore it with AI. The result will appear here.',
+      },
+      error: {
+        title: 'Error Occurred',
+        subtitle: 'An error occurred while processing your request. Please try again.',
+        try: 'Retry',
+      },
+    },
+    'style-transfer-info': {
+      title: 'Four Major Advantages of Flux Image to Image AI',
+      description: 'Advanced AI models with flexible options to meet your needs.',
+      try: 'Try it now',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: 'Multiple Specialized Models',
+            description:
+              'Choose from various models optimized for different tasks - Flux Redux AI, Flux.1 Dev for advanced features like image-to-image transformation.',
+          },
+          {
+            title: 'Intelligent Model Selection',
+            description:
+              'Our system automatically recommends the most suitable model based on your input image and text description, balancing quality and computation costs.',
+          },
+          {
+            title: 'Superior Text Understanding',
+            description:
+              'Advanced natural language processing capabilities allow precise interpretation of text prompts to accurately transform images according to your descriptions.',
+          },
+          {
+            title: 'Cost-Effective Processing',
+            description:
+              'Flexible model options let you choose between lightweight models for simple tasks and advanced models for complex transformations, optimizing both quality and cost.',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      description: 'Answers to common questions about style transfer',
+      list: {
+        total: '6',
+        items: [
+          {
+            question: 'What is style transfer?',
+            answer:
+              'Style transfer is an artificial intelligence technology that can apply the artistic style of one image to another image while retaining the content of the original image.',
+          },
+          {
+            question: 'How to use the style transfer feature?',
+            answer:
+              'Simply upload your original image and the artistic style image you want to apply, our AI will automatically apply the style to your image.',
+          },
+          {
+            question: 'What image formats does style transfer support?',
+            answer:
+              'We support common image formats, including JPEG, PNG, and WebP. For the best results, we recommend using high-quality images.',
+          },
+          {
+            question: 'How long does it take to process an image?',
+            answer:
+              'Processing time depends on image size and server load, usually ranging from a few seconds to several minutes. High-resolution images may require longer processing time.',
+          },
+          {
+            question: 'Will style transfer change my original image?',
+            answer:
+              'No, all processing is non-destructive. You can download the processed image at any time, and the original image will remain unchanged.',
+          },
+          {
+            question: 'How to get the best effect?',
+            answer:
+              'For the best effect, we recommend using high contrast style images and trying different style images to find the most suitable one.',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: 'Transform Your Images with AI',

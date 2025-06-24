@@ -22,13 +22,13 @@ export function TextToImage() {
   const router = useRouter();
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const t = useScopedI18n('text-to-image');
+  const t = useScopedI18n('text-to-image.tool');
 
   // Define the form schema using Zod
   const imageGenerationSchema = z.object({
-    prompt: z.string().min(1, { message: t('tool.form.prompt.message') }),
+    prompt: z.string().min(1, { message: t('form.prompt.message') }),
     aspectRatio: z.string({
-      required_error: t('tool.form.aspectRatio.message'),
+      required_error: t('form.aspectRatio.message'),
     }),
   });
 
@@ -133,9 +133,9 @@ export function TextToImage() {
                   <FormItem>
                     <div className="mb-2 space-y-1">
                       <FormLabel className="font-medium text-blue-700 dark:text-blue-400">
-                        {t('tool.form.prompt.label')}
+                        {t('form.prompt.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.prompt.description')}</p>
+                      <p className="text-muted-foreground text-xs">{t('form.prompt.description')}</p>
                     </div>
                     <FormControl>
                       <Textarea
@@ -157,9 +157,9 @@ export function TextToImage() {
                   <FormItem className="space-y-3">
                     <div className="mb-2 space-y-1">
                       <FormLabel className="font-medium text-blue-700 dark:text-blue-400">
-                        {t('tool.form.aspectRatio.label')}
+                        {t('form.aspectRatio.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.aspectRatio.description')}</p>
+                      <p className="text-muted-foreground text-xs">{t('form.aspectRatio.description')}</p>
                     </div>
                     <FormControl>
                       <AspectRatioSelector
@@ -183,12 +183,12 @@ export function TextToImage() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
-                    {t('tool.form.submit.loading')}
+                    {t('form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="mr-2 size-4" />
-                    {t('tool.form.submit.default')}
+                    {t('form.submit.default')}
                   </>
                 )}
               </Button>
@@ -207,7 +207,7 @@ export function TextToImage() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          {t('tool.regenerate')}
+          {t('regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -217,7 +217,7 @@ export function TextToImage() {
           variant="ghost"
         >
           <Download className="size-4" />
-          {t('tool.download')}
+          {t('download')}
         </Button>
 
         {/* Result Content */}
@@ -233,8 +233,8 @@ export function TextToImage() {
               <ImageIcon className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.idle.title')}</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('tool.idle.subtitle')}</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('idle.subtitle')}</p>
             </div>
           </div>
 
@@ -269,13 +269,13 @@ export function TextToImage() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.error.title')}</h3>
-              <p className="text-muted-foreground mt-2 text-sm">{t('tool.error.subtitle')}</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
-                {t('tool.error.try')}
+                {t('error.try')}
               </Button>
             </div>
           </div>

@@ -688,35 +688,93 @@ export default {
   },
   'style-transfer': {
     header: {
-      title: 'Style Transfer',
-      subtitle: 'Transform any image into your favorite artistic style',
+      title: '风格迁移',
+      subtitle: '将任意图像转换为您喜欢的艺术风格',
+    },
+    tool: {
+      form: {
+        image: {
+          label: '图像',
+          description: '上传一张图像进行转换',
+          message: '请上传图像',
+        },
+        styleImage: {
+          label: '风格图像',
+          description: '上传一张风格图像用于转换原图',
+          message: '请上传风格图像',
+        },
+        submit: {
+          loading: '处理中...',
+          default: '生成头像',
+        },
+      },
+      regenerate: '重新生成',
+      download: '下载',
+      idle: {
+        title: '准备好修复',
+        subtitle: '上传您的旧照片，使用AI进行修复。修复后的图片将在这里显示。',
+      },
+      error: {
+        title: '出现错误',
+        subtitle: '处理您的请求时遇到错误。请再次尝试。',
+        try: '重试',
+      },
     },
     'style-transfer-info': {
-      title: 'Four Major Advantages of Flux Image to Image AI',
-      description: 'Advanced AI models with flexible options to meet your needs.',
-      try: 'Try it now',
-      advantages: {
+      title: 'Flux图像风格迁移AI的四大优势',
+      description: '先进的AI模型，提供灵活选项，满足多样需求。',
+      try: '立即体验',
+      list: {
         total: '4',
         items: [
           {
-            title: 'Multiple Specialized Models',
-            description:
-              'Choose from various models optimized for different tasks - Flux Redux AI, Flux.1 Dev for advanced features like image-to-image transformation.',
+            title: '多种专业模型',
+            description: '可选择多种为不同任务优化的模型，如支持图像风格迁移的 Flux Redux AI 和 Flux.1 Dev 等。',
           },
           {
-            title: 'Intelligent Model Selection',
-            description:
-              'Our system automatically recommends the most suitable model based on your input image and text description, balancing quality and computation costs.',
+            title: '智能模型选择',
+            description: '系统会根据输入图像和文本描述，自动推荐最合适的模型，在质量与计算成本之间取得平衡。',
           },
           {
-            title: 'Superior Text Understanding',
-            description:
-              'Advanced natural language processing capabilities allow precise interpretation of text prompts to accurately transform images according to your descriptions.',
+            title: '出色的文本理解能力',
+            description: '先进的自然语言处理能力，能精准理解文本提示，准确按描述生成图像效果。',
           },
           {
-            title: 'Cost-Effective Processing',
-            description:
-              'Flexible model options let you choose between lightweight models for simple tasks and advanced models for complex transformations, optimizing both quality and cost.',
+            title: '高性价比的处理',
+            description: '灵活的模型选项，简单任务可选轻量模型，复杂任务可选高级模型，兼顾效果与成本。',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: '常见问题',
+      description: '关于风格迁移的常见问题解答',
+      list: {
+        total: '6',
+        items: [
+          {
+            question: '什么是风格迁移？',
+            answer: '风格迁移是一种人工智能技术，可以在保留原始图像内容的同时，应用另一幅图像的艺术风格。',
+          },
+          {
+            question: '如何使用风格迁移功能？',
+            answer: '只需上传原始图像和希望应用的风格图像，AI 将自动将风格应用于您的图像。',
+          },
+          {
+            question: '风格迁移支持哪些图像格式？',
+            answer: '支持常见图像格式，包括 JPEG、PNG 和 WebP。为获得最佳效果，建议使用高质量图像。',
+          },
+          {
+            question: '处理一张图像需要多久？',
+            answer: '处理时间取决于图像大小和服务器负载，通常在几秒到几分钟之间。高分辨率图像可能需要更长时间。',
+          },
+          {
+            question: '风格迁移会改变我的原图吗？',
+            answer: '不会，所有处理都是非破坏性的，您随时可以下载处理后的图像，原图保持不变。',
+          },
+          {
+            question: '如何获得最佳效果？',
+            answer: '为获得最佳效果，建议使用高对比度的风格图像，并尝试不同风格图像来寻找最合适的一种。',
           },
         ],
       },

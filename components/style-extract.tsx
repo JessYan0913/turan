@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Check, Copy, LetterText, Loader2, Palette, Pickaxe, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertCircle, Check, Copy, LetterText, Loader2, Pickaxe, RefreshCw, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { type Prediction } from 'replicate';
@@ -18,8 +18,6 @@ import { cn } from '@/lib/utils';
 export function StyleExtract() {
   const router = useRouter();
   const [isCopied, setIsCopied] = useState(false);
-
-  const imageRef = useRef<HTMLImageElement>(null);
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({

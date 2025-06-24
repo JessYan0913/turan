@@ -15,16 +15,18 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/use-polling-request';
 import { cn, downloadImage } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 export function StyleTransfer() {
+  const t = useScopedI18n('style-transfer.tool');
   const router = useRouter();
 
   const imageRef = useRef<HTMLImageElement>(null);
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
-    image: z.instanceof(File, { message: 'Please upload an image' }),
-    styleImage: z.instanceof(File, { message: 'Please upload a style image' }),
+    image: z.instanceof(File, { message: t('form.image.message') }),
+    styleImage: z.instanceof(File, { message: t('form.styleImage.message') }),
   });
 
   // Initialize react-hook-form with Zod validation
@@ -126,10 +128,10 @@ export function StyleTransfer() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Prompt</FormLabel>
-                      <p className="text-muted-foreground text-xs">
-                        Describe the style transformation you want to apply
-                      </p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('form.image.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('form.image.description')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -145,8 +147,10 @@ export function StyleTransfer() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Style Image</FormLabel>
-                      <p className="text-muted-foreground text-xs">Choose a style image to apply to your image</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('form.styleImage.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('form.styleImage.description')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -166,12 +170,12 @@ export function StyleTransfer() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
-                    Processing...
+                    {t('form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <Brush className="mr-2 size-5" />
-                    Apply Style Transfer
+                    {t('form.submit.default')}
                   </>
                 )}
               </Button>
@@ -190,7 +194,7 @@ export function StyleTransfer() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          Regenerate
+          {t('regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -200,7 +204,7 @@ export function StyleTransfer() {
           variant="ghost"
         >
           <Download className="size-4" />
-          Download
+          {t('download')}
         </Button>
 
         {/* Result Content */}
@@ -216,10 +220,8 @@ export function StyleTransfer() {
               <Brush className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Apply Style Transfer</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
-                Your style-transferred image will appear here
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('idle.subtitle')}</p>
             </div>
           </div>
 
@@ -254,15 +256,13 @@ export function StyleTransfer() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something went wrong</h3>
-              <p className="text-muted-foreground mt-2 text-sm">
-                We encountered an error while processing your request. Please try again.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
               >
-                Try Again
+                {t('error.try')}
               </Button>
             </div>
           </div>

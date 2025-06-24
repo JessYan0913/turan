@@ -20,7 +20,7 @@ import { cn, downloadImage } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
 export function StylePreset() {
-  const t = useScopedI18n('style-preset');
+  const t = useScopedI18n('style-preset.tool');
   const router = useRouter();
 
   const imageRef = useRef<HTMLImageElement>(null);
@@ -28,8 +28,8 @@ export function StylePreset() {
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
-    image: z.instanceof(File, { message: t('tool.form.image.message') }),
-    style: z.string().min(1, { message: t('tool.form.style.message') }),
+    image: z.instanceof(File, { message: t('form.image.message') }),
+    style: z.string().min(1, { message: t('form.style.message') }),
     prompt: z.string().optional(),
   });
 
@@ -152,9 +152,9 @@ export function StylePreset() {
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
-                        {t('tool.form.image.label')}
+                        {t('form.image.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.image.description')}</p>
+                      <p className="text-muted-foreground text-xs">{t('form.image.description')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -171,9 +171,9 @@ export function StylePreset() {
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
-                        {t('tool.form.style.label')}
+                        {t('form.style.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.style.description')}</p>
+                      <p className="text-muted-foreground text-xs">{t('form.style.description')}</p>
                     </div>
                     <FormControl>
                       <StyleSelector
@@ -201,12 +201,12 @@ export function StylePreset() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
-                    {t('tool.form.submit.loading')}
+                    {t('form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <Palette className="mr-2 size-5" />
-                    {t('tool.form.submit.default')}
+                    {t('form.submit.default')}
                   </>
                 )}
               </Button>
@@ -225,7 +225,7 @@ export function StylePreset() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          {t('tool.regenerate')}
+          {t('regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -235,7 +235,7 @@ export function StylePreset() {
           variant="ghost"
         >
           <Download className="size-4" />
-          {t('tool.download')}
+          {t('download')}
         </Button>
 
         {/* Result Content */}
@@ -251,8 +251,8 @@ export function StylePreset() {
               <Palette className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.idle.title')}</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('tool.idle.subtitle')}</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('idle.subtitle')}</p>
             </div>
           </div>
 
@@ -287,8 +287,8 @@ export function StylePreset() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.error.title')}</h3>
-              <p className="text-muted-foreground mt-2 text-sm">{t('tool.error.subtitle')}</p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
