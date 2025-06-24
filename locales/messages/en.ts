@@ -221,15 +221,15 @@ export default {
     examples: {
       title01: 'Explore Pre-made Prompts for the',
       title02: 'AI Image Editor',
-      subtitle: 'Input text description, AI will edit your images for you',
+      description: 'Input text description, AI will edit your images for you',
       more: 'Load More Examples',
     },
     'how-to-use': {
       title: 'How to Use',
-      subtitle: 'Follow these simple steps to create amazing AI-generated images',
+      description: 'Follow these simple steps to create amazing AI-generated images',
       steps: {
         total: '4',
-        list: [
+        items: [
           {
             title: 'Choose an Example or Start Fresh',
             description:
@@ -255,10 +255,10 @@ export default {
     },
     faq: {
       title: 'Frequently Asked Questions',
-      subtitle: 'Find answers to common questions about our AI image generator',
+      description: 'Find answers to common questions about our AI image generator',
       questions: {
         total: '8',
-        list: [
+        items: [
           {
             question: 'How does the image editing tool work?',
             answer:

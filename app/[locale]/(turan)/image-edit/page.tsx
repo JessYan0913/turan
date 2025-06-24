@@ -50,13 +50,13 @@ export default async function TextToImagePage() {
   const t = await getScopedI18n('image-edit');
   const faqTotal = t('faq.questions.total') as unknown as number;
   const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
-    question: t(`faq.questions.list.${index}.question` as any),
-    answer: t(`faq.questions.list.${index}.answer` as any),
+    question: t(`faq.questions.items.${index}.question` as any),
+    answer: t(`faq.questions.items.${index}.answer` as any),
   }));
   const howToUseTotal = t('how-to-use.steps.total') as unknown as number;
   const howToUse = Array.from({ length: howToUseTotal }).map((_, index) => ({
-    title: t(`how-to-use.steps.list.${index}.title` as any),
-    description: t(`how-to-use.steps.list.${index}.description` as any),
+    title: t(`how-to-use.steps.items.${index}.title` as any),
+    description: t(`how-to-use.steps.items.${index}.description` as any),
   }));
   return (
     <div className="min-h-screen transition-colors duration-300">
@@ -86,7 +86,7 @@ export default async function TextToImagePage() {
                   {t('examples.title02')}
                 </span>
               </h2>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.subtitle')}</p>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.description')}</p>
             </div>
 
             {/* Example Grid */}
@@ -131,7 +131,7 @@ export default async function TextToImagePage() {
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
                     {t('how-to-use.title')}
                   </h2>
-                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('how-to-use.subtitle')}</p>
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('how-to-use.description')}</p>
                 </div>
 
                 <div className="space-y-8">
@@ -161,7 +161,7 @@ export default async function TextToImagePage() {
                   <h2 className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl md:text-5xl">
                     {t('faq.title')}
                   </h2>
-                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">{t('faq.subtitle')}</p>
+                  <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">{t('faq.description')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-10">

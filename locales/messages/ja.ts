@@ -221,15 +221,15 @@ export default {
     examples: {
       title01: 'AI画像エディターの',
       title02: 'テンプレートプロンプトを探す',
-      subtitle: 'テキストで説明するだけで、AIが画像を編集します',
+      description: 'テキストで説明するだけで、AIが画像を編集します',
       more: '他の例を見る',
     },
     'how-to-use': {
       title: '使い方',
-      subtitle: 'AIで素晴らしい画像を生成する簡単な手順',
+      description: 'AIで素晴らしい画像を生成する簡単な手順',
       steps: {
         total: '4',
-        list: [
+        items: [
           {
             title: '例を選ぶか、新規作成',
             description:
@@ -255,10 +255,10 @@ export default {
     },
     faq: {
       title: 'よくある質問',
-      subtitle: 'AI画像エディターに関するよくある質問と回答',
+      description: 'AI画像エディターに関するよくある質問と回答',
       questions: {
         total: '8',
-        list: [
+        items: [
           {
             question: 'この画像編集ツールはどのように機能しますか？',
             answer:

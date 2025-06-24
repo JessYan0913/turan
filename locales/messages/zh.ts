@@ -211,15 +211,15 @@ export default {
     examples: {
       title01: '探索AI图片编辑器的',
       title02: '预设提示词',
-      subtitle: '输入文字描述，AI将为您编辑图片',
+      description: '输入文字描述，AI将为您编辑图片',
       more: '加载更多示例',
     },
     'how-to-use': {
       title: '使用指南',
-      subtitle: '按照以下简单步骤创建惊艳的AI编辑图片',
+      description: '按照以下简单步骤创建惊艳的AI编辑图片',
       steps: {
         total: '4',
-        list: [
+        items: [
           {
             title: '选择示例或从头开始',
             description: '浏览我们的示例提示词，或者从您自己的创意开始。点击任意示例即可将其作为起点。',
@@ -241,10 +241,10 @@ export default {
     },
     faq: {
       title: '常见问题',
-      subtitle: '关于我们的AI图片编辑器的常见问题解答',
+      description: '关于我们的AI图片编辑器的常见问题解答',
       questions: {
         total: '8',
-        list: [
+        items: [
           {
             question: '这个图片编辑工具是如何工作的？',
             answer:
