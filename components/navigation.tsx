@@ -121,7 +121,6 @@ export function Navigation({ user }: { user: User | undefined }) {
                     className={cn(
                       'group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
                       'hover:bg-accent hover:text-accent-foreground',
-                      'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                       'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
                     )}
                   >
@@ -155,7 +154,6 @@ export function Navigation({ user }: { user: User | undefined }) {
                     className={cn(
                       'group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
                       'hover:bg-accent hover:text-accent-foreground',
-                      'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                       'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
                     )}
                   >
@@ -169,7 +167,6 @@ export function Navigation({ user }: { user: User | undefined }) {
                     className={cn(
                       'group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
                       'hover:bg-accent hover:text-accent-foreground',
-                      'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                       'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
                     )}
                   >
