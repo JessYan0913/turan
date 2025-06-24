@@ -420,13 +420,177 @@ export default {
   },
   'photo-restore': {
     header: {
-      title: '旧照片修复',
-      subtitle: '让珍贵记忆焕发新生',
+      title: 'Old Photo Restoration',
+      subtitle: 'Breathe new life into your cherished memories with our AI-powered photo restoration',
+    },
+    tool: {
+      form: {
+        image: {
+          label: 'Old Photo',
+          description: 'Upload an image to restore',
+          message: 'Please upload an image',
+        },
+        colorize: {
+          label: 'Colorize',
+          description: 'Whether to colorize the restored image',
+          sublabel: 'Colorize restored image',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Restore Photo',
+        },
+      },
+      regenerate: 'Regenerate',
+      download: 'Download',
+      idle: {
+        title: 'Ready to Restore',
+        subtitle: 'Upload your old photo to restore it with AI. Your restored image will appear here.',
+      },
+      error: {
+        title: 'Something went wrong',
+        subtitle: 'We encountered an error while processing your request. Please try again.',
+        try: 'Try Again',
+      },
     },
     features: {
-      title01: '',
-      title02: '',
-      subtitle: '',
+      title01: 'Powered by',
+      title02: 'FLUX Kontext',
+      description:
+        'Our advanced AI restoration technology brings your old photographs back to life with incredible detail and accuracy.',
+      items: {
+        total: '3',
+        list: [
+          {
+            title: 'Fix Scratches & Damage',
+            description:
+              'Automatically repair tears, creases, stains, and other physical damage that has accumulated over time.',
+          },
+          {
+            title: 'Colorize Black & White Photos',
+            description:
+              'Transform monochrome memories into vibrant color images with historically accurate and detailed colorization.',
+          },
+          {
+            title: 'Enhance Resolution',
+            description:
+              'Upscale low-resolution scans to reveal hidden details and create print-worthy restorations of your family heirlooms.',
+          },
+        ],
+      },
+    },
+    technology: {
+      title01: 'Advanced Restoration',
+      title02: 'Technology',
+      description:
+        'Our AI-powered restoration process uses cutting-edge techniques to bring your memories back to life',
+      items: {
+        total: '3',
+        list: [
+          {
+            title: 'Smart Damage Detection',
+            description:
+              'Our AI automatically identifies different types of damage in your photos, from scratches and tears to fading and discoloration, applying the appropriate restoration techniques to each area.',
+          },
+          {
+            title: 'Historical Color Accuracy',
+            description:
+              'When colorizing black and white photos, our AI has been trained on thousands of historical images to ensure period-accurate colors for clothing, objects, and environments.',
+          },
+          {
+            title: 'Face Enhancement',
+            description:
+              'Special attention is given to faces in your photos, with advanced facial recognition that preserves the identity and expressions of your loved ones while enhancing clarity and detail.',
+          },
+        ],
+      },
+    },
+    examples: {
+      title01: 'Before & After',
+      title02: 'Showcase',
+      description: 'See the remarkable transformations our AI restoration technology can achieve',
+      try: 'Upload Your Photo Now',
+    },
+    'how-to-use': {
+      title: 'How to Restore Your Old Photos',
+      description: 'Bring your cherished memories back to life in just a few simple steps',
+      steps: {
+        total: '4',
+        list: [
+          {
+            step: 1,
+            title: 'Upload Your Old Photo',
+            description:
+              'Start by uploading the old photograph you want to restore. You can scan your physical photo, drag and drop an image file, or click to browse your files.',
+          },
+          {
+            step: 2,
+            title: 'Select Restoration Type',
+            description:
+              "Choose the type of restoration that best suits your photo's condition. Our AI will analyze the damage and suggest the most appropriate restoration techniques.",
+          },
+          {
+            step: 3,
+            title: 'Review & Refine',
+            description:
+              'Preview the restored photo and make any adjustments. Fine-tune the restoration intensity, color balance, sharpness, and other parameters to achieve the perfect result.',
+          },
+          {
+            step: 4,
+            title: 'Save & Share',
+            description:
+              'Download your beautifully restored photograph in high resolution. Share your revitalized memories with family and friends or print them for display.',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      description: 'Find answers to common questions about our AI photo restoration technology',
+      questions: {
+        total: '8',
+        list: [
+          {
+            question: 'What types of photo damage can this tool repair?',
+            answer:
+              'Our AI-powered restoration tool can effectively repair various types of photo damage including scratches, dust spots, tears, creases, water stains, and general wear and tear. It also handles fading, yellowing, and discoloration that commonly occur in old photographs.',
+          },
+          {
+            question: 'How does the AI handle colorization of black and white photos?',
+            answer:
+              'The FLUX Kontext Pro model uses advanced AI to add realistic colors to black and white photos. It analyzes the content and context of your image to apply historically accurate colors while maintaining the natural look and feel of the original photograph.',
+          },
+          {
+            question: 'Will the restoration process change the original photo?',
+            answer:
+              'No, the original photo remains completely untouched. The restoration process creates a new, enhanced version of your photo while preserving the original file exactly as it was uploaded.',
+          },
+          {
+            question: 'What is the recommended image quality for best results?',
+            answer:
+              'For optimal restoration, we recommend using high-quality scans or digital copies of your photos. Ideal specifications are: minimum 300 DPI resolution, well-lit conditions, and saved in lossless formats like TIFF or PNG when possible.',
+          },
+          {
+            question: 'Can the tool restore severely damaged or partial photos?',
+            answer:
+              'While the tool can reconstruct missing or heavily damaged areas, results may vary depending on the extent of damage. For photos with significant portions missing, some manual editing might be needed for optimal results.',
+          },
+          {
+            question: 'How long does the restoration process take?',
+            answer:
+              'Processing time depends on the image size and complexity of restoration needed. Most standard photos are processed within 30-90 seconds. Higher resolution images or those requiring extensive repairs may take longer.',
+          },
+          {
+            question: 'What file formats are supported for upload?',
+            answer:
+              'The tool supports common image formats including JPEG, PNG, and WebP. For best results, especially with professional scanning, we recommend using TIFF format as it preserves maximum image quality.',
+          },
+          {
+            question: 'Can I adjust the intensity of the restoration?',
+            answer:
+              'Yes, the tool provides adjustment options to control the strength of restoration effects, allowing you to balance between preserving the original character of the photo and applying restoration enhancements.',
+          },
+        ],
+      },
     },
   },
   'create-avatar': {

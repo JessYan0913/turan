@@ -16,23 +16,25 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { usePollingRequest } from '@/hooks/use-polling-request';
 import { cn, downloadImage } from '@/lib/utils';
+import { useScopedI18n } from '@/locales/client';
 
 export function PhotoRestore() {
+  const t = useScopedI18n('photo-restore');
   const router = useRouter();
 
   const imageRef = useRef<HTMLImageElement>(null);
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
-    image: z.instanceof(File, { message: 'Please upload an image' }),
-    color: z.boolean().default(false),
+    image: z.instanceof(File, { message: t('tool.form.image.message') }),
+    colorize: z.boolean().default(false),
   });
 
   // Initialize react-hook-form with Zod validation
   const form = useForm<z.infer<typeof styleTransformSchema>>({
     resolver: zodResolver(styleTransformSchema),
     defaultValues: {
-      color: false,
+      colorize: false,
     },
   });
 
@@ -41,11 +43,11 @@ export function PhotoRestore() {
     data: generatedImage,
     status,
     reset: resetPolling,
-  } = usePollingRequest<{ image: File; color: boolean }, Prediction>({
+  } = usePollingRequest<{ image: File; colorize: boolean }, Prediction>({
     request: async (data) => {
       const formData = new FormData();
       formData.append('image', data.image);
-      formData.append('color', data.color ? 'true' : 'false');
+      formData.append('colorize', data.colorize ? 'true' : 'false');
 
       const response = await fetch('/api/photo-restore', {
         method: 'POST',
@@ -82,7 +84,7 @@ export function PhotoRestore() {
   const onSubmit = useCallback(
     (data: z.infer<typeof styleTransformSchema>) => {
       resetPolling();
-      submitTransform({ image: data.image, color: data.color });
+      submitTransform({ image: data.image, colorize: data.colorize });
     },
     [submitTransform, resetPolling]
   );
@@ -93,7 +95,7 @@ export function PhotoRestore() {
       resetPolling();
       submitTransform({
         image: values.image,
-        color: values.color,
+        colorize: values.colorize,
       });
     }
   }, [form, submitTransform, resetPolling]);
@@ -129,8 +131,10 @@ export function PhotoRestore() {
                 render={({ field: { onChange } }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Image</FormLabel>
-                      <p className="text-muted-foreground text-xs">Upload an image to restore</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.image.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.image.description')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -142,12 +146,14 @@ export function PhotoRestore() {
 
               <FormField
                 control={form.control}
-                name="color"
+                name="colorize"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
                     <div className="mb-2 space-y-1">
-                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">Colorize</FormLabel>
-                      <p className="text-muted-foreground text-xs">Whether to colorize the restored image</p>
+                      <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
+                        {t('tool.form.colorize.label')}
+                      </FormLabel>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.colorize.description')}</p>
                     </div>
                     <FormControl>
                       <div className="flex items-center space-x-2">
@@ -159,7 +165,7 @@ export function PhotoRestore() {
                           className="border-blue-600 data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-600 data-[state=checked]:to-cyan-500 dark:border-cyan-400"
                         />
                         <label htmlFor="colorize" className="text-sm text-blue-700 dark:text-cyan-400">
-                          Colorize restored image
+                          {t('tool.form.colorize.sublabel')}
                         </label>
                       </div>
                     </FormControl>
@@ -178,12 +184,12 @@ export function PhotoRestore() {
                 {status === 'loading' || status === 'polling' ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
-                    Processing...
+                    {t('tool.form.submit.loading')}
                   </>
                 ) : (
                   <>
                     <PaintRoller className="mr-2 size-5" />
-                    Transform Style
+                    {t('tool.form.submit.default')}
                   </>
                 )}
               </Button>
@@ -202,7 +208,7 @@ export function PhotoRestore() {
           variant="ghost"
         >
           <RefreshCw className="size-4" />
-          Regenerate
+          {t('tool.regenerate')}
         </Button>
         {/* Download Button - Always visible, only enabled when there's an image */}
         <Button
@@ -212,7 +218,7 @@ export function PhotoRestore() {
           variant="ghost"
         >
           <Download className="size-4" />
-          Download
+          {t('tool.download')}
         </Button>
 
         {/* Result Content */}
@@ -228,10 +234,8 @@ export function PhotoRestore() {
               <Camera className="size-16 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Ready to Restore</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">
-                Upload your old photo to restore it with AI. Your restored image will appear here.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.idle.title')}</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('tool.idle.subtitle')}</p>
             </div>
           </div>
 
@@ -266,10 +270,8 @@ export function PhotoRestore() {
               <AlertCircle className="size-16 text-red-500" />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Something went wrong</h3>
-              <p className="text-muted-foreground mt-2 text-sm">
-                We encountered an error while processing your request. Please try again.
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('tool.error.title')}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{t('tool.error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={() => form.reset()}
