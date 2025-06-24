@@ -312,12 +312,12 @@ export default {
       form: {
         image: {
           label: 'Upload Image',
-          discription: 'Describe the style transformation you want to apply',
+          description: 'Describe the style transformation you want to apply',
           message: 'Please upload an image',
         },
         style: {
           label: 'Style',
-          discription: 'Choose a style to apply to your image',
+          description: 'Choose a style to apply to your image',
           message: 'Please select a style',
         },
         submit: {
@@ -340,17 +340,17 @@ export default {
     examples: {
       title01: 'Explore Style Presets',
       title02: 'AI Image Generator',
-      subtitle:
+      description:
         'Browse our collection of professionally designed presets. Click any preset to see a preview of how it transforms your image.',
       apply: 'Apply Preset',
       more: 'Load More Examples',
     },
     'how-to-use': {
       title: 'How to Use Style Presets',
-      subtitle: 'Transform your images in just a few clicks with our easy-to-use style presets',
+      description: 'Transform your images in just a few clicks with our easy-to-use style presets',
       steps: {
         total: '4',
-        list: [
+        items: [
           {
             step: 1,
             title: 'Upload Your Image',
@@ -380,10 +380,10 @@ export default {
     },
     faq: {
       title: 'Frequently Asked Questions',
-      subtitle: 'Find answers to common questions about our AI image generator',
+      description: 'Find answers to common questions about our AI image generator',
       questions: {
         total: '6',
-        list: [
+        items: [
           {
             question: 'What are Style Presets?',
             answer:

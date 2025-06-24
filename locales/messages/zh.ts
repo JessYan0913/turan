@@ -296,12 +296,12 @@ export default {
       form: {
         image: {
           label: '上传图片',
-          discription: '描述您想要应用的风格转换效果',
+          description: '描述您想要应用的风格转换效果',
           message: '请上传一张图片',
         },
         style: {
           label: '风格',
-          discription: '选择要应用于图片的风格',
+          description: '选择要应用于图片的风格',
           message: '请选择一种风格',
         },
         submit: {
@@ -324,16 +324,16 @@ export default {
     examples: {
       title01: '探索风格预设',
       title02: 'AI图像生成器',
-      subtitle: '浏览我们专业设计的预设系列。点击任意预设查看它如何改变您的图片。',
+      description: '浏览我们专业设计的预设系列。点击任意预设查看它如何改变您的图片。',
       apply: '应用预设',
       more: '加载更多示例',
     },
     'how-to-use': {
       title: '使用指南',
-      subtitle: '简单几步，让您的图片焕然一新',
+      description: '简单几步，让您的图片焕然一新',
       steps: {
         total: '4',
-        list: [
+        items: [
           {
             step: 1,
             title: '上传您的图片',
@@ -359,10 +359,10 @@ export default {
     },
     faq: {
       title: '常见问题',
-      subtitle: '关于AI图像生成器的常见问题解答',
+      description: '关于AI图像生成器的常见问题解答',
       questions: {
         total: '6',
-        list: [
+        items: [
           {
             question: '什么是风格预设？',
             answer:

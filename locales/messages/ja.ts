@@ -312,12 +312,12 @@ export default {
       form: {
         image: {
           label: '画像をアップロード',
-          discription: '適用したいスタイル変換を説明してください',
+          description: '適用したいスタイル変換を説明してください',
           message: '画像をアップロードしてください',
         },
         style: {
           label: 'スタイル',
-          discription: '画像に適用するスタイルを選択',
+          description: '画像に適用するスタイルを選択',
           message: 'スタイルを選択してください',
         },
         submit: {
@@ -340,17 +340,17 @@ export default {
     examples: {
       title01: 'スタイルプリセットの',
       title02: 'AI画像ジェネレーター',
-      subtitle:
+      description:
         'プロがデザインしたプリセットコレクションからお選びください。各プリセットをクリックすると、画像がどのように変わるかをプレビューできます。',
       apply: 'プリセットを適用',
       more: 'もっと見る',
     },
     'how-to-use': {
       title: '使い方ガイド',
-      subtitle: '簡単な操作でプロ並みの画像編集を実現',
+      description: '簡単な操作でプロ並みの画像編集を実現',
       steps: {
         total: '4',
-        list: [
+        items: [
           {
             step: 1,
             title: '画像をアップロード',
@@ -380,10 +380,10 @@ export default {
     },
     faq: {
       title: 'よくあるご質問',
-      subtitle: 'AI画像ジェネレーターに関するよくある質問と回答',
+      description: 'AI画像ジェネレーターに関するよくある質問と回答',
       questions: {
         total: '6',
-        list: [
+        items: [
           {
             question: 'スタイルプリセットとは何ですか？',
             answer:

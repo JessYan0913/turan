@@ -154,7 +154,7 @@ export function StylePreset() {
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
                         {t('tool.form.image.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.image.discription')}</p>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.image.description')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
@@ -173,7 +173,7 @@ export function StylePreset() {
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
                         {t('tool.form.style.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('tool.form.style.discription')}</p>
+                      <p className="text-muted-foreground text-xs">{t('tool.form.style.description')}</p>
                     </div>
                     <FormControl>
                       <StyleSelector
@@ -183,7 +183,6 @@ export function StylePreset() {
                           field.onChange(style.id);
                           form.setValue('prompt', style.prompt);
                         }}
-                        placeholder="Select a style"
                         disabled={status === 'loading' || status === 'polling'}
                       />
                     </FormControl>

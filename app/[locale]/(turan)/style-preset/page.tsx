@@ -83,13 +83,13 @@ export default async function StylePresetPage() {
   const t = await getScopedI18n('style-preset');
   const faqTotal = t('faq.questions.total') as unknown as number;
   const faqs = Array.from({ length: faqTotal }).map((_, index) => ({
-    question: t(`faq.questions.list.${index}.question` as any),
-    answer: t(`faq.questions.list.${index}.answer` as any),
+    question: t(`faq.questions.items.${index}.question` as any),
+    answer: t(`faq.questions.items.${index}.answer` as any),
   }));
   const howToUseTotal = t('how-to-use.steps.total') as unknown as number;
   const howToUse = Array.from({ length: howToUseTotal }).map((_, index) => ({
-    title: t(`how-to-use.steps.list.${index}.title` as any),
-    description: t(`how-to-use.steps.list.${index}.description` as any),
+    title: t(`how-to-use.steps.items.${index}.title` as any),
+    description: t(`how-to-use.steps.items.${index}.description` as any),
   }));
   return (
     <div className="min-h-screen transition-colors duration-300">
@@ -119,7 +119,7 @@ export default async function StylePresetPage() {
                   {t('examples.title02')}
                 </span>
               </h2>
-              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.subtitle')}</p>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg">{t('examples.description')}</p>
             </div>
 
             {/* Style Presets Grid */}
@@ -171,7 +171,7 @@ export default async function StylePresetPage() {
                     {t('how-to-use.title')}
                   </h2>
                   <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed">
-                    {t('how-to-use.subtitle')}
+                    {t('how-to-use.description')}
                   </p>
                 </div>
 
@@ -201,7 +201,7 @@ export default async function StylePresetPage() {
                     {t('faq.title')}
                   </h2>
                   <p className="text-muted-foreground mx-auto max-w-3xl text-lg leading-relaxed md:text-xl md:leading-relaxed">
-                    {t('faq.subtitle')}
+                    {t('faq.description')}
                   </p>
                 </div>
 
