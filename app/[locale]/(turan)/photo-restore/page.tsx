@@ -82,7 +82,7 @@ export default async function PhotoRestorePage() {
                   <div className="relative h-[400px] w-full overflow-hidden rounded-2xl shadow-xl md:h-[500px]">
                     {/* Before Image (Bottom Layer) */}
                     <div className="absolute inset-0">
-                      <Image src="/caw-edited.png" alt="Before photo restoration" fill className="object-cover" />
+                      <Image src="/old-photo.png" alt="Before photo restoration" fill className="object-cover" />
                     </div>
 
                     {/* After Image (Top Layer with Diagonal Mask) */}
@@ -93,7 +93,12 @@ export default async function PhotoRestorePage() {
                         WebkitClipPath: 'polygon(100% 0, 0 0, 100% 100%)',
                       }}
                     >
-                      <Image src="/caw-original.webp" alt="After photo restoration" fill className="object-cover" />
+                      <Image
+                        src="/old-photo-restored.png"
+                        alt="After photo restoration"
+                        fill
+                        className="object-cover"
+                      />
                     </div>
 
                     {/* Diagonal Line Indicator */}
@@ -164,8 +169,8 @@ export default async function PhotoRestorePage() {
                   <div className="bg-card border-border overflow-hidden rounded-xl border shadow-md transition-all hover:shadow-lg">
                     <div className="relative aspect-[4/3]">
                       <ImageSlider
-                        beforeImage="https://img.artiversehub.ai/online/2025/6/16/c6628fb3-0cc1-4026-a308-06420e600891_11038925.png"
-                        afterImage="https://img.artiversehub.ai/online/2025/6/20/a2489fa2-445a-4671-ae88-36d7ec49b5a8_11014526.png"
+                        beforeImage="/old-photo.png"
+                        afterImage="/old-photo-restored.png"
                         beforeLabel="Original"
                         afterLabel="Restored"
                         className="size-full"

@@ -66,7 +66,7 @@ export const fetcher = async (url: string) => {
   return res.json();
 };
 
-export const WEBHOOK_HOST = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NGROK_HOST;
+export const WEBHOOK_HOST = process.env.DOMAIN_NAME ? `https://${process.env.DOMAIN_NAME}` : process.env.NGROK_HOST;
 
 /**
  * 从URL下载图片

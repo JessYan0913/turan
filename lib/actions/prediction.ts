@@ -47,7 +47,7 @@ export async function createPrediction(user: User, points: number, prediction: P
 }
 
 type ProcessPredictionConfig = {
-  type: 'generate' | 'style-transfer' | 'edit' | 'avatar';
+  type: 'generate' | 'style-transfer' | 'edit' | 'avatar' | 'photo-restore';
   points: number;
   getWorkData: (input: any, processedImageUrl: string) => Record<string, unknown>;
 };
@@ -66,7 +66,6 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
     if (!user) {
       throw new Error('User not found', { cause: userId });
     }
-    // 处理失败或取消的情况
     if (prediction.status !== 'succeeded') {
       if (['failed', 'canceled'].includes(prediction.status)) {
         await db.transaction(async (tx) => {
@@ -108,7 +107,6 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
     );
 
     await db.transaction(async (tx) => {
-      // 更新预测状态
       const [updatedPrediction] = await tx
         .update(predictionTable)
         .set({
@@ -122,7 +120,6 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
         .where(eq(predictionTable.id, prediction.id))
         .returning();
 
-      // 创建工作记录
       const workData = {
         userId,
         title,

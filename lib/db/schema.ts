@@ -130,7 +130,7 @@ export const workTable = pgTable(
       .$defaultFn(() => nanoid()),
     title: varchar('title', { length: 255 }).notNull(),
     type: varchar('type', {
-      enum: ['style-transfer', 'avatar', 'edit', 'generate', 'other'],
+      enum: ['style-transfer', 'avatar', 'edit', 'generate', 'other', 'photo-restore'],
     }).notNull(),
     prompt: text('prompt').notNull().default(''),
     originalImage: text('original_image').default(''),
