@@ -10,7 +10,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ success: false, message: 'Prediction ID is required' }, { status: 400 });
     }
 
-    const prediction = await replicate.predictions.get(predictionId);
+    const { urls, webhook, ...prediction } = await replicate.predictions.get(predictionId);
 
     return NextResponse.json(prediction, { status: 200 });
   } catch (error) {

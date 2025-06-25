@@ -769,24 +769,24 @@ export default {
         total: '4',
         items: [
           {
-            title: 'Multiple Specialized Models',
+            title: 'Image-driven Style Creation',
             description:
-              'Choose from various models optimized for different tasks - Flux Redux AI, Flux.1 Dev for advanced features like image-to-image transformation.',
+              'No need to write complex prompts. Just upload your content image and a style reference image, and AI will automatically capture the style essence and seamlessly merge it.',
           },
           {
-            title: 'Intelligent Model Selection',
+            title: 'Accurate Style Capture',
             description:
-              'Our system automatically recommends the most suitable model based on your input image and text description, balancing quality and computation costs.',
+              "AI doesn't just learn the color and brushstrokes of the style image, it also understands its composition and atmosphere, while accurately preserving the content and details of your original photo.",
           },
           {
-            title: 'Superior Text Understanding',
+            title: 'Endless Creative Possibilities',
             description:
-              'Advanced natural language processing capabilities allow precise interpretation of text prompts to accurately transform images according to your descriptions.',
+              "From Van Gogh's oil paintings to cyberpunk neon lights, any image can be your style source, easily creating unique artistic works.",
           },
           {
-            title: 'Cost-Effective Processing',
+            title: 'Instant Creation with Zero Prompts',
             description:
-              'Flexible model options let you choose between lightweight models for simple tasks and advanced models for complex transformations, optimizing both quality and cost.',
+              'Say goodbye to the hassle of repeatedly fine-tuning prompts. With intuitive image selection, you can instantly preview and generate results, making the entire creation process smoother and more efficient.',
           },
         ],
       },
