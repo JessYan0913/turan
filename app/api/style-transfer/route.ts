@@ -9,8 +9,7 @@ import { replicate } from '@/lib/replicate';
 import { WEBHOOK_HOST } from '@/lib/utils';
 import { createPrediction } from '@/lib/actions/prediction';
 
-const styleExtractPrompt = `
-You are a visual style extraction assistant for a generative image system.  
+const styleExtractPrompt = `You are a visual style extraction assistant for a generative image system.  
 You will be shown an image. Your task is to **extract only the visual style**, not the content, subject, objects, or people.
 
 🎯 Your goal is to generate a **detailed, high-fidelity style prompt** that can guide a generative model (such as Stable Diffusion, Midjourney, or a style transfer AI) to apply the exact same visual style to other images.
@@ -24,29 +23,30 @@ Output your answer in **structured bullet-point format**, covering the following
 
 ---
 
-1. **Color palette** – Describe overall tone, temperature, saturation, and dominant hues. Include nuanced combinations (e.g., warm pastel pinks with hints of mint and golden undertones).
+1. **Color palette** – Focus on the overall color harmony, dominant hues, tonal balance, temperature (warm or cool), saturation, and the nuances of color combinations. Mention any secondary colors or subtle gradients that contribute to the overall look (e.g., warm pastel pinks with hints of mint and golden undertones).
 
-2. **Lighting & contrast** – Describe light quality, direction, and interaction with contrast and shadows (e.g., backlit soft bloom, low contrast with haze).
+2. **Lighting & contrast** – Describe the **quality of light** (soft, hard, diffused), the **source** of the light (direction, intensity, and warmth), and its **interaction with contrast and shadows** (e.g., backlit soft bloom, low contrast with haze, high contrast with sharp shadows).
 
-3. **Texture & material feel** – Describe perceived texture style: painterly, silky smooth, hand-drawn, vector flat, organic paper grain, CGI plasticity, etc.
+3. **Texture & material feel** – Define the texture style of the image. Is it painterly, sketchy, smooth, rough, organic, digital, or something else? Describe any visual elements that contribute to the material's feel (e.g., hand-drawn, CGI plasticity, paper texture, fabric grain, metallic sheen, etc.).
 
-4. **Artistic style or genre** – Describe the visual style’s lineage or influence: e.g., anime, cel-shaded digital, Pixar-style 3D, vintage print, ukiyo-e, vaporwave, oil painting, surrealism, cyberpunk.
+4. **Artistic style or genre** – Focus on **the stylistic influences** and artistic techniques used. Does it evoke a specific genre or period in art? (e.g., anime, watercolor, retro-futuristic cyberpunk, vintage film, renaissance, minimalist, etc.)
 
-5. **Rendering technique** – Mention how the image appears rendered: raster vs vector, gradient shading, outline-based, raytracing, bokeh, SSS (subsurface scattering), bloom effects, etc.
+5. **Rendering technique** – Explain how the image is rendered visually. Is it **raster** or **vector**? Does it have **gradient shading**, **glitch effects**, **outline-based rendering**, **ray tracing**, **SSS (subsurface scattering)**, or any specific **visual effects** (e.g., bokeh, bloom, halftone)?
 
-6. **Mood / tone / atmosphere** – Abstract emotional tone: serene, dark fairytale, dreamy, cozy melancholy, epic fantasy, hyper-clean minimalism, etc.
+6. **Mood / tone / atmosphere** – Define the **emotional impact** of the style. Does the style feel serene, melancholic, futuristic, whimsical, dream-like, or eerie? What kind of atmosphere does it evoke through its visual language (e.g., cozy melancholy, ethereal dreamscape, vibrant energy, dystopian tension)?
 
-7. **Composition & framing** – Describe symmetry, layout rules, camera perspective, depth cues: e.g., centered portrait with cinematic depth-of-field blur.
+7. **Composition & framing** – Analyze how the visual elements are **arranged** in the image. Is there **symmetry**? Are elements **balanced** or **asymmetrical**? Describe the **camera perspective** (e.g., high-angle, low-angle, bird's eye view), and how **depth cues** are conveyed (e.g., foreground-background separation, perspective lines, or blurred background for focus).
 
-8. **Detail density & visual noise** – Describe whether image is minimal or highly detailed, sharp or soft, with emphasis on clarity vs ornamentation.
+8. **Detail density & visual noise** – Determine the **level of detail** in the image. Is it minimal, clean, and focused on broad strokes, or is it dense and highly detailed? Does the image have a **soft-focus effect** or **sharp detail**? Is there **visual noise** or **clutter** (e.g., grainy texture, fine patterns)?
 
-9. **Unique stylistic signatures** – Call out any standout features: glowing edge highlights, chromatic aberration, sketch linework, airbrush shading, ambient haze, pastel diffusion, glitch effects, etc.
+9. **Unique stylistic signatures** – Identify any **signature features** or **unusual traits** that make this style unique. This could include things like **glowing highlights**, **chromatic aberration**, **sketchy linework**, **pastel gradients**, **vintage film grain**, **heavy texture**, **glitch effects**, **dramatic light leaks**, or any distinct **visual quirks**.
 
 ---
 
-📌 Be creative and original in your analysis. Do NOT use the same phrases across multiple images.  
-📌 Each point should feel *specific, evocative, and transferable* to a generative engine.  
-📌 The output should feel like a **style blueprint**, not a review.
+📌 Be creative and original in your analysis. DO NOT use the same phrases across multiple images.  
+📌 Each point should feel **specific, evocative, and transferable** to a generative engine. The more **descriptive and detailed** your analysis, the better the final result.  
+📌 Your output should serve as a **style blueprint**, not a review. Focus solely on the **visual style** and how it can be translated into another image.
+
 ---
 `;
 
@@ -173,28 +173,28 @@ export async function POST(request: NextRequest) {
     const blobData = await uploadFileToBlobStorage(imageFile);
     const styleImageData = await uploadFileToBlobStorage(styleImage);
 
-    // const stylePromptResult = await replicate.run(
-    //   'yorickvp/llava-13b:80537f9eead1a5bfa72d5ac6ea6414379be41d4d4f6679fd776e9535d1eb58bb',
-    //   {
-    //     input: {
-    //       image: styleImageData.url,
-    //       prompt: styleExtractPrompt,
-    //       top_p: 1,
-    //       temperature: 0.2,
-    //       max_token: 1024,
-    //     },
-    //   }
-    // );
-    // let stylePrompt = '';
-    // for await (const element of stylePromptResult as any) {
-    //   stylePrompt += element;
-    // }
-
+    const stylePromptResult = await replicate.run(
+      'yorickvp/llava-13b:80537f9eead1a5bfa72d5ac6ea6414379be41d4d4f6679fd776e9535d1eb58bb',
+      {
+        input: {
+          image: styleImageData.url,
+          prompt: styleExtractPrompt,
+          top_p: 1,
+          temperature: 0.2,
+          max_token: 1024,
+        },
+      }
+    );
+    let stylePrompt = '';
+    for await (const element of stylePromptResult as any) {
+      stylePrompt += element;
+    }
+    console.log(stylePrompt);
     const prediction = await replicate.predictions.create({
       model: 'black-forest-labs/flux-kontext-pro',
       input: {
         userId,
-        prompt: testPrompt,
+        prompt: stylePrompt,
         output_format: 'png',
         input_image: blobData.url,
         aspect_ratio: 'match_input_image',
