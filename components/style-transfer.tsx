@@ -134,7 +134,11 @@ export function StyleTransfer() {
                       <p className="text-muted-foreground text-xs">{t('form.image.description')}</p>
                     </div>
                     <FormControl>
-                      <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
+                      <ImageUploader
+                        inputId="image-upload-original"
+                        onImageChange={onChange}
+                        disabled={status === 'loading' || status === 'polling'}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -153,7 +157,11 @@ export function StyleTransfer() {
                       <p className="text-muted-foreground text-xs">{t('form.styleImage.description')}</p>
                     </div>
                     <FormControl>
-                      <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
+                      <ImageUploader
+                        inputId="image-upload-style"
+                        onImageChange={onChange}
+                        disabled={status === 'loading' || status === 'polling'}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
