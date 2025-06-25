@@ -50,14 +50,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     switch (type) {
       case 'text-to-image':
         processPrediction(prediction, {
-          type: 'generate',
+          type: 'text-to-image',
           points: 1,
           getWorkData: () => ({}),
         });
         break;
-      case 'style-transform':
+      case 'style-preset':
         processPrediction(prediction, {
-          type: 'style-transfer',
+          type: 'style-preset',
           points: 15,
           getWorkData: () => ({
             originalImage: prediction.input['input_image'],
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         break;
       case 'image-edit':
         processPrediction(prediction, {
-          type: 'edit',
+          type: 'image-edit',
           points: 15,
           getWorkData: () => ({
             originalImage: prediction.input['input_image'],
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         break;
       case 'avatar-generate':
         processPrediction(prediction, {
-          type: 'avatar',
+          type: 'create-avatar',
           points: 15,
           getWorkData: () => ({
             originalImage: prediction.input['input_image'],

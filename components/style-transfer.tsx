@@ -46,7 +46,7 @@ export function StyleTransfer() {
       formData.append('image', data.image);
       formData.append('styleImage', data.styleImage);
 
-      const response = await fetch('/api/style-transform', {
+      const response = await fetch('/api/style-transfer', {
         method: 'POST',
         body: formData,
         credentials: 'include',

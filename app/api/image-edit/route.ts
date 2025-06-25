@@ -1,5 +1,4 @@
 import { eq } from 'drizzle-orm';
-import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
@@ -23,7 +22,7 @@ export async function POST(request: Request) {
     const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
 
     if (!user) {
-      redirect('/login');
+      return new Response('Unauthorized', { status: 401 });
     }
 
     if (user.points < 15) {

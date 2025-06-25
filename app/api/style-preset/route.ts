@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         seed: 2,
         safety_tolerance: 2,
       },
-      webhook: `${WEBHOOK_HOST}/api/webhook/style-transform`,
+      webhook: `${WEBHOOK_HOST}/api/webhook/style-preset`,
       webhook_events_filter: ['completed', 'logs', 'start'],
     });
     createPrediction(user, 15, prediction);

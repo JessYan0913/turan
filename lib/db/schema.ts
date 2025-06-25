@@ -68,9 +68,6 @@ export type User = InferSelectModel<typeof userTable> & {
   };
 };
 
-// 定义作品类型
-export type WorkType = 'style-transfer' | 'avatar' | 'edit' | 'generate' | 'other';
-
 // 定义作品状态
 export type WorkStatus = 'processing' | 'completed' | 'failed';
 
@@ -122,6 +119,15 @@ export const predictionTable = pgTable(
 export type Prediction = InferSelectModel<typeof predictionTable>;
 
 // 定义作品表结构
+export type WorkType =
+  | 'style-preset'
+  | 'create-avatar'
+  | 'image-edit'
+  | 'text-to-image'
+  | 'style-transfer'
+  | 'style-extract'
+  | 'photo-restore';
+
 export const workTable = pgTable(
   'work',
   {
@@ -130,7 +136,15 @@ export const workTable = pgTable(
       .$defaultFn(() => nanoid()),
     title: varchar('title', { length: 255 }).notNull(),
     type: varchar('type', {
-      enum: ['style-transfer', 'avatar', 'edit', 'generate', 'other', 'photo-restore'],
+      enum: [
+        'style-preset',
+        'create-avatar',
+        'image-edit',
+        'text-to-image',
+        'style-transfer',
+        'style-extract',
+        'photo-restore',
+      ],
     }).notNull(),
     prompt: text('prompt').notNull().default(''),
     originalImage: text('original_image').default(''),

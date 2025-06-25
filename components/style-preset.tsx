@@ -54,7 +54,7 @@ export function StylePreset() {
       formData.append('prompt', data.prompt || '');
       formData.append('style', data.style);
 
-      const response = await fetch('/api/style-transform', {
+      const response = await fetch('/api/style-preset', {
         method: 'POST',
         body: formData,
         credentials: 'include',

@@ -6,7 +6,7 @@ import { type Prediction } from 'replicate';
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
 import { db } from '@/lib/db/client';
-import { predictionTable, transactionTable, type User, userTable, workTable } from '@/lib/db/schema';
+import { predictionTable, transactionTable, type User, userTable, workTable, type WorkType } from '@/lib/db/schema';
 
 export async function createPrediction(user: User, points: number, prediction: Prediction) {
   await db.transaction(async (tx) => {
@@ -47,7 +47,7 @@ export async function createPrediction(user: User, points: number, prediction: P
 }
 
 type ProcessPredictionConfig = {
-  type: 'generate' | 'style-transfer' | 'edit' | 'avatar' | 'photo-restore';
+  type: WorkType;
   points: number;
   getWorkData: (input: any, processedImageUrl: string) => Record<string, unknown>;
 };
