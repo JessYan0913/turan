@@ -2,12 +2,12 @@ import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
+import { createPrediction } from '@/lib/actions/prediction';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
 import { replicate } from '@/lib/replicate';
 import { WEBHOOK_HOST } from '@/lib/utils';
-import { createPrediction } from '@/lib/actions/prediction';
 
 const styleExtractPrompt = `You are a visual style extraction assistant for a generative image system.  
 You will be shown an image. Your task is to **extract only the visual style**, not the content, subject, objects, or people.

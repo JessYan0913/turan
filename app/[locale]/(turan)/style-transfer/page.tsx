@@ -1,11 +1,11 @@
-import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 import { StyleTransfer } from '@/components/style-transfer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getScopedI18n } from '@/locales/server';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { getScopedI18n } from '@/locales/server';
 
 export default async function StyleTransferPage() {
   const t = await getScopedI18n('style-transfer');
@@ -64,44 +64,44 @@ export default async function StyleTransferPage() {
                     {t('style-transfer-info.try')}
                   </Link>
                 </div>
-                <div className="mt-8 w-full max-w-4xl mx-auto pt-8 pb-20">
+                <div className="mx-auto mt-8 w-full max-w-4xl pb-20 pt-8">
                   <div className="relative">
                     {/* Main split-screen visual */}
-                    <div className="relative aspect-video w-full overflow-hidden rounded-2xl shadow-2xl flex bg-muted">
+                    <div className="bg-muted relative flex aspect-video w-full overflow-hidden rounded-2xl shadow-2xl">
                       {/* Left side: Content */}
-                      <div className="relative w-1/2 h-full">
+                      <div className="relative h-full w-1/2">
                         <Image
-                          src="/style-transfer-original.png"
+                          src="/style-transfer-original.webp"
                           alt="Original Content"
                           fill
                           className="object-cover"
                         />
-                        <div className="absolute top-3 left-3 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                        <div className="absolute left-3 top-3 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                           CONTENT
                         </div>
                       </div>
                       {/* Right side: Result */}
-                      <div className="relative w-1/2 h-full">
+                      <div className="relative h-full w-1/2">
                         <Image src="/style-transfer-result.png" alt="Styled Result" fill className="object-cover" />
-                        <div className="absolute top-3 right-3 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                        <div className="absolute right-3 top-3 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                           RESULT
                         </div>
                       </div>
                       {/* Divider with arrow */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-                        <div className="w-px h-full bg-white/20 absolute"></div>
-                        <div className="bg-background/80 backdrop-blur-sm rounded-full p-2 shadow-lg border border-border">
-                          <ArrowRight className="size-6 text-primary" />
+                      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+                        <div className="absolute h-full w-px bg-white/20"></div>
+                        <div className="bg-background/80 border-border rounded-full border p-2 shadow-lg backdrop-blur-sm">
+                          <ArrowRight className="text-primary size-6" />
                         </div>
                       </div>
                     </div>
 
                     {/* Style image floating below */}
-                    <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center group">
-                      <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-background shadow-lg overflow-hidden transition-transform duration-300 group-hover:scale-110">
+                    <div className="group absolute -bottom-12 left-1/2 flex -translate-x-1/2 flex-col items-center">
+                      <div className="border-background relative size-28 overflow-hidden rounded-full border-4 shadow-lg transition-transform duration-300 group-hover:scale-110 md:size-32">
                         <Image src="/style-transfer-style.webp" alt="Style Source" fill className="object-cover" />
                       </div>
-                      <div className="mt-3 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                      <div className="mt-3 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                         STYLE
                       </div>
                     </div>
