@@ -42,41 +42,51 @@ export default {
   },
   navigation: {
     pricing: 'Pricing',
-    works: 'My Works',
     language: 'Language',
     theme: 'Theme',
     profile: 'My Profile',
     signOut: 'Sign Out',
     signIn: 'Sign In',
-    imageTools: 'Image Tools',
-    tools: {
-      'text-to-image': {
-        title: 'Text to Image',
-        description: 'Generate images from text',
+    'free-tools': {
+      title: 'Free Tools',
+      tools: {
+        'remove-bg': {
+          title: 'Remove Background',
+          description: 'Remove the background from an image',
+        },
       },
-      'image-edit': {
-        title: 'Image Editor',
-        description: 'Edit images with uploaded pictures and prompts',
-      },
-      'style-preset': {
-        title: 'Style Preset',
-        description: 'Select a preset style to edit',
-      },
-      'photo-restore': {
-        title: 'Photo Restore',
-        description: 'Restore and colorize old photos',
-      },
-      'style-transfer': {
-        title: 'Style Transfer',
-        description: 'Transfer style between two images',
-      },
-      'style-extract': {
-        title: 'Style Extract',
-        description: 'Extract style from an image',
-      },
-      'create-avatar': {
-        title: 'Avatar Generation',
-        description: 'Generate an avatar',
+    },
+    'pro-tools': {
+      title: 'Professional Tools',
+      tools: {
+        'text-to-image': {
+          title: 'Text-to-Image',
+          description: 'Generate an image from a text description',
+        },
+        'image-edit': {
+          title: 'Image Editor',
+          description: 'Edit an image with text prompts',
+        },
+        'style-preset': {
+          title: 'Style Presets',
+          description: 'Apply a pre-set style to transform an image',
+        },
+        'photo-restore': {
+          title: 'Photo Restoration',
+          description: 'Restore and colorize old photos',
+        },
+        'style-transfer': {
+          title: 'Style Transfer',
+          description: 'Merge the style of two images',
+        },
+        'create-avatar': {
+          title: 'Avatar Creator',
+          description: 'Generate an avatar',
+        },
+        'style-extract': {
+          title: 'Style Extractor',
+          description: 'Analyze the style of an image',
+        },
       },
     },
   },
@@ -826,6 +836,99 @@ export default {
             question: 'How to get the best effect?',
             answer:
               'For the best effect, we recommend using high contrast style images and trying different style images to find the most suitable one.',
+          },
+        ],
+      },
+    },
+  },
+  'remove-bg': {
+    header: {
+      title: 'Turan AI Remove Background',
+      subtitle: 'Remove backgrounds with AI',
+    },
+    tool: {
+      form: {
+        image: {
+          label: 'Upload Image',
+          description: 'Drag and drop an image here, or click to select',
+          message: 'Please upload an imag',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Generate Image',
+        },
+      },
+      regenerate: 'Regenerate',
+      download: 'Download',
+      idle: {
+        title: 'Ready to Remove',
+        subtitle: 'Your image with removed background will appear here',
+      },
+      error: {
+        title: 'Something went wrong',
+        subtitle: 'We encountered an error while processing your request. Please try again.',
+        try: 'Try Again',
+      },
+    },
+    examples: {
+      title02: 'Remove Background',
+      description: 'Upload an image, and AI will remove backgrounds for you',
+      more: 'Load More Examples',
+    },
+    'how-to-use': {
+      title: 'How to Use',
+      description: 'Remove image background in simple steps',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: 'Upload Image',
+            description:
+              'Click the "Upload Image" button or drag and drop your image into the designated area. Supports common image formats like JPG and PNG.',
+          },
+          {
+            title: 'Wait for AI Processing',
+            description:
+              'After uploading, our AI will automatically detect and process the image background. Processing time varies by image size and complexity, but typically completes in seconds.',
+          },
+          {
+            title: 'Preview Results',
+            description:
+              'Once processed, preview the background-removed image. If satisfied, you can download it directly. If adjustments are needed, click "Regenerate".',
+          },
+          {
+            title: 'Download or Share',
+            description:
+              'Download the processed transparent background image or share it directly on social media. Output is in PNG format with transparency preserved.',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      description: 'Common questions about AI background removal',
+      list: {
+        total: '4',
+        items: [
+          {
+            question: 'Is the background removal feature free?',
+            answer:
+              'Yes, our AI background removal feature is completely free to use with no hidden charges. You can upload and remove backgrounds from images anytime without any subscription or payment required.',
+          },
+          {
+            question: 'What image formats are supported?',
+            answer:
+              'We support common image formats like JPG and PNG. We recommend using PNG format for better transparency results when removing backgrounds.',
+          },
+          {
+            question: 'Will the image quality be reduced after processing?',
+            answer:
+              'No. Our AI maintains the original image quality while precisely removing the background. The processed image will retain the same quality as the original.',
+          },
+          {
+            question: 'Can I use the processed images commercially?',
+            answer:
+              'Yes. All images processed with our tool are completely yours to use. You have full rights to use them for both personal and commercial purposes without any additional authorization required.',
           },
         ],
       },

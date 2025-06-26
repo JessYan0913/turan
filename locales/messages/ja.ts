@@ -48,35 +48,46 @@ export default {
     profile: 'プロフィール',
     signOut: 'ログアウト',
     signIn: 'ログイン',
-    imageTools: '画像ツール',
-    tools: {
-      'text-to-image': {
-        title: 'テキストからイメージを生成',
-        description: 'テキストで画像を生成',
+    'free-tools': {
+      title: '無料ツール',
+      tools: {
+        'remove-bg': {
+          title: '背景除去',
+          description: '画像の背景を除去',
+        },
       },
-      'image-edit': {
-        title: '画像編集',
-        description: '画像をアップロードし、編集の指示を追加',
-      },
-      'style-preset': {
-        title: 'プリセットスタイル',
-        description: 'プリセットスタイルを選択して編集',
-      },
-      'photo-restore': {
-        title: '古い写真を復元',
-        description: '古い写真を修復してカラー化',
-      },
-      'style-transfer': {
-        title: 'スタイルを移転',
-        description: '2つの画像をスタイルを融合',
-      },
-      'style-extract': {
-        title: 'スタイルを抽出',
-        description: '画像のスタイル特徴を抽出',
-      },
-      'create-avatar': {
-        title: 'アバター生成',
-        description: '生成アバター',
+    },
+    'pro-tools': {
+      title: '有料ツール',
+      tools: {
+        'text-to-image': {
+          title: 'テキストから画像',
+          description: 'テキストを基に画像を生成',
+        },
+        'image-edit': {
+          title: '画像編集',
+          description: '画像をアップロードし、テキストを基に編集',
+        },
+        'style-preset': {
+          title: 'スタイルプリセット',
+          description: 'プリセットされたスタイルを選択して画像を変換',
+        },
+        'photo-restore': {
+          title: '古い写真の修復',
+          description: '古い写真を修復し、カラー化',
+        },
+        'style-transfer': {
+          title: 'スタイル移植',
+          description: '2つの画像のスタイルを融合',
+        },
+        'create-avatar': {
+          title: 'アバター生成',
+          description: 'アバターを生成',
+        },
+        'style-extract': {
+          title: 'スタイル抽出',
+          description: '画像のスタイル特徴を抽出',
+        },
       },
     },
   },
@@ -818,6 +829,99 @@ export default {
             question: '最適な効果を得るには？',
             answer:
               '高コントラストのスタイル画像を使うと効果的です。複数のスタイルを試して最も合うものを見つけましょう。',
+          },
+        ],
+      },
+    },
+  },
+  'remove-bg': {
+    header: {
+      title: 'Turan AI 背景削除',
+      subtitle: 'AIで背景を削除',
+    },
+    tool: {
+      form: {
+        image: {
+          label: '画像をアップロード',
+          description: '画像をドラッグ＆ドロップするか、クリックして選択',
+          message: '画像をアップロードしてください',
+        },
+        submit: {
+          loading: '処理中...',
+          default: '画像を生成',
+        },
+      },
+      regenerate: '再生成',
+      download: 'ダウンロード',
+      idle: {
+        title: '準備完了',
+        subtitle: '背景が削除された画像がここに表示されます',
+      },
+      error: {
+        title: 'エラーが発生しました',
+        subtitle: 'リクエストの処理中にエラーが発生しました。もう一度お試しください。',
+        try: '再試行',
+      },
+    },
+    examples: {
+      title02: '背景削除で活用',
+      description: '画像をアップロードすると、AIが背景を削除します',
+      more: '他の例を表示',
+    },
+    'how-to-use': {
+      title: '使い方',
+      description: '簡単な手順で画像の背景を削除',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: '画像をアップロード',
+            description:
+              '「画像をアップロード」ボタンをクリックするか、画像を指定の領域にドラッグ＆ドロップしてください。JPG、PNGなどの一般的な画像形式に対応しています。',
+          },
+          {
+            title: 'AI処理を待つ',
+            description:
+              'アップロード後、AIが自動的に画像の背景を認識・処理します。画像のサイズや複雑さによりますが、通常は数秒で処理が完了します。',
+          },
+          {
+            title: '結果を確認',
+            description:
+              '処理が完了したら、背景が削除された画像をプレビューできます。問題がなければそのままダウンロードを、調整が必要な場合は「再生成」をクリックしてください。',
+          },
+          {
+            title: 'ダウンロードまたは共有',
+            description:
+              '処理済みの透明背景画像をダウンロードするか、SNSで直接共有できます。透明部分を保持したPNG形式で出力されます。',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'よくある質問',
+      description: 'AI背景削除に関するよくあるご質問',
+      list: {
+        total: '4',
+        items: [
+          {
+            question: '背景削除機能は無料ですか？',
+            answer:
+              'はい、AI背景削除機能は完全に無料でご利用いただけます。追加料金やサブスクリプションは不要で、いつでも画像をアップロードして背景を削除いただけます。',
+          },
+          {
+            question: '対応している画像形式は？',
+            answer:
+              'JPG、PNGなどの一般的な画像形式に対応しています。透明な背景を活かすため、PNG形式の使用をおすすめします。',
+          },
+          {
+            question: '処理後の画質は劣化しますか？',
+            answer:
+              'いいえ、当社のAIは元の画像のクオリティを保ちつつ、正確に背景を削除します。処理後の画質は元の画像と変わりません。',
+          },
+          {
+            question: '処理した画像を商用利用できますか？',
+            answer:
+              'はい、当ツールで処理した画像はすべてお客様のものとなり、個人・商用問わず自由にお使いいただけます。追加の許諾は必要ありません。',
           },
         ],
       },

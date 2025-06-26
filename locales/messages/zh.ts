@@ -44,35 +44,46 @@ export default {
     profile: '个人资料',
     signOut: '退出登录',
     signIn: '登录',
-    imageTools: '图片工具',
-    tools: {
-      'text-to-image': {
-        title: '文字生图',
-        description: '用文字描述生成图片',
+    'free-tools': {
+      title: '免费工具',
+      tools: {
+        'remove-bg': {
+          title: '移除背景',
+          description: '移除图片背景',
+        },
       },
-      'image-edit': {
-        title: '图片编辑',
-        description: '上传图片+提示词编辑图像',
-      },
-      'style-preset': {
-        title: '风格预设',
-        description: '选择预设风格快速转换',
-      },
-      'photo-restore': {
-        title: '照片修复',
-        description: '老照片修复和上色',
-      },
-      'style-transfer': {
-        title: '风格迁移',
-        description: '两张图片风格融合',
-      },
-      'style-extract': {
-        title: '风格提取',
-        description: '分析图片风格特征',
-      },
-      'create-avatar': {
-        title: '头像生成',
-        description: '生成头像',
+    },
+    'pro-tools': {
+      title: '专业工具',
+      tools: {
+        'text-to-image': {
+          title: '文字生图',
+          description: '用文字描述生成图片',
+        },
+        'image-edit': {
+          title: '图片编辑',
+          description: '上传图片+提示词编辑图像',
+        },
+        'style-preset': {
+          title: '风格预设',
+          description: '选择预设风格快速转换',
+        },
+        'photo-restore': {
+          title: '照片修复',
+          description: '老照片修复和上色',
+        },
+        'style-transfer': {
+          title: '风格迁移',
+          description: '两张图片风格融合',
+        },
+        'create-avatar': {
+          title: '头像生成',
+          description: '生成头像',
+        },
+        'style-extract': {
+          title: '风格提取',
+          description: '分析图片风格特征',
+        },
       },
     },
   },
@@ -777,6 +788,92 @@ export default {
           {
             question: '如何获得最佳效果？',
             answer: '为获得最佳效果，建议使用高对比度的风格图像，并尝试不同风格图像来寻找最合适的一种。',
+          },
+        ],
+      },
+    },
+  },
+  'remove-bg': {
+    header: {
+      title: 'Turan AI 智能去背景',
+      subtitle: 'AI一键去除图片背景',
+    },
+    tool: {
+      form: {
+        image: {
+          label: '上传图片',
+          description: '拖放图片到此处，或点击选择',
+          message: '请上传图片',
+        },
+        submit: {
+          loading: '处理中...',
+          default: '生成图片',
+        },
+      },
+      regenerate: '重新生成',
+      download: '下载',
+      idle: {
+        title: '准备就绪',
+        subtitle: '去背景后的图片将显示在这里',
+      },
+      error: {
+        title: '出错了',
+        subtitle: '处理您的请求时出错，请重试。',
+        try: '重试',
+      },
+    },
+    examples: {
+      title02: '智能去背景',
+      description: '上传图片，AI将为您去除背景',
+      more: '加载更多示例',
+    },
+    'how-to-use': {
+      title: '使用指南',
+      description: '简单几步，轻松去除图片背景',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: '上传图片',
+            description: '点击"上传图片"按钮或直接将图片拖放到指定区域。支持JPG、PNG等常见图片格式。',
+          },
+          {
+            title: '等待AI处理',
+            description: '上传后，我们的AI会自动识别并处理图片背景。处理时间根据图片大小和复杂度而定，通常只需几秒钟。',
+          },
+          {
+            title: '预览结果',
+            description: '处理完成后，预览去背景效果。如果满意，可以直接下载；如需调整，可以点击"重新生成"。',
+          },
+          {
+            title: '下载或分享',
+            description: '下载处理后的透明背景图片，或直接分享到社交媒体平台。支持PNG格式，保留透明通道。',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: '常见问题',
+      description: '关于AI去背景的常见问题解答',
+      list: {
+        total: '4',
+        items: [
+          {
+            question: '去背景功能是免费的吗？',
+            answer:
+              '是的，我们的AI去背景功能完全免费使用，不收取任何费用。您可以随时上传图片进行背景去除，无需订阅或付费。',
+          },
+          {
+            question: '支持哪些图片格式？',
+            answer: '我们支持JPG、PNG等常见图片格式。建议使用PNG格式以获得更好的透明背景效果。',
+          },
+          {
+            question: '处理后的图片质量会降低吗？',
+            answer: '不会。我们的AI会保持原始图片的清晰度，同时精确去除背景。处理后的图片质量与原始图片保持一致。',
+          },
+          {
+            question: '处理后的图片可以商用吗？',
+            answer: '可以。使用我们工具处理后的图片完全归您所有，可以自由用于个人或商业用途，无需额外授权。',
           },
         ],
       },
