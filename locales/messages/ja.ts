@@ -55,8 +55,8 @@ export default {
         description: 'テキストで画像を生成',
       },
       'image-edit': {
-        title: '画像を編集',
-        description: '画像をアップロードして編集',
+        title: '画像編集',
+        description: '画像をアップロードし、編集の指示を追加',
       },
       'style-preset': {
         title: 'プリセットスタイル',

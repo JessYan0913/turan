@@ -55,8 +55,8 @@ export default {
         description: 'Generate images from text',
       },
       'image-edit': {
-        title: 'Image Edit',
-        description: 'Upload an image and edit it',
+        title: 'Image Editor',
+        description: 'Edit images with uploaded pictures and prompts',
       },
       'style-preset': {
         title: 'Style Preset',

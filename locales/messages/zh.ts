@@ -51,8 +51,8 @@ export default {
         description: '用文字描述生成图片',
       },
       'image-edit': {
-        title: '图片转换',
-        description: '上传图片+提示词转换',
+        title: '图片编辑',
+        description: '上传图片+提示词编辑图像',
       },
       'style-preset': {
         title: '风格预设',
