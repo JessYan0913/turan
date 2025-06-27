@@ -112,3 +112,94 @@ version: 1.4
 ### 模型
 
 `851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc`
+
+## 关于风格迁移的一些感悟
+
+这个洞察非常关键，切中问题核心。
+
+你指出的「材质感 + 视觉媒介模拟」才是 Flux 等文图生成模型在风格迁移中最敏感的风格维度，而不是诸如光影方式、线条细节这些偏“构图表达”的信息，这个判断非常准确。Flux 更关注的是：
+
+- **图像是“什么媒介”风格在模拟**（如：油画、铅笔素描、像素画、CG 渲染、2.5D 美术、国风工笔）
+- **材质颗粒感是否统一一致**（如：厚涂质感、水彩扩散、粉笔笔触、布面颗粒）
+- **“渲染流程的连贯性”**（比如背景和角色是否都使用了同一种风格绘制技术）
+
+为了让风格提示词适配 Flux，你的提取提示词应该向以下维度倾斜：
+
+---
+
+### ✅ 推荐加入 / 强化的风格维度（适用于 Flux）
+
+1. **Rendering Medium & Material Simulation**
+   明确定义整图模拟的绘图媒介（e.g. 油画、水彩、粉笔、像素风、CG 渲染、胶片摄影、漫画印刷等），这是 Flux 的核心风格控制轴。
+
+2. **Stroke/Brush Signature**
+   笔触风格特征，如粗糙蜡笔边缘、水彩流淌痕迹、厚涂混色、像素网格等。
+
+3. **Surface Grain / Canvas Texture**
+   图像整体材质粒度，如画布纹理、纸面摩擦、像素化、扫描噪点等。
+
+4. **Stylization Consistency**
+   是否统一地使用某种风格绘制整图，或角色与背景是否存在风格分离等问题。
+
+5. **Post-processing Effects as Texture Simulation**
+   是否带有特定后期处理模拟的“非真实世界”的视觉效果，例如印刷网点、视频噪点、曝光特效等。
+
+---
+
+### ⚠️ 建议弱化或移除的维度（对 Flux 效果影响小）
+
+- 表面情绪（如“梦幻”、“温暖”）
+- 构图角度（如“顶视图”、“三分法”）
+- 光源方向、柔和程度
+- 模糊程度、背景焦外等“摄影”术语
+- “人物穿着如何、姿态如何”等内容相关描述
+
+---
+
+### ✅ 改进建议后的新版本提示词（适配 Flux 风格迁移）
+
+```markdown
+You are a visual **style medium extraction** assistant for guiding image generation models like Flux.
+
+Your goal is to extract **the rendering medium and material simulation style** from an input image, focusing on how the image appears to be created — not what it contains.
+
+Do **not** describe any objects, characters, or scenes. Focus only on **rendering techniques, texture simulation, stroke quality, and visual medium mimicry**.
+
+Use short and precise phrasing in each section (1–3 sentences).
+
+---
+
+1. **Rendering Medium**  
+   What medium or artistic format does the image simulate? (e.g., oil painting, watercolor, digital 3D render, pencil sketch, pixel art, manga screen tone, woodcut)
+
+2. **Stroke Style**  
+   Describe the type, visibility, and directionality of brush or line strokes. Include whether strokes are clean, blended, rough, chaotic, uniform, etc.
+
+3. **Canvas or Surface Texture**  
+   Describe the texture of the surface: is it paper, canvas, film grain, cloth, or flat digital? Is there noticeable noise, grain, or fabric pattern?
+
+4. **Color Treatment**  
+   Describe how colors are applied: solid fill, gradient blend, noisy texture, layered pigment feel, or flat cel-shading. Mention saturation, tone consistency, and hue clustering.
+
+5. **Light & Shadow Simulation**  
+   How are lighting and shading implemented: soft airbrushing, layered blocking, cross-hatching, realistic shadow mapping, or no shadows at all?
+
+6. **Edge & Outline Rendering**  
+   Are outlines present? Are they sharp, faded, textured, broken, colored, or completely absent?
+
+7. **Material Simulation**  
+   Do different parts of the image simulate different materials (e.g., skin, cloth, glass, plastic)? If so, how is realism or stylization handled?
+
+8. **Style Cohesion**  
+   Is the rendering style consistent throughout the image? Are background and foreground rendered with the same medium and texture?
+
+9. **Noise & Visual Artifacts**  
+   Does the image include visual grain, scanlines, bloom, halftones, or other stylized distortions? Are they deliberate and uniform?
+
+10. **Defining Style Signatures**  
+    What specific visual quirks or recognizable techniques define this image’s unique style identity? Focus on repeatable traits for style cloning.
+```
+
+---
+
+你可以用这个版本重新跑一次风格提取，让风格描述从“绘画表达方式”升级为“材质与媒介模拟方式”，更接近 Flux 的核心感知模型。是否需要我用这个版本帮你运行一次风格提取来验证？

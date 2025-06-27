@@ -45,13 +45,12 @@ export async function POST(request: NextRequest) {
     }
 
     const blobData = await uploadFileToBlobStorage(imageFile);
-    const styleImageBlobData = await uploadFileToBlobStorage(styleImage);
 
     const prediction = await replicate.predictions.create({
       model: 'black-forest-labs/flux-kontext-pro',
       input: {
         userId,
-        prompt: await generateFluxStylePrompt(styleImageBlobData.url),
+        prompt: await generateFluxStylePrompt(styleImage),
         output_format: 'png',
         input_image: blobData.url,
         aspect_ratio: 'match_input_image',

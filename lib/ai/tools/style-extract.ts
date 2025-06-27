@@ -2,161 +2,170 @@ import { generateObject, tool } from 'ai';
 import { z } from 'zod';
 
 import { modelProvider } from '@/lib/ai/provider';
-import { replicate } from '@/lib/replicate';
-
-const analyzingPrompt = (stylePrompt: string) => `
-You are a style expert tasked with analyzing visual rendering characteristics of an image. Below are the extracted visual style properties, including their dominance scores:
-
-${stylePrompt}
-
-Your task is to:
-
-1. Identify the **dominant style** that most strongly defines the image based on the provided properties.
-2. List the **compatible styles** that align well with the dominant style.
-3. Identify any **conflicting styles** that should be excluded from the final style description.
-
-Please output your answer as a JSON object with the following fields:
-
-\`\`\`json
-{
-  "dominant_style_key": "rendering_medium", 
-  "dominant_value": "digital painting", 
-  "compatible_styles": [
-    {"key": "linework", "value": "smooth, fluid lines"},
-    {"key": "color_approach", "value": "vibrant, saturated colors"},
-    {"key": "artistic_genre", "value": "anime/manga"},
-    {"key": "rendering_resolution", "value": "high resolution"}
-  ], 
-  "discarded_styles": [
-    {"key": "texture_simulation", "value": "textured, stylized surface"}
-  ]
-}
-\`\`\`
-
-### Explanation:
-
-* **dominant_style_key**: The visual characteristic with the highest dominance score that defines the image style.
-* **dominant_value**: The style value associated with the dominant characteristic.
-* **compatible_styles**: An array of other style properties that align with the dominant style, forming a cohesive visual identity.
-* **discarded_styles**: An array of style properties that conflict with the dominant style, which should be excluded from the final style description.
-
-Focus **only on visual rendering characteristics**. Do not include any content or scene descriptions.
-`;
 
 const styleExtractPrompt = `
-You are a visual style extraction assistant.
+You are a visual style extraction assistant. You must extract only rendering-related characteristics from an image using the following 14 visual style dimensions. Do NOT describe people, objects, or scene content.
 
-You will be shown an image. Your task is to analyze and extract its visual rendering style in a structured format that can be used to guide a style transfer model (e.g., Flux, Midjourney, or Stable Diffusion). You must NOT describe the content, people, or objects in the image — only the visual rendering characteristics.
+---
 
-Output your answer in the following JSON structure. For each dimension, you must include:
+1. renderingMedium  
+- Description: Primary technical medium or emulated medium style.  
+- Guidance: Describe what the rendering technique looks like. You may combine terms like "digital painting with photographic elements". Avoid reusing examples directly.
 
-- value: a short, factual style description
-- dominance_score: a score (0.0 – 1.0) that estimates how dominant this dimension is in defining the overall visual style of the image.
+2. linework  
+- Description: Presence, style, and detail of outlines or internal lines.  
+- Guidance: Describe both contour lines and interior line detail, such as "thin outer strokes with cross-hatch shading".
 
-Also, return a final field:
+3. colorApproach  
+- Description: Color scheme, tone, and palette use.  
+- Guidance: Specify both the palette structure and intensity, such as "muted tones with warm highlights" or "high-saturation primary colors".
 
-- dominant_style_key: the key name of the style dimension that is most important in determining the image's overall style.
+4. textureSimulation  
+- Description: Surface rendering and material texture effects.  
+- Guidance: Include both the material feel and visual technique, such as "gritty pencil texture" or "smooth synthetic shading".
 
-Use this JSON schema:
+5. artisticGenre  
+- Description: Art style or genre lineage (e.g., anime, cyberpunk, surrealist).  
+- Guidance: Use recognizable or fused styles like "anime with photorealism" or "flat vector minimalism".
 
-\`\`\`json
-{
-  "rendering_medium": {
-    "value": "...",
-    "dominance_score": ...
-  },
-  "linework": {
-    "value": "...",
-    "dominance_score": ...
-  },
-  "color_approach": {
-    "value": "...",
-    "dominance_score": ...
-  },
-  "texture_simulation": {
-    "value": "...",
-    "dominance_score": ...
-  },
-  "artistic_genre": {
-    "value": "...",
-    "dominance_score": ...
-  },
-  "rendering_resolution": {
-    "value": "...",
-    "dominance_score": ...
-  },
-  "dominant_style_key": "..."
-}
-\`\`\`
+6. renderingResolution  
+- Description: Perceived sharpness, clarity, or visual fidelity.  
+- Guidance: Describe the apparent resolution level, not the file resolution, e.g., "high-definition with crisp edges".
 
-⚠️ Notes:
+7. visualMood  
+- Description: The emotion or aesthetic atmosphere evoked visually.  
+- Guidance: Must come from lighting, palette, or texture — e.g., "dreamy", "moody", "playful", etc.
 
-* Use specific and technical terms (e.g., "flat cel-shading", "watercolor bleed", "canvas texture", "minimalist vector art").
-* Avoid generic or emotional words.
-* All values must be visually inferred.
+8. surfaceFidelity  
+- Description: Degree of realism or stylization in surfaces.  
+- Guidance: Focus on material or form precision — such as "polished with highlights", "simplified geometry", or "hyper-detailed texture".
+
+9. compositionStyle  
+- Description: Layout structure and visual balance.  
+- Guidance: Consider symmetry, focus, and arrangement, such as "rule-of-thirds layout with empty margins" or "asymmetrical diagonal flow".
+
+10. lightingStyle  
+- Description: Lighting technique and direction.  
+- Guidance: Describe how the scene is lit, including light direction and softness — e.g., "backlit with glow", "harsh rim lighting", or "diffused top light".
+
+11. backgroundTreatment  
+- Description: Visual style of background relative to foreground.  
+- Guidance: Focus on style match or spatial contrast — like "flat color background", "blurred depth", or "textured but abstract".
+
+12. styleStrength  
+- Description: Intensity of the applied visual style.  
+- Guidance: Assess how strong or subtle the stylistic transformation is — e.g., "dominant", "highly stylized", "barely present".
+
+13. visualCues  
+- Description: 3–5 signature visual features.  
+- Guidance: Write out 3–5 strong visual style elements (e.g., "flat shading", "high-contrast lighting", "grainy overlay").
+
+14. signatureTechniques  
+- Description: Optional. Unique markers from genre or artist.  
+- Guidance: Use only if strongly present — e.g., "halftone dot shading", "Ghibli-style clouds", "retro VHS blur".
 `;
 
-async function runLLaVAStyleExtraction(imageUrl: string): Promise<string> {
-  const stylePromptResult = await replicate.run(
-    'yorickvp/llava-13b:80537f9eead1a5bfa72d5ac6ea6414379be41d4d4f6679fd776e9535d1eb58bb',
-    {
-      input: {
-        image: imageUrl,
-        prompt: styleExtractPrompt,
-        top_p: 1,
-        temperature: 0.2,
-        max_token: 1024,
-      },
-    }
-  );
-  let stylePrompt = '';
-  for await (const element of stylePromptResult as any) {
-    stylePrompt += element;
-  }
-
-  return stylePrompt;
-}
-
-const styleAnalysisSchema = z.object({
-  dominant_style_key: z.string(),
-  dominant_value: z.string(),
-  compatible_styles: z.array(
-    z.object({
-      key: z.string(),
-      value: z.string(),
-    })
-  ),
-  discarded_styles: z.array(
-    z.object({
-      key: z.string(),
-      value: z.string(),
-    })
-  ),
+const styleScheme = z.object({
+  renderingMedium: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  linework: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  colorApproach: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  textureSimulation: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  artisticGenre: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  renderingResolution: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  visualMood: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  surfaceFidelity: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  compositionStyle: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  lightingStyle: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  backgroundTreatment: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
+  styleStrength: z.object({
+    value: z.string(),
+    dominanceScore: z.number(),
+  }),
 });
 
-export type StyleAnalysis = z.infer<typeof styleAnalysisSchema>;
+async function runLLaVAStyleExtraction(image: File | Blob): Promise<z.infer<typeof styleScheme>> {
+  try {
+    console.log('image: ', await image.arrayBuffer());
 
-async function processLLaVAStyleOutput(llavaOutput: string): Promise<StyleAnalysis> {
-  const { object } = await generateObject({
-    model: modelProvider.languageModel('prompt-model'),
-    prompt: analyzingPrompt(llavaOutput),
-    schema: styleAnalysisSchema,
-  });
-  return object;
+    const { object } = await generateObject({
+      model: modelProvider.languageModel('style-analysis-model'),
+      system: styleExtractPrompt,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Analyze the style of the following image.',
+            },
+            {
+              type: 'image',
+              image: await image.arrayBuffer(), // 或者使用其他支持的图像数据格式
+              mimeType: image.type,
+            },
+          ] as any,
+        },
+      ],
+      schema: styleScheme,
+    });
+    console.log('-======>', object);
+
+    return object;
+  } catch (error) {
+    console.log('======>', error);
+
+    throw new Error();
+  }
 }
 
-export async function generateFluxStylePrompt(imageUrl: string): Promise<string> {
-  const llavaOutput = await runLLaVAStyleExtraction(imageUrl);
-  const styleAnalysis = await processLLaVAStyleOutput(llavaOutput);
-  return `${styleAnalysis.dominant_value} style with ${styleAnalysis.compatible_styles.map((style) => style.value).join(', ')}, excluding ${styleAnalysis.discarded_styles.map((style) => style.value).join(', ')}.`;
+export async function generateFluxStylePrompt(image: File | Blob): Promise<string> {
+  const style = await runLLaVAStyleExtraction(image);
+
+  return Object.values(style)
+    .map(({ value }) => value)
+    .join(', ');
 }
 
 export const styleExtractTool = tool({
   description: 'Extract style from image',
   parameters: z.object({
-    iamge: z.string().describe('Image URL'),
+    image: z.string().describe('Image URL'),
   }),
-  execute: async ({ iamge }) => {
-    return await generateFluxStylePrompt(iamge);
+  execute: async ({ image }) => {
+    const file = await fetch(image).then((res) => res.blob());
+    return await generateFluxStylePrompt(file);
   },
 });
