@@ -118,8 +118,6 @@ const styleScheme = z.object({
 
 async function runLLaVAStyleExtraction(image: File | Blob): Promise<z.infer<typeof styleScheme>> {
   try {
-    console.log('image: ', await image.arrayBuffer());
-
     const { object } = await generateObject({
       model: modelProvider.languageModel('style-analysis-model'),
       system: styleExtractPrompt,
@@ -141,12 +139,8 @@ async function runLLaVAStyleExtraction(image: File | Blob): Promise<z.infer<type
       ],
       schema: styleScheme,
     });
-    console.log('-======>', object);
-
     return object;
   } catch (error) {
-    console.log('======>', error);
-
     throw new Error();
   }
 }

@@ -99,7 +99,7 @@ export default async function StyleTransferPage() {
                     {/* Style image floating below */}
                     <div className="group absolute -bottom-12 left-1/2 flex -translate-x-1/2 flex-col items-center">
                       <div className="border-background relative size-28 overflow-hidden rounded-full border-4 shadow-lg transition-transform duration-300 group-hover:scale-110 md:size-32">
-                        <Image src="/style-transfer-style.webp" alt="Style Source" fill className="object-cover" />
+                        <Image src="/style-transfer-style.jpg" alt="Style Source" fill className="object-cover" />
                       </div>
                       <div className="mt-3 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                         STYLE
