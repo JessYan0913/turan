@@ -99,7 +99,7 @@ Please restore the damaged and missing areas in this old photo. The restoration 
 
 ### 模型
 
-`tencentarc/gfpgan:0fbacf7afc6c144e5be9767cff80f25aff23e52b0708f17e20f9879b2f21516c`
+`nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa`
 
 ### 提示词
 

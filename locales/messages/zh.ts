@@ -51,6 +51,10 @@ export default {
           title: '移除背景',
           description: '移除图片背景',
         },
+        'resolution-improvement': {
+          title: '提升分辨率',
+          description: '提升图片分辨率',
+        },
       },
     },
     'pro-tools': {

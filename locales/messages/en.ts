@@ -54,6 +54,10 @@ export default {
           title: 'Remove Background',
           description: 'Remove the background from an image',
         },
+        'resolution-improvement': {
+          title: 'Resolution Improvement',
+          description: 'Improve the resolution of an image',
+        },
       },
     },
     'pro-tools': {

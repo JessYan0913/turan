@@ -55,6 +55,10 @@ export default {
           title: '背景除去',
           description: '画像の背景を除去',
         },
+        'resolution-improvement': {
+          title: '画像の解像度向上',
+          description: '画像の解像度を向上させる',
+        },
       },
     },
     'pro-tools': {

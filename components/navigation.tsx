@@ -4,13 +4,13 @@ import {
   Brush,
   Camera,
   Crown,
-  Eye,
+  FlipHorizontal,
   ImageIcon,
   Menu,
   Palette,
+  Proportions,
   Type as TypeIcon,
   UserIcon,
-  FlipHorizontal,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { User } from 'next-auth';
@@ -57,9 +57,9 @@ export function Navigation({ user }: { user: User | undefined }) {
       color: 'from-blue-500 to-cyan-500',
     },
     {
-      id: 'remove-bg',
-      icon: FlipHorizontal,
-      href: '/remove-bg',
+      id: 'resolution-improvement',
+      icon: Proportions,
+      href: '/resolution-improvement',
       color: 'from-blue-500 to-cyan-500',
     },
   ];
@@ -127,41 +127,6 @@ export function Navigation({ user }: { user: User | undefined }) {
                       'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
                     )}
                   >
-                    {t('free-tools.title')}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-popover rounded-lg p-4 shadow-lg">
-                    <div className="grid w-[500px] grid-cols-2 gap-3">
-                      {freeToolsItems.map(({ id, icon: Icon, href }) => (
-                        <NavigationMenuLink asChild key={id}>
-                          <Link
-                            href={href}
-                            className="hover:bg-accent group flex items-start gap-3 rounded-lg p-3 transition-colors"
-                          >
-                            <div className="bg-accent mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg">
-                              <Icon className="text-foreground/80 size-5" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="text-foreground font-medium">
-                                {t(`free-tools.tools.${id}.title` as any)}
-                              </div>
-                              <div className="text-muted-foreground mt-1 text-sm">
-                                {t(`free-tools.tools.${id}.description` as any)}
-                              </div>
-                            </div>
-                          </Link>
-                        </NavigationMenuLink>
-                      ))}
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger
-                    className={cn(
-                      'group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                      'hover:bg-accent hover:text-accent-foreground',
-                      'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
-                    )}
-                  >
                     {t('pro-tools.title')}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-popover rounded-lg p-4 shadow-lg">
@@ -181,6 +146,42 @@ export function Navigation({ user }: { user: User | undefined }) {
                               </div>
                               <div className="text-muted-foreground mt-1 text-sm">
                                 {t(`pro-tools.tools.${id}.description` as any)}
+                              </div>
+                            </div>
+                          </Link>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      'group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                      'hover:bg-accent hover:text-accent-foreground',
+                      'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
+                    )}
+                  >
+                    {t('free-tools.title')}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="bg-popover rounded-lg p-4 shadow-lg">
+                    <div className="grid w-[500px] grid-cols-2 gap-3">
+                      {freeToolsItems.map(({ id, icon: Icon, href }) => (
+                        <NavigationMenuLink asChild key={id}>
+                          <Link
+                            href={href}
+                            className="hover:bg-accent group flex items-start gap-3 rounded-lg p-3 transition-colors"
+                          >
+                            <div className="bg-accent mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-lg">
+                              <Icon className="text-foreground/80 size-5" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-foreground font-medium">
+                                {t(`free-tools.tools.${id}.title` as any)}
+                              </div>
+                              <div className="text-muted-foreground mt-1 text-sm">
+                                {t(`free-tools.tools.${id}.description` as any)}
                               </div>
                             </div>
                           </Link>
