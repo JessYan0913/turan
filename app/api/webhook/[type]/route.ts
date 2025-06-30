@@ -92,6 +92,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           }),
         });
         break;
+      case 'remove-bg':
+        processPrediction(prediction, {
+          type: 'remove-bg',
+          points: 15,
+          getWorkData: () => ({
+            originalImage: prediction.input['input_image'],
+          }),
+        });
+        break;
       default:
         console.error('Invalid webhook type:', type);
         return NextResponse.json({ error: 'Invalid webhook type' }, { status: 400 });

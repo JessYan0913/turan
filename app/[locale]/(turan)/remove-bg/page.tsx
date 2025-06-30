@@ -1,7 +1,7 @@
 import type React from 'react';
 
-import { ImageEdit } from '@/components/image-edit';
 import { ImageSlider } from '@/components/image-slider';
+import { RemoveBg } from '@/components/remove-bg';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getScopedI18n } from '@/locales/server';
@@ -73,7 +73,7 @@ export default async function TextToImagePage() {
               </p>
             </div>
             <div className="w-full">
-              <ImageEdit />
+              <RemoveBg />
             </div>
           </section>
 

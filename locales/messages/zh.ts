@@ -898,10 +898,10 @@ export default {
         },
         submit: {
           loading: '处理中...',
-          default: '生成图片',
+          default: '去除背景',
         },
       },
-      regenerate: '重新生成',
+      regenerate: '重新处理',
       download: '下载',
       idle: {
         title: '准备就绪',

@@ -943,10 +943,10 @@ export default {
         },
         submit: {
           loading: '処理中...',
-          default: '画像を生成',
+          default: '背景を削除',
         },
       },
-      regenerate: '再生成',
+      regenerate: '再処理',
       download: 'ダウンロード',
       idle: {
         title: '準備完了',

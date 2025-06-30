@@ -951,10 +951,10 @@ export default {
         },
         submit: {
           loading: 'Processing...',
-          default: 'Generate Image',
+          default: 'Remove Background',
         },
       },
-      regenerate: 'Regenerate',
+      regenerate: 'Process again',
       download: 'Download',
       idle: {
         title: 'Ready to Remove',

@@ -126,7 +126,8 @@ export type WorkType =
   | 'text-to-image'
   | 'style-transfer'
   | 'style-extract'
-  | 'photo-restore';
+  | 'photo-restore'
+  | 'remove-bg';
 
 export const workTable = pgTable(
   'work',
@@ -144,6 +145,7 @@ export const workTable = pgTable(
         'style-transfer',
         'style-extract',
         'photo-restore',
+        'remove-bg',
       ],
     }).notNull(),
     prompt: text('prompt').notNull().default(''),
