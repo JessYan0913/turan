@@ -84,11 +84,98 @@ export default {
           title: '头像生成',
           description: '生成头像',
         },
-        'style-extract': {
-          title: '风格提取',
-          description: '分析图片风格特征',
-        },
       },
+    },
+  },
+  'loading-page': {
+    hero: {
+      title: 'TURAN',
+      subtitle: 'AI 智能图片编辑',
+      description: '运用前沿 AI 技术，让您的图片焕然一新。从背景移除到风格转换，数秒内解锁无限创意可能。',
+      'free-start-creating': '免费开始创作',
+      'pro-start-creating': '专业版开始创作',
+      'active-user': '活跃用户',
+      'images-processed': '图片处理量',
+      'satisfaction-rate': '用户满意度',
+    },
+    'free-tools': {
+      title: '免费工具',
+      subtitle: '立即体验我们强大的免费工具，无需注册。',
+      'remove-bg': {
+        title: '智能去背景',
+        description: 'AI 智能识别，秒速去除图片背景',
+      },
+      'resolution-improvement': {
+        title: '画质提升',
+        description: '高清无损放大，让图片更清晰',
+      },
+    },
+    'pro-tools': {
+      title: '专业工具',
+      subtitle: '解锁专业版 AI 功能，体验更强大的创作工具。',
+      'text-to-image': {
+        title: '文生图',
+        description: '根据文字描述生成精美图片',
+      },
+      'image-edit': {
+        title: '图片编辑器',
+        description: '专业级 AI 图片编辑工具',
+      },
+      'style-preset': {
+        title: '风格预设',
+        description: '一键应用多种艺术风格',
+      },
+      'photo-restore': {
+        title: '老照片修复',
+        description: '修复老旧和受损的照片',
+      },
+      'style-transfer': {
+        title: '风格迁移',
+        description: '将艺术风格应用到您的图片',
+      },
+      'create-avatar': {
+        title: 'AI 头像生成',
+        description: '创建个性化的 AI 头像',
+      },
+    },
+    testimonials: {
+      title: '用户评价',
+      subtitle: '看看全球创作者如何使用我们的工具',
+      experience: {
+        title: '体验分享',
+        subtitle: '我们期待听到您使用工具的心得',
+        feedback: '提交反馈',
+      },
+    },
+    features: {
+      title: '为什么选择',
+      subtitle: '探索我们的工具如何帮助全球创作者',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: '极速处理',
+            description: '优化 AI 模型，秒级处理图片',
+          },
+          {
+            title: '隐私优先',
+            description: '图片安全处理，绝不存储',
+          },
+          {
+            title: '无需下载',
+            description: '浏览器直接使用，无需安装任何软件',
+          },
+          {
+            title: '专业品质',
+            description: '前沿 AI 技术，呈现专业级效果',
+          },
+        ],
+      },
+    },
+    cta: {
+      title: '准备好改造您的图片了吗？',
+      description: '加入数百万信任 Turan 的创作者行列',
+      'start-creating': '免费开始使用',
     },
   },
   'aspect-ratio-selector': {

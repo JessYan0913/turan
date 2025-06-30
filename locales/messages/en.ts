@@ -94,6 +94,98 @@ export default {
       },
     },
   },
+  'loading-page': {
+    hero: {
+      title: 'TURAN',
+      subtitle: 'AI-Powered Image Editing',
+      description:
+        'Transform your images with cutting-edge AI technology. From background removal to style transfer, unlock unlimited creative possibilities in seconds.',
+      'free-start-creating': 'Free Start Creating',
+      'pro-start-creating': 'Pro Start Creating',
+      'active-user': 'Active Users',
+      'images-processed': 'Images Processed',
+      'satisfaction-rate': 'Satisfaction Rate',
+    },
+    'free-tools': {
+      title: 'Free Tools',
+      subtitle: 'Get started with our powerful free tools. No signup required.',
+      'remove-bg': {
+        title: 'Remove Background',
+        description: 'AI-powered background removal in seconds',
+      },
+      'resolution-improvement': {
+        title: 'Resolution Improvement',
+        description: 'Upscale images with crystal clarity',
+      },
+    },
+    'pro-tools': {
+      title: 'Professional Tools',
+      subtitle: 'Unlock advanced AI capabilities with our professional suite.',
+      'text-to-image': {
+        title: 'Text to Image',
+        description: 'Generate stunning images from text prompts',
+      },
+      'image-edit': {
+        title: 'Image Editor',
+        description: 'Professional AI-powered image editing',
+      },
+      'style-preset': {
+        title: 'Style Presets',
+        description: 'Apply artistic styles instantly',
+      },
+      'photo-restore': {
+        title: 'Photo Restore',
+        description: 'Restore old and damaged photos',
+      },
+      'style-transfer': {
+        title: 'Style Transfer',
+        description: 'Transform images with artistic styles',
+      },
+      'create-avatar': {
+        title: 'Avatar Creator',
+        description: 'Create personalized AI avatars',
+      },
+    },
+    testimonials: {
+      title: 'What Our Users Say',
+      subtitle: 'Discover how our tools are helping creators around the world',
+      experience: {
+        title: 'Experience',
+        subtitle: "We'd love to hear how our tools have helped your creative process.",
+        feedback: 'Submit Feedback',
+      },
+    },
+    features: {
+      title: 'Why Choose',
+      subtitle: 'Discover how our tools are helping creators around the world',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: 'Lightning Fast',
+            description: 'Process images in seconds with our optimized AI models',
+          },
+          {
+            title: 'Privacy First',
+            description: 'Your images are processed securely and never stored',
+          },
+          {
+            title: 'No Downloads',
+            description: 'Works directly in your browser, no software installation',
+          },
+          {
+            title: 'Professional Quality',
+            description: 'Studio-grade results powered by cutting-edge AI',
+          },
+        ],
+      },
+    },
+    cta: {
+      title: 'Ready to Transform Your Images?',
+      description: 'Join millions of creators who trust Turan for their image editing needs.',
+      'start-creating': 'Get Started Free',
+    },
+  },
   'aspect-ratio-selector': {
     'aspect-ratio': 'Aspect Ratio',
     proportion: 'proportion',

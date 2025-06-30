@@ -34,7 +34,7 @@
     --shadow-card-large-hover: 0 12px 48px rgba(0, 0, 0, 0.15);
   }
 
-  .dark {
+  [data-theme='dark'] {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;

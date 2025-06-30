@@ -4,10 +4,10 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { setStaticParamsLocale } from 'next-international/server';
+import { ThemeProvider } from 'next-themes';
 import type React from 'react';
 import { Toaster } from 'sonner';
 
-import { ThemeProvider } from '@/components/theme-provider';
 import { I18nProviderClient } from '@/locales/client';
 
 const inter = Inter({ subsets: ['latin'] });

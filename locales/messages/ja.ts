@@ -95,6 +95,97 @@ export default {
       },
     },
   },
+  'loading-page': {
+    hero: {
+      title: 'TURAN',
+      subtitle: 'AI搭載の画像編集',
+      description: '最先端のAI技術で画像を変革。背景削除からスタイル転送まで、数秒で無限の創造の可能性を解き放ちます。',
+      'free-start-creating': '無料で始める',
+      'pro-start-creating': 'プロ版で始める',
+      'active-user': 'アクティブユーザー',
+      'images-processed': '処理画像数',
+      'satisfaction-rate': '満足度',
+    },
+    'free-tools': {
+      title: '無料ツール',
+      subtitle: '強力な無料ツールを今すぐお試しください。登録不要です。',
+      'remove-bg': {
+        title: '背景削除',
+        description: 'AIが数秒で背景を削除',
+      },
+      'resolution-improvement': {
+        title: '解像度向上',
+        description: 'クリアな高解像度にアップスケール',
+      },
+    },
+    'pro-tools': {
+      title: 'プロ仕様ツール',
+      subtitle: '高度なAI機能を備えたプロフェッショナル向けツールセット',
+      'text-to-image': {
+        title: 'テキストから画像生成',
+        description: 'テキストプロンプトから美しい画像を生成',
+      },
+      'image-edit': {
+        title: '画像エディター',
+        description: 'プロ仕様のAI画像編集',
+      },
+      'style-preset': {
+        title: 'スタイルプリセット',
+        description: 'アーティスティックなスタイルを即座に適用',
+      },
+      'photo-restore': {
+        title: '写真修復',
+        description: '古い写真や傷んだ写真を修復',
+      },
+      'style-transfer': {
+        title: 'スタイル転送',
+        description: 'アーティスティックなスタイルで画像を変身',
+      },
+      'create-avatar': {
+        title: 'アバター作成',
+        description: 'パーソナライズされたAIアバターを作成',
+      },
+    },
+    testimonials: {
+      title: 'ユーザーの声',
+      subtitle: '世界中のクリエイターがどのように活用しているかご覧ください',
+      experience: {
+        title: '体験談',
+        subtitle: 'ツールのご感想をお聞かせください',
+        feedback: 'フィードバックを送信',
+      },
+    },
+    features: {
+      title: '選ばれる',
+      subtitle: 'Turanが選ばれる理由をご紹介します',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: '超高速処理',
+            description: '最適化されたAIモデルで画像を即座に処理',
+          },
+          {
+            title: 'プライバシー保護',
+            description: '画像は安全に処理され、一切保存されません',
+          },
+          {
+            title: 'ダウンロード不要',
+            description: 'ブラウザで直接利用可能、ソフトウェアのインストール不要',
+          },
+          {
+            title: 'プロ品質',
+            description: '最先端AIによるスタジオ品質の仕上がり',
+          },
+        ],
+      },
+    },
+    cta: {
+      title: '画像編集を始めましょう',
+      description: 'Turanを信頼する何百万人ものクリエイターに加わってください',
+      'start-creating': '無料で始める',
+    },
+  },
   'aspect-ratio-selector': {
     'aspect-ratio': 'アスペクト比',
     proportion: '比率',
