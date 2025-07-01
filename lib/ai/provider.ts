@@ -16,6 +16,7 @@ export const modelProvider = customProvider({
     'style-analysis-model': openrouter('mistralai/mistral-small-3.2-24b-instruct'),
   },
   imageModels: {
+    'text-to-image-model': replicate.image('black-forest-labs/flux-schnell'),
     'image-edit-model': replicate.image('black-forest-labs/flux-kontext-pro'),
     'style-preset-model': replicate.image('black-forest-labs/flux-kontext-pro'),
     'remove-bg-model': replicate.image(

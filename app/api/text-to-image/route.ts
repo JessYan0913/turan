@@ -1,13 +1,13 @@
+import { experimental_generateImage as generateImage } from 'ai';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
-import { createPrediction } from '@/lib/actions/prediction';
+import { uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
+import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
-import { replicate } from '@/lib/replicate';
-import { WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -39,21 +39,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Aspect ratio is required' }, { status: 400 });
     }
 
-    const prediction = await replicate.predictions.create({
-      model: 'black-forest-labs/flux-schnell',
-      input: {
-        userId,
-        prompt,
-        output_format: 'png',
-        aspect_ratio: aspectRatio,
+    const { image } = await generateImage({
+      model: modelProvider.imageModel('text-to-image-model'),
+      prompt: prompt,
+      providerOptions: {
+        replicate: {
+          output_format: 'png',
+          aspect_ratio: aspectRatio,
+        },
       },
-      webhook: `${WEBHOOK_HOST}/api/webhook/text-to-image`,
-      webhook_events_filter: ['completed'],
     });
 
-    createPrediction(user, 1, prediction);
+    const resultBlobData = await uploadGeneratedImageToBlobStorage(image);
 
-    return NextResponse.json({ id: prediction.id, input: prediction.input }, { status: 201 });
+    // createPrediction(user, 1, prediction);
+
+    return NextResponse.json({ ...resultBlobData }, { status: 200 });
   } catch (error) {
     console.error('Error processing image generation:', error);
     return NextResponse.json(
