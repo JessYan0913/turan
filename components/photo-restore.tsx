@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Camera, Download, Loader2, PaintRoller, RefreshCw, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { type Prediction } from 'replicate';
+import useSWRMutation from 'swr/mutation';
 import { z } from 'zod';
 
 import { ImageSlider } from '@/components/image-slider';
@@ -14,8 +15,7 @@ import { ImageUploader } from '@/components/image-uploader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { usePollingRequest } from '@/hooks/use-polling-request';
-import { cn, downloadImage } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
 export function PhotoRestore() {
@@ -39,81 +39,43 @@ export function PhotoRestore() {
   });
 
   const {
-    execute: submitTransform,
+    trigger: restorePhoto,
+    isMutating: isProcessing,
+    error,
+    reset,
     data: generatedImage,
-    status,
-    reset: resetPolling,
-  } = usePollingRequest<{ image: File; colorize: boolean }, Prediction>({
-    request: async (data) => {
+  } = useSWRMutation('/api/photo-restore', async (url, { arg }: { arg: FormData }) => {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: arg,
+      credentials: 'include',
+    });
+
+    if (response.status === 401) {
+      router.push('/login');
+      return null;
+    }
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Failed to restore photo');
+    }
+
+    return response.json();
+  });
+
+  const submit = form.handleSubmit(async (data: z.infer<typeof styleTransformSchema>) => {
+    try {
+      reset();
       const formData = new FormData();
       formData.append('image', data.image);
       formData.append('colorize', data.colorize ? 'true' : 'false');
 
-      const response = await fetch('/api/photo-restore', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-
-      if (response.status === 401) {
-        router.push('/login');
-        return;
-      }
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        throw new Error(error.message || 'Failed to process style transformation');
-      }
-
-      return response.json();
-    },
-    checkStatus: async (id) => {
-      const response = await fetch(`/api/prediction/${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to check status');
-      }
-      return response.json();
-    },
-    isComplete: (data: Prediction) => data.status === 'succeeded' || data.status === 'failed',
-    getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output : null),
-    successMessage: 'Style transformation completed successfully',
-    errorMessage: 'Failed to transform style',
-    timeoutMessage: 'Request timed out',
+      await restorePhoto(formData);
+    } catch (err) {
+      console.error('Failed to restore photo:', err);
+    }
   });
-
-  const onSubmit = useCallback(
-    (data: z.infer<typeof styleTransformSchema>) => {
-      resetPolling();
-      submitTransform({ image: data.image, colorize: data.colorize });
-    },
-    [submitTransform, resetPolling]
-  );
-
-  const handleRegenerate = useCallback(() => {
-    const values = form.getValues();
-    if (values.image) {
-      resetPolling();
-      submitTransform({
-        image: values.image,
-        colorize: values.colorize,
-      });
-    }
-  }, [form, submitTransform, resetPolling]);
-
-  const handleDownload = useCallback(() => {
-    if (!imageRef.current || !generatedImage) return;
-
-    let imageUrl = '';
-    if (typeof generatedImage === 'string') {
-      imageUrl = generatedImage;
-    } else if (generatedImage?.output?.[0]) {
-      imageUrl = generatedImage.output[0] as string;
-    } else {
-      return;
-    }
-
-    downloadImage(imageUrl, `styled-image-${Date.now()}.png`);
-  }, [generatedImage]);
 
   return (
     <div className="grid h-full min-h-[calc(100vh-320px)] grid-cols-1 gap-8 lg:grid-cols-2">
@@ -121,7 +83,7 @@ export function PhotoRestore() {
       <div className="flex flex-col">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={submit}
             className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
           >
             <div className="space-y-6">
@@ -137,7 +99,7 @@ export function PhotoRestore() {
                       <p className="text-muted-foreground text-xs">{t('form.image.description')}</p>
                     </div>
                     <FormControl>
-                      <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
+                      <ImageUploader onImageChange={onChange} disabled={isProcessing} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,7 +123,7 @@ export function PhotoRestore() {
                           id="colorize"
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          disabled={status === 'loading' || status === 'polling'}
+                          disabled={isProcessing}
                           className="border-blue-600 data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-600 data-[state=checked]:to-cyan-500 dark:border-cyan-400"
                         />
                         <label htmlFor="colorize" className="text-sm text-blue-700 dark:text-cyan-400">
@@ -179,9 +141,9 @@ export function PhotoRestore() {
               <Button
                 type="submit"
                 className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-blue-700 hover:to-cyan-600 hover:shadow-md disabled:from-blue-400 disabled:to-cyan-400"
-                disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
+                disabled={isProcessing || !form.formState.isValid}
               >
-                {status === 'loading' || status === 'polling' ? (
+                {isProcessing ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
                     {t('form.submit.loading')}
@@ -201,25 +163,26 @@ export function PhotoRestore() {
       {/* Right Column - Result Display */}
       <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-blue-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
-        <Button
-          onClick={handleRegenerate}
-          disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
-          variant="ghost"
-        >
-          <RefreshCw className="size-4" />
-          {t('regenerate')}
-        </Button>
+        {generatedImage && (
+          <Button
+            onClick={submit}
+            className="bg-background/90 text-foreground hover:bg-background absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-lg backdrop-blur-sm transition-all hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            variant="ghost"
+          >
+            <RefreshCw className="size-4" />
+            {t('regenerate')}
+          </Button>
+        )}
         {/* Download Button - Always visible, only enabled when there's an image */}
-        <Button
-          onClick={handleDownload}
-          disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
-          variant="ghost"
-        >
-          <Download className="size-4" />
-          {t('download')}
-        </Button>
+        {generatedImage?.downloadUrl && (
+          <Link
+            href={generatedImage.downloadUrl}
+            className="bg-background/90 text-foreground hover:bg-background absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-lg backdrop-blur-sm transition-all hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            <Download className="size-4" />
+            {t('download')}
+          </Link>
+        )}
 
         {/* Result Content */}
         <div className="relative flex flex-1 flex-col items-center justify-center p-6">
@@ -227,7 +190,7 @@ export function PhotoRestore() {
           <div
             className={cn(
               'absolute inset-0 flex flex-col items-center justify-center space-y-4 p-6 text-center transition-all duration-500',
-              status === 'idle' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              !isProcessing && !generatedImage && !error ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
             <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
@@ -239,22 +202,20 @@ export function PhotoRestore() {
             </div>
           </div>
 
-          {/* Loading/Polling State */}
+          {/* Loading/Processing State */}
           <div
             className={cn(
               'absolute inset-0 flex flex-col items-center justify-center space-y-6 p-6 transition-all duration-500',
-              status === 'loading' || status === 'polling' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              isProcessing ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
             <div className="scale-100 animate-[pulse_1s_ease-in-out_infinite] transition-all hover:scale-110">
               <Sparkles className="size-16 text-cyan-500" />
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                {status === 'loading' ? 'Transforming Your Image' : 'Processing...'}
-              </h3>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Restoring Your Photo</h3>
               <p className="text-muted-foreground mt-2 text-sm">
-                {status === 'loading' ? 'Generating your image...' : 'Processing...'}
+                Enhancing and repairing your image. This may take a moment...
               </p>
             </div>
           </div>
@@ -263,7 +224,7 @@ export function PhotoRestore() {
           <div
             className={cn(
               'absolute inset-0 flex flex-col items-center justify-center space-y-6 p-6 text-center transition-all duration-500',
-              status === 'error' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              error ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
             <div className="rounded-full bg-red-100 p-6 dark:bg-red-900/30">
@@ -274,7 +235,7 @@ export function PhotoRestore() {
               <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
-                onClick={() => form.reset()}
+                onClick={submit}
               >
                 Try Again
               </Button>
@@ -285,18 +246,18 @@ export function PhotoRestore() {
           <div
             className={cn(
               'absolute inset-0 flex items-center justify-center transition-all duration-500',
-              status === 'success' && generatedImage ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              generatedImage && !isProcessing ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            {status === 'success' && generatedImage && (
+            {generatedImage && !isProcessing && (
               <div className="relative size-full p-4">
-                <div className="relative size-full overflow-hidden rounded-lg shadow-md">
+                <div className="relative size-full overflow-hidden rounded-lg">
                   <ImageSlider
                     ref={imageRef}
                     beforeImage={URL.createObjectURL(form.getValues('image'))}
-                    afterImage={generatedImage}
+                    afterImage={generatedImage.url}
                     beforeLabel="Original"
-                    afterLabel="Transformed"
+                    afterLabel="Restored"
                     className="size-full"
                   />
                 </div>
