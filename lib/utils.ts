@@ -129,3 +129,7 @@ export function verifyWebhookSignature(signedContent: string, signatures: string
     return false;
   }
 }
+
+export function toBase64(buffer: Uint8Array): string {
+  return Buffer.from(buffer).toString('base64');
+}

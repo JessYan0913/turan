@@ -1,6 +1,6 @@
 'use server';
 
-import { put } from '@vercel/blob';
+import { put, type PutBlobResult } from '@vercel/blob';
 import { z } from 'zod';
 
 import { nanoid } from '@/lib/utils';
@@ -77,25 +77,16 @@ export async function uploadFileToBlobStorage(file: File) {
  */
 export async function uploadGeneratedImageToBlobStorage(
   generatedFile: GeneratedFile,
-  filename: string = 'generated-image.png'
-) {
+  mimeType: string = 'image/webp'
+): Promise<PutBlobResult> {
   try {
-    // Extract base64 data (remove data URL prefix if present)
     const base64Data = generatedFile.base64.split(';base64,').pop() || '';
     const buffer = Buffer.from(base64Data, 'base64');
 
-    // Upload to Vercel Blob storage
-    const blobData = await put(`${Date.now()}-${filename}`, buffer, {
+    return await put(`${nanoid()}.webp`, buffer, {
       access: 'public',
-      contentType: 'image/png',
+      contentType: mimeType,
     });
-
-    return {
-      ...blobData,
-      fileSize: buffer.byteLength,
-      fileType: 'image/png',
-      filename,
-    };
   } catch (error) {
     console.error('上传生成图片失败:', error);
     throw new Error('上传生成图片失败');

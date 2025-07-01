@@ -67,6 +67,16 @@ const ImageSlider = forwardRef<HTMLDivElement, ImageSliderProps>(function ImageS
     >
       {/* Original Image */}
       <div className="relative size-full">
+        <div
+          className="absolute inset-0 size-full"
+          style={{
+            backgroundImage:
+              'linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%), linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%)',
+            backgroundPosition: '0 0, 10px 10px, 10px 10px, 20px 20px',
+            backgroundSize: '20px 20px',
+            backgroundColor: '#f3f4f6',
+          }}
+        />
         <Image
           src={beforeImage || '/placeholder.svg'}
           alt={beforeLabel}
@@ -86,6 +96,16 @@ const ImageSlider = forwardRef<HTMLDivElement, ImageSliderProps>(function ImageS
         className="absolute left-0 top-0 size-full overflow-hidden"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
+        <div
+          className="absolute inset-0 size-full"
+          style={{
+            backgroundImage:
+              'linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%), linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%)',
+            backgroundPosition: '0 0, 10px 10px, 10px 10px, 20px 20px',
+            backgroundSize: '20px 20px',
+            backgroundColor: '#f3f4f6',
+          }}
+        />
         <Image
           src={afterImage || '/placeholder.svg'}
           alt={afterLabel}
