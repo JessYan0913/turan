@@ -245,7 +245,7 @@ export function TextToImage() {
           >
             {generatedImage && !isProcessing && (
               <div className="relative size-full p-4">
-                <div className="relative size-full overflow-hidden rounded-lg shadow-md">
+                <div className="relative size-full overflow-hidden rounded-lg">
                   <Image
                     src={generatedImage.url}
                     alt="Generated image"
