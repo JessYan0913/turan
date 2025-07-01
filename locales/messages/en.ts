@@ -1030,6 +1030,91 @@ export default {
       },
     },
   },
+  'resolution-improvement': {
+    header: {
+      title: 'Turan AI Smart Resolution Enhancement',
+      subtitle: 'Enhance Image Clarity with One Click',
+    },
+    tool: {
+      form: {
+        image: {
+          label: 'Upload Image',
+          description: 'Drag & drop your image here, or click to select',
+          message: 'Please upload an image',
+        },
+        submit: {
+          loading: 'Processing...',
+          default: 'Enhance Resolution',
+        },
+      },
+      regenerate: 'Retry',
+      download: 'Download',
+      idle: {
+        title: 'Ready',
+        subtitle: 'Your enhanced image will appear here',
+      },
+      error: {
+        title: 'Something went wrong',
+        subtitle: 'An error occurred while processing your request. Please try again.',
+        try: 'Retry',
+      },
+    },
+    'how-to-use': {
+      title: 'How to Use',
+      description: 'Enhance your image resolution in just a few simple steps',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: 'Upload Image',
+            description:
+              'Click the "Upload Image" button or drag and drop your image. Supports common formats like JPG and PNG.',
+          },
+          {
+            title: 'Select Upscale Factor',
+            description: 'Choose your desired upscaling factor, with options like 2x and 4x available.',
+          },
+          {
+            title: 'Wait for AI Processing',
+            description:
+              'Our AI will analyze and enhance your image resolution. Processing time depends on image size and upscaling factor.',
+          },
+          {
+            title: 'Download HD Image',
+            description: 'Once processed, download your high-definition image for a clearer visual experience.',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      description: 'Common questions about image resolution enhancement',
+      list: {
+        total: '4',
+        items: [
+          {
+            question: 'Is the resolution enhancement feature free?',
+            answer: 'Yes, our AI resolution enhancement is completely free to use with no hidden charges.',
+          },
+          {
+            question: 'What image formats are supported?',
+            answer:
+              'We support common image formats including JPG, PNG, and WEBP. For best results, use higher quality source images.',
+          },
+          {
+            question: 'What is the maximum image size for upscaling?',
+            answer:
+              'We support upscaling images up to 4K resolution, ensuring the enhanced images remain sharp and clear.',
+          },
+          {
+            question: 'Will the processed image lose quality?',
+            answer:
+              'Our AI algorithm intelligently repairs and enhances image details, minimizing distortion to deliver naturally clearer upscaled images.',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: 'Transform Your Images with AI',

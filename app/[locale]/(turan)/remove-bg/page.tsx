@@ -46,7 +46,7 @@ const examples = [
   },
 ];
 
-export default async function TextToImagePage() {
+export default async function RemoveBgPage() {
   const t = await getScopedI18n('remove-bg');
   const faqTotal = t('faq.list.total') as unknown as number;
   const faqs = Array.from({ length: faqTotal }).map((_, index) => ({

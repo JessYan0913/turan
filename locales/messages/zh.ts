@@ -970,6 +970,86 @@ export default {
       },
     },
   },
+  'resolution-improvement': {
+    header: {
+      title: 'Turan AI 智能提升分辨率',
+      subtitle: 'AI一键提升图片清晰度',
+    },
+    tool: {
+      form: {
+        image: {
+          label: '上传图片',
+          description: '拖放图片到此处，或点击选择',
+          message: '请上传图片',
+        },
+        submit: {
+          loading: '处理中...',
+          default: '提升分辨率',
+        },
+      },
+      regenerate: '重新处理',
+      download: '下载',
+      idle: {
+        title: '准备就绪',
+        subtitle: '提升分辨率后的图片将显示在这里',
+      },
+      error: {
+        title: '出错了',
+        subtitle: '处理您的请求时出错，请重试。',
+        try: '重试',
+      },
+    },
+    'how-to-use': {
+      title: '使用指南',
+      description: '简单几步，轻松提升图片分辨率',
+      list: {
+        total: '4',
+        items: [
+          {
+            title: '上传图片',
+            description: '点击"上传图片"按钮或直接将图片拖放到指定区域。支持JPG、PNG等常见图片格式。',
+          },
+          {
+            title: '选择放大倍数',
+            description: '选择您希望图片放大的倍数，支持2倍、4倍等选项。',
+          },
+          {
+            title: '等待AI处理',
+            description: '我们的AI会自动分析并提升图片分辨率。处理时间根据图片大小和放大倍数而定。',
+          },
+          {
+            title: '下载高清图片',
+            description: '处理完成后，下载高清大图，获得更清晰的视觉体验。',
+          },
+        ],
+      },
+    },
+    faq: {
+      title: '常见问题',
+      description: '关于图片分辨率提升的常见问题解答',
+      list: {
+        total: '4',
+        items: [
+          {
+            question: '分辨率提升功能是免费的吗？',
+            answer: '是的，我们的AI分辨率提升功能完全免费使用，不收取任何费用。',
+          },
+          {
+            question: '支持哪些图片格式？',
+            answer: '我们支持JPG、PNG、WEBP等常见图片格式。建议使用原始质量较高的图片以获得最佳效果。',
+          },
+          {
+            question: '最大支持多大的图片放大？',
+            answer: '我们支持最高4K分辨率的图片放大处理，确保放大后的图片依然保持清晰锐利。',
+          },
+          {
+            question: '处理后的图片会失真吗？',
+            answer: '我们的AI算法会智能修复和增强图片细节，最大程度减少失真，使放大后的图片更加自然清晰。',
+          },
+        ],
+      },
+    },
+  },
   home: {
     title: 'Turan',
     subtitle: '每一次生成，都是用心呈现',
