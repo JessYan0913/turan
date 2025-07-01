@@ -807,14 +807,14 @@ export default {
         },
         submit: {
           loading: '处理中...',
-          default: '生成头像',
+          default: '转换',
         },
       },
-      regenerate: '重新生成',
+      regenerate: '重新转换',
       download: '下载',
       idle: {
-        title: '准备好修复',
-        subtitle: '上传您的旧照片，使用AI进行修复。修复后的图片将在这里显示。',
+        title: '准备好转换',
+        subtitle: '上传您想要转换的图像，使用AI进行转换。转换后的图片将在这里显示。',
       },
       error: {
         title: '出现错误',

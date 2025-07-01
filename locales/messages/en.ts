@@ -852,14 +852,14 @@ export default {
         },
         submit: {
           loading: 'Processing...',
-          default: 'Generate Avatar',
+          default: 'Transform',
         },
       },
       regenerate: 'Regenerate',
       download: 'Download',
       idle: {
-        title: 'Ready to Restore',
-        subtitle: 'Upload your old photo and restore it with AI. The result will appear here.',
+        title: 'Ready to Transform',
+        subtitle: 'Upload your photo and transform it with AI. The result will appear here.',
       },
       error: {
         title: 'Error Occurred',

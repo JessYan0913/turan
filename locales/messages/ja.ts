@@ -849,14 +849,14 @@ export default {
         },
         submit: {
           loading: '処理中...',
-          default: 'アバターを生成',
+          default: '変換',
         },
       },
-      regenerate: '再生成',
+      regenerate: '再変換',
       download: 'ダウンロード',
       idle: {
-        title: '修復の準備完了',
-        subtitle: '古い写真をアップロードしてAIで修復します。修復後の画像はここに表示されます。',
+        title: '準備完了',
+        subtitle: '変換後の画像がここに表示されます。',
       },
       error: {
         title: 'エラーが発生しました',
