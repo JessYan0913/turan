@@ -46,11 +46,9 @@ export async function POST(request: Request) {
       },
     });
 
-    const mime = image.mimeType;
-
     const resultBlobData = await uploadGeneratedImageToBlobStorage(image);
 
-    return NextResponse.json({ ...resultBlobData, mimeType: mime }, { status: 200 });
+    return NextResponse.json({ ...resultBlobData }, { status: 200 });
   } catch (error) {
     console.error('Error processing image edit:', error);
     return NextResponse.json(

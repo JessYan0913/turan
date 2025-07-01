@@ -1,14 +1,13 @@
+import { experimental_generateImage as generateImage } from 'ai';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
-import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
-import { createPrediction } from '@/lib/actions/prediction';
+import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
+import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
-import { replicate } from '@/lib/replicate';
-import { WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -33,16 +32,11 @@ export async function POST(request: Request) {
     // Parse FormData from the request
     const formData = await request.formData();
     const imageFile = formData.get('image') as File | null;
-    const prompt = formData.get('prompt') as string | null;
-    const style = formData.get('style') as string | null; // Add this line to retrieve the style inf
+    const style = formData.get('style') as string | null;
 
     // Validate required fields
     if (!imageFile) {
       return NextResponse.json({ success: false, message: 'Image file is required' }, { status: 400 });
-    }
-
-    if (!prompt) {
-      return NextResponse.json({ success: false, message: 'Prompt is required' }, { status: 400 });
     }
 
     if (!style) {
@@ -51,24 +45,24 @@ export async function POST(request: Request) {
 
     const blobData = await uploadFileToBlobStorage(imageFile);
 
-    const prediction = await replicate.predictions.create({
-      model: 'black-forest-labs/flux-kontext-pro',
-      input: {
-        userId,
-        prompt,
-        style,
-        output_format: 'png',
-        input_image: blobData.url,
-        aspect_ratio: 'match_input_image',
-        seed: 2,
-        safety_tolerance: 2,
+    const { image } = await generateImage({
+      model: modelProvider.imageModel('style-preset-model'),
+      prompt: `${style} style`,
+      providerOptions: {
+        replicate: {
+          output_format: 'png',
+          input_image: blobData.url,
+          aspect_ratio: 'match_input_image',
+          seed: 2,
+          safety_tolerance: 2,
+        },
       },
-      webhook: `${WEBHOOK_HOST}/api/webhook/style-preset`,
-      webhook_events_filter: ['completed', 'logs', 'start'],
     });
-    createPrediction(user, 15, prediction);
 
-    return NextResponse.json({ id: prediction.id, input: prediction.input }, { status: 201 });
+    const resultBlobData = await uploadGeneratedImageToBlobStorage(image);
+    // createPrediction(user, 15, prediction);
+
+    return NextResponse.json({ ...resultBlobData }, { status: 200 });
   } catch (error) {
     console.error('Error processing style transform:', error);
     return NextResponse.json(

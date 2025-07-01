@@ -75,17 +75,14 @@ export async function uploadFileToBlobStorage(file: File) {
 /**
  * Upload a GeneratedFile (from ai package) to Vercel Blob storage
  */
-export async function uploadGeneratedImageToBlobStorage(
-  generatedFile: GeneratedFile,
-  mimeType: string = 'image/webp'
-): Promise<PutBlobResult> {
+export async function uploadGeneratedImageToBlobStorage(generatedFile: GeneratedFile): Promise<PutBlobResult> {
   try {
     const base64Data = generatedFile.base64.split(';base64,').pop() || '';
     const buffer = Buffer.from(base64Data, 'base64');
 
     return await put(`${nanoid()}.webp`, buffer, {
       access: 'public',
-      contentType: mimeType,
+      contentType: 'image/webp',
     });
   } catch (error) {
     console.error('上传生成图片失败:', error);

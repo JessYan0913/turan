@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Download, Loader2, Palette, RefreshCw, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { type Prediction } from 'replicate';
+import useSWRMutation from 'swr/mutation';
 import { z } from 'zod';
 
 import { ImageSlider } from '@/components/image-slider';
@@ -14,126 +15,116 @@ import { ImageUploader } from '@/components/image-uploader';
 import { StyleSelector } from '@/components/style-selector';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { usePollingRequest } from '@/hooks/use-polling-request';
-import { StyleOption } from '@/lib/actions/options';
-import { cn, downloadImage } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
+
+const styleOptions = [
+  {
+    id: 'watercolor',
+    name: '水彩画',
+    description: '柔和的水彩风格',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/watercolor-Z8JH4ZSxghGP6sLe52NWv7Bx4vHEvt.jpg',
+    prompt: 'watercolor style',
+  },
+  {
+    id: 'oil-painting',
+    name: '油画',
+    description: '经典油画质感',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/oil_painting-AYBJF8kmuP2EJNF2gaD9qKSJi9SYZq.jpg',
+    prompt: 'oil painting style',
+  },
+  {
+    id: 'sketch',
+    name: '素描',
+    description: '铅笔素描风格',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/sketch-6oXiC1pkS2IESTeBTP7pUAHNjwfaHa.jpg',
+    prompt: 'sketch style',
+  },
+  {
+    id: 'anime',
+    name: '动漫',
+    description: '日式动漫风格',
+    preview:
+      'https://2hav3s1paktcascm.public.blob.vercel-storage.com/japanese_anime-e5mmAcpzirq73IYmNgmNUNw6waN57A.jpg',
+    prompt: 'japanese anime style',
+  },
+  {
+    id: 'ghibli',
+    name: '吉卜力',
+    description: '宫崎骏动画风格',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/ghibli-HXo6xKMUTK9PYLrhIMW5YZpbadrI0Q.jpg',
+    prompt: 'ghibli style',
+  },
+  {
+    id: 'cyberpunk',
+    name: '赛博朋克',
+    description: '未来科幻风格',
+    preview: 'https://2hav3s1paktcascm.public.blob.vercel-storage.com/cyberpunk-lrumHLuIWlhLfhCf82TQopwq4JZiuB.jpg',
+    prompt: 'cyberpunk style',
+  },
+];
 
 export function StylePreset() {
   const t = useScopedI18n('style-preset.tool');
   const router = useRouter();
 
   const imageRef = useRef<HTMLImageElement>(null);
-  const [styleOptions, setStyleOptions] = useState<StyleOption[]>([]);
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
     image: z.instanceof(File, { message: t('form.image.message') }),
     style: z.string().min(1, { message: t('form.style.message') }),
-    prompt: z.string().optional(),
   });
 
   // Initialize react-hook-form with Zod validation
   const form = useForm<z.infer<typeof styleTransformSchema>>({
     resolver: zodResolver(styleTransformSchema),
     defaultValues: {
-      prompt: '',
       style: '',
     },
   });
 
   const {
-    execute: submitTransform,
+    trigger: stylePreset,
+    isMutating: isProcessing,
+    error,
+    reset,
     data: generatedImage,
-    status,
-    reset: resetPolling,
-  } = usePollingRequest<{ image: File; prompt: string; style: string }, Prediction>({
-    request: async (data) => {
-      const formData = new FormData();
-      formData.append('image', data.image);
-      formData.append('prompt', data.prompt || '');
-      formData.append('style', data.style);
+  } = useSWRMutation('/api/style-preset', async (url, { arg }: { arg: FormData }) => {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: arg,
+      credentials: 'include',
+    });
 
-      const response = await fetch('/api/style-preset', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
+    if (response.status === 401) {
+      router.push('/login');
+      return null;
+    }
 
-      if (response.status === 401) {
-        router.push('/login');
-        return;
-      }
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Failed to process style transformation');
+    }
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        throw new Error(error.message || 'Failed to process style transformation');
-      }
-
-      return response.json();
-    },
-    checkStatus: async (id) => {
-      const response = await fetch(`/api/prediction/${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to check status');
-      }
-      return response.json();
-    },
-    isComplete: (data: Prediction) => data.status === 'succeeded' || data.status === 'failed',
-    getResult: (data: Prediction) => (data.status === 'succeeded' ? data.output : null),
-    successMessage: 'Style transformation completed successfully',
-    errorMessage: 'Failed to transform style',
-    timeoutMessage: 'Request timed out',
+    return response.json();
   });
 
-  useEffect(() => {
-    const fetchStyleOptions = async () => {
-      try {
-        const { getStyleOptions } = await import('@/lib/actions/options');
-        const data = await getStyleOptions();
-        setStyleOptions(data);
-      } catch (error) {
-        console.error('Failed to fetch style options:', error);
-      }
-    };
-
-    fetchStyleOptions();
-  }, []);
-
   const onSubmit = useCallback(
-    (data: z.infer<typeof styleTransformSchema>) => {
-      resetPolling();
-      submitTransform({ image: data.image, prompt: data.prompt || '', style: data.style });
+    async (data: z.infer<typeof styleTransformSchema>) => {
+      try {
+        reset();
+        const formData = new FormData();
+        formData.append('image', data.image);
+        formData.append('style', data.style);
+
+        await stylePreset(formData);
+      } catch (err) {
+        console.error('Error applying style preset:', err);
+      }
     },
-    [submitTransform, resetPolling]
+    [stylePreset, reset]
   );
-
-  const handleRegenerate = useCallback(() => {
-    const values = form.getValues();
-    if (values.image) {
-      resetPolling();
-      submitTransform({
-        image: values.image,
-        prompt: values.prompt || '',
-        style: values.style,
-      });
-    }
-  }, [form, submitTransform, resetPolling]);
-
-  const handleDownload = useCallback(() => {
-    if (!imageRef.current || !generatedImage) return;
-
-    let imageUrl = '';
-    if (typeof generatedImage === 'string') {
-      imageUrl = generatedImage;
-    } else if (generatedImage?.output?.[0]) {
-      imageUrl = generatedImage.output[0] as string;
-    } else {
-      return;
-    }
-
-    downloadImage(imageUrl, `styled-image-${Date.now()}.png`);
-  }, [generatedImage]);
 
   return (
     <div className="grid h-full min-h-[calc(100vh-320px)] grid-cols-1 gap-8 lg:grid-cols-2">
@@ -157,7 +148,7 @@ export function StylePreset() {
                       <p className="text-muted-foreground text-xs">{t('form.image.description')}</p>
                     </div>
                     <FormControl>
-                      <ImageUploader onImageChange={onChange} disabled={status === 'loading' || status === 'polling'} />
+                      <ImageUploader onImageChange={onChange} disabled={isProcessing} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -181,9 +172,8 @@ export function StylePreset() {
                         value={field.value}
                         onSelect={(style) => {
                           field.onChange(style.id);
-                          form.setValue('prompt', style.prompt);
                         }}
-                        disabled={status === 'loading' || status === 'polling'}
+                        disabled={isProcessing}
                       />
                     </FormControl>
                     <FormMessage />
@@ -196,9 +186,9 @@ export function StylePreset() {
               <Button
                 type="submit"
                 className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-5 text-base font-medium text-white shadow-sm transition-all duration-300 hover:from-blue-700 hover:to-cyan-600 hover:shadow-md disabled:from-blue-400 disabled:to-cyan-400"
-                disabled={status === 'loading' || status === 'polling' || !form.formState.isValid}
+                disabled={isProcessing || !form.formState.isValid}
               >
-                {status === 'loading' || status === 'polling' ? (
+                {isProcessing ? (
                   <>
                     <Loader2 className="mr-2 size-5 animate-spin" />
                     {t('form.submit.loading')}
@@ -218,25 +208,26 @@ export function StylePreset() {
       {/* Right Column - Result Display */}
       <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-blue-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
-        <Button
-          onClick={handleRegenerate}
-          disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
-          variant="ghost"
-        >
-          <RefreshCw className="size-4" />
-          {t('regenerate')}
-        </Button>
+        {generatedImage && (
+          <Button
+            onClick={() => reset()}
+            className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+            variant="ghost"
+          >
+            <RefreshCw className="size-4" />
+            {t('regenerate')}
+          </Button>
+        )}
         {/* Download Button - Always visible, only enabled when there's an image */}
-        <Button
-          onClick={handleDownload}
-          disabled={status !== 'success' || !generatedImage}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
-          variant="ghost"
-        >
-          <Download className="size-4" />
-          {t('download')}
-        </Button>
+        {generatedImage?.downloadUrl && (
+          <Link
+            href={generatedImage.downloadUrl}
+            className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          >
+            <Download className="size-4" />
+            {t('download')}
+          </Link>
+        )}
 
         {/* Result Content */}
         <div className="relative flex flex-1 flex-col items-center justify-center p-6">
@@ -244,7 +235,7 @@ export function StylePreset() {
           <div
             className={cn(
               'absolute inset-0 flex flex-col items-center justify-center space-y-4 p-6 text-center transition-all duration-500',
-              status === 'idle' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              !isProcessing && !generatedImage && !error ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
             <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
@@ -260,19 +251,15 @@ export function StylePreset() {
           <div
             className={cn(
               'absolute inset-0 flex flex-col items-center justify-center space-y-6 p-6 transition-all duration-500',
-              status === 'loading' || status === 'polling' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              isProcessing ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
             <div className="scale-100 animate-[pulse_1s_ease-in-out_infinite] transition-all hover:scale-110">
               <Sparkles className="size-16 text-cyan-500" />
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                {status === 'loading' ? 'Transforming Your Image' : 'Processing...'}
-              </h3>
-              <p className="text-muted-foreground mt-2 text-sm">
-                {status === 'loading' ? 'Generating your image...' : 'Processing...'}
-              </p>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{'Processing...'}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">{'Processing...'}</p>
             </div>
           </div>
 
@@ -280,7 +267,7 @@ export function StylePreset() {
           <div
             className={cn(
               'absolute inset-0 flex flex-col items-center justify-center space-y-6 p-6 text-center transition-all duration-500',
-              status === 'error' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              error ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
             <div className="rounded-full bg-red-100 p-6 dark:bg-red-900/30">
@@ -291,7 +278,7 @@ export function StylePreset() {
               <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
-                onClick={() => form.reset()}
+                onClick={() => reset()}
               >
                 Try Again
               </Button>
@@ -302,16 +289,16 @@ export function StylePreset() {
           <div
             className={cn(
               'absolute inset-0 flex items-center justify-center transition-all duration-500',
-              status === 'success' && generatedImage ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              generatedImage && !isProcessing ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            {status === 'success' && generatedImage && (
+            {generatedImage && !isProcessing && (
               <div className="relative size-full p-4">
                 <div className="relative size-full overflow-hidden rounded-lg shadow-md">
                   <ImageSlider
                     ref={imageRef}
                     beforeImage={URL.createObjectURL(form.getValues('image'))}
-                    afterImage={generatedImage}
+                    afterImage={generatedImage.url}
                     beforeLabel="Original"
                     afterLabel="Transformed"
                     className="size-full"

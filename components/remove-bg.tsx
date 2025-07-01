@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Download, Image as ImageIcon, Loader2, RefreshCw, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import useSWRMutation from 'swr/mutation';
@@ -13,14 +14,13 @@ import { ImageSlider } from '@/components/image-slider';
 import { ImageUploader } from '@/components/image-uploader';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { cn, downloadImage } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useScopedI18n } from '@/locales/client';
 
 export function RemoveBg() {
   const t = useScopedI18n('remove-bg.tool');
   const router = useRouter();
   const imageRef = useRef<HTMLImageElement>(null);
-  const [generatedImage, setGeneratedImage] = useState<{ url: string } | null>(null);
   const imageEditSchema = z.object({
     image: z.instanceof(File, { message: t('form.image.message') }),
   });
@@ -35,6 +35,7 @@ export function RemoveBg() {
     isMutating: isProcessing,
     error,
     reset,
+    data: generatedImage,
   } = useSWRMutation('/api/remove-bg', async (url, { arg }: { arg: FormData }) => {
     const response = await fetch(url, {
       method: 'POST',
@@ -62,26 +63,13 @@ export function RemoveBg() {
         const formData = new FormData();
         formData.append('image', data.image);
 
-        const result = await removeBg(formData);
-        if (result) {
-          setGeneratedImage(result);
-        }
+        await removeBg(formData);
       } catch (err) {
         console.error('Error removing background:', err);
       }
     },
     [removeBg, reset]
   );
-
-  const handleRegenerate = useCallback(() => {
-    setGeneratedImage(null);
-    form.reset();
-  }, [form]);
-
-  const handleDownload = useCallback(() => {
-    if (!generatedImage?.url) return;
-    downloadImage(generatedImage.url);
-  }, [generatedImage]);
 
   return (
     <div className="grid h-full min-h-[calc(100vh-320px)] grid-cols-1 gap-8 lg:grid-cols-2">
@@ -139,25 +127,26 @@ export function RemoveBg() {
       {/* Right Column - Result Display */}
       <div className="relative flex h-full min-h-[400px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-white to-blue-50/50 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10">
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
-        <Button
-          onClick={handleRegenerate}
-          disabled={!generatedImage}
-          className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
-          variant="ghost"
-        >
-          <RefreshCw className="size-4" />
-          {t('regenerate')}
-        </Button>
+        {generatedImage && (
+          <Button
+            onClick={() => reset()}
+            className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+            variant="ghost"
+          >
+            <RefreshCw className="size-4" />
+            {t('regenerate')}
+          </Button>
+        )}
         {/* Download Button - Always visible, only enabled when there's an image */}
-        <Button
-          onClick={handleDownload}
-          disabled={!generatedImage}
-          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
-          variant="ghost"
-        >
-          <Download className="size-4" />
-          {t('download')}
-        </Button>
+        {generatedImage?.downloadUrl && (
+          <Link
+            href={generatedImage.downloadUrl}
+            className="absolute bottom-6 right-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
+          >
+            <Download className="size-4" />
+            {t('download')}
+          </Link>
+        )}
 
         {/* Result Content */}
         <div className="relative flex flex-1 flex-col items-center justify-center p-6">
@@ -165,7 +154,7 @@ export function RemoveBg() {
           <div
             className={cn(
               'absolute inset-0 flex flex-col items-center justify-center space-y-4 p-6 text-center transition-all duration-500',
-              !isProcessing ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              !isProcessing && !generatedImage && !error ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
             <div className="rounded-full bg-blue-50 p-6 dark:bg-blue-900/20">
@@ -208,7 +197,7 @@ export function RemoveBg() {
               <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
-                onClick={() => form.reset()}
+                onClick={() => reset()}
               >
                 {t('error.try')}
               </Button>
@@ -219,10 +208,10 @@ export function RemoveBg() {
           <div
             className={cn(
               'absolute inset-0 flex items-center justify-center transition-all duration-500',
-              generatedImage ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              generatedImage && !isProcessing ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             )}
           >
-            {generatedImage && (
+            {generatedImage && !isProcessing && (
               <div className="relative size-full p-4">
                 <div className="relative size-full overflow-hidden rounded-lg shadow-md">
                   <ImageSlider
