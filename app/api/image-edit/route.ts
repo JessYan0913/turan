@@ -1,13 +1,12 @@
+import { experimental_generateImage as generateImage } from 'ai';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
-import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
-import { createPrediction } from '@/lib/actions/prediction';
+import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
+import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
-import { replicate } from '@/lib/replicate';
-import { WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -45,24 +44,24 @@ export async function POST(request: Request) {
 
     const blobData = await uploadFileToBlobStorage(imageFile);
 
-    const prediction = await replicate.predictions.create({
-      model: 'black-forest-labs/flux-kontext-pro',
-      input: {
-        userId,
-        prompt,
-        output_format: 'png',
-        input_image: blobData.url,
-        aspect_ratio: 'match_input_image',
-        seed: 2,
-        safety_tolerance: 2,
+    const { image } = await generateImage({
+      model: modelProvider.imageModel('image-edit-model'),
+      prompt: prompt,
+      providerOptions: {
+        replicate: {
+          output_format: 'png',
+          input_image: blobData.url,
+          aspect_ratio: 'match_input_image',
+          seed: 2,
+          safety_tolerance: 2,
+        },
       },
-      webhook: `${WEBHOOK_HOST}/api/webhook/image-edit`,
-      webhook_events_filter: ['completed', 'logs', 'start'],
     });
 
-    createPrediction(user, 15, prediction);
+    const resultBlobData = await uploadGeneratedImageToBlobStorage(image);
+    // createPrediction(user, 15, prediction);
 
-    return NextResponse.json({ id: prediction.id, input: prediction.input }, { status: 201 });
+    return NextResponse.json({ ...resultBlobData }, { status: 200 });
   } catch (error) {
     console.error('Error processing image edit:', error);
     return NextResponse.json(

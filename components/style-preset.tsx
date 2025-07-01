@@ -1,7 +1,5 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Download, Loader2, Palette, RefreshCw, Sparkles } from 'lucide-react';
 import Link from 'next/link';
@@ -68,8 +66,6 @@ export function StylePreset() {
   const t = useScopedI18n('style-preset.tool');
   const router = useRouter();
 
-  const imageRef = useRef<HTMLImageElement>(null);
-
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
     image: z.instanceof(File, { message: t('form.image.message') }),
@@ -110,21 +106,18 @@ export function StylePreset() {
     return response.json();
   });
 
-  const onSubmit = useCallback(
-    async (data: z.infer<typeof styleTransformSchema>) => {
-      try {
-        reset();
-        const formData = new FormData();
-        formData.append('image', data.image);
-        formData.append('style', data.style);
+  const submit = form.handleSubmit(async (data: z.infer<typeof styleTransformSchema>) => {
+    try {
+      reset();
+      const formData = new FormData();
+      formData.append('image', data.image);
+      formData.append('style', data.style);
 
-        await stylePreset(formData);
-      } catch (err) {
-        console.error('Error applying style preset:', err);
-      }
-    },
-    [stylePreset, reset]
-  );
+      await stylePreset(formData);
+    } catch (err) {
+      console.error('Error applying style preset:', err);
+    }
+  });
 
   return (
     <div className="grid h-full min-h-[calc(100vh-320px)] grid-cols-1 gap-8 lg:grid-cols-2">
@@ -132,7 +125,7 @@ export function StylePreset() {
       <div className="flex flex-col">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={() => submit()}
             className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
           >
             <div className="space-y-6">
@@ -210,7 +203,9 @@ export function StylePreset() {
         {/* Regenerate Button - Always visible, only enabled when there's an image */}
         {generatedImage && (
           <Button
-            onClick={() => reset()}
+            onClick={() => {
+              submit();
+            }}
             className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-gray-900 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-800/90 dark:text-white dark:hover:bg-gray-800/100"
             variant="ghost"
           >
@@ -278,7 +273,7 @@ export function StylePreset() {
               <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
-                onClick={() => reset()}
+                onClick={() => submit()}
               >
                 Try Again
               </Button>
@@ -296,7 +291,6 @@ export function StylePreset() {
               <div className="relative size-full p-4">
                 <div className="relative size-full overflow-hidden rounded-lg shadow-md">
                   <ImageSlider
-                    ref={imageRef}
                     beforeImage={URL.createObjectURL(form.getValues('image'))}
                     afterImage={generatedImage.url}
                     beforeLabel="Original"
