@@ -162,6 +162,13 @@
       "when": 1750304842720,
       "tag": "0022_certain_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1751364917767,
+      "tag": "0023_funny_the_call",
+      "breakpoints": true
     }
   ]
 }

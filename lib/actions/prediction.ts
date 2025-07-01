@@ -1,12 +1,19 @@
 'use server';
 
 import { and, count, desc, eq } from 'drizzle-orm';
-import { type Prediction } from 'replicate';
 
 import { generateTitle } from '@/lib/actions/ai';
 import { saveOnlineImage } from '@/lib/actions/file-upload';
 import { db } from '@/lib/db/client';
-import { predictionTable, transactionTable, type User, userTable, workTable, type WorkType } from '@/lib/db/schema';
+import {
+  type Prediction,
+  predictionTable,
+  transactionTable,
+  type User,
+  userTable,
+  workTable,
+  type WorkType,
+} from '@/lib/db/schema';
 
 export async function createPrediction(user: User, points: number, prediction: Prediction) {
   await db.transaction(async (tx) => {
@@ -20,13 +27,9 @@ export async function createPrediction(user: User, points: number, prediction: P
       output: prediction.output ?? null,
       source: 'web',
       error: prediction.error ?? null,
-      logs: prediction.logs ?? null,
       metrics: prediction.metrics ?? null,
-      webhook: prediction.webhook ?? null,
-      webhookEventsFilter: prediction.webhook_events_filter ?? null,
-      urls: prediction.urls ?? {},
-      createdAt: prediction.created_at ? new Date(prediction.created_at) : new Date(),
-      startedAt: prediction.started_at ? new Date(prediction.started_at) : null,
+      createdAt: new Date(),
+      startedAt: new Date(),
     });
     const [updatedUser] = await tx
       .update(userTable)
@@ -75,9 +78,8 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
               status: prediction.status,
               output: prediction.output,
               error: prediction.error,
-              logs: prediction.logs,
               metrics: prediction.metrics,
-              completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+              completedAt: new Date(),
             })
             .where(eq(predictionTable.id, prediction.id));
           const [updatedUser] = await tx
@@ -113,9 +115,8 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
           status: prediction.status,
           output: prediction.output,
           error: prediction.error,
-          logs: prediction.logs,
           metrics: prediction.metrics,
-          completedAt: prediction.completed_at ? new Date(prediction.completed_at) : null,
+          completedAt: new Date(),
         })
         .where(eq(predictionTable.id, prediction.id))
         .returning();
@@ -128,8 +129,8 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
         points: config.points,
         processedImage: processedImageBlob.url,
         metadata: prediction.metrics,
-        completedAt: new Date(prediction.completed_at || new Date()),
-        predictTime: prediction.metrics?.predict_time?.toString(),
+        completedAt: new Date(),
+        predictTime: null,
         predictionId: updatedPrediction.id,
         ...config.getWorkData(prediction.input, processedImageBlob.url),
       };
