@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
+import { createPrediction } from '@/lib/actions/prediction';
 import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
@@ -45,9 +46,28 @@ export async function POST(request: Request) {
 
     const blobData = await uploadFileToBlobStorage(imageFile);
 
+    const prompt = `${style} style`;
+
+    setImmediate(() => {
+      createPrediction(user, 15, {
+        status: 'starting',
+        error: null,
+        userId: user.id,
+        model: 'style-preset-model',
+        version: '1',
+        input: {
+          image: blobData.url,
+          prompt,
+        },
+        output: null,
+        source: 'web',
+        metrics: null,
+      });
+    });
+
     const { image } = await generateImage({
       model: modelProvider.imageModel('style-preset-model'),
-      prompt: `${style} style`,
+      prompt: prompt,
       providerOptions: {
         replicate: {
           output_format: 'png',

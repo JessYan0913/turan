@@ -14,23 +14,31 @@ import {
   workTable,
   type WorkType,
 } from '@/lib/db/schema';
+import { nanoid } from '@/lib/utils';
 
-export async function createPrediction(user: User, points: number, prediction: Prediction) {
+export async function createPrediction(
+  user: User,
+  points: number,
+  prediction: Omit<Prediction, 'id' | 'createdAt' | 'updatedAt' | 'startedAt' | 'completedAt'>
+) {
   await db.transaction(async (tx) => {
-    await tx.insert(predictionTable).values({
-      id: prediction.id,
-      userId: user.id,
-      status: prediction.status as any, // Type assertion since the status types might not match exactly
-      model: prediction.model,
-      version: prediction.version,
-      input: prediction.input,
-      output: prediction.output ?? null,
-      source: 'web',
-      error: prediction.error ?? null,
-      metrics: prediction.metrics ?? null,
-      createdAt: new Date(),
-      startedAt: new Date(),
-    });
+    const [insertedPrediction] = await tx
+      .insert(predictionTable)
+      .values({
+        id: nanoid(),
+        userId: user.id,
+        status: prediction.status,
+        model: prediction.model,
+        version: prediction.version,
+        input: prediction.input,
+        output: prediction.output ?? null,
+        source: 'web',
+        error: prediction.error ?? null,
+        metrics: prediction.metrics ?? null,
+        createdAt: new Date(),
+        startedAt: new Date(),
+      })
+      .returning();
     const [updatedUser] = await tx
       .update(userTable)
       .set({ points: user.points - points })
@@ -43,7 +51,7 @@ export async function createPrediction(user: User, points: number, prediction: P
       status: 'completed' as const,
       balanceBefore: user.points,
       balanceAfter: updatedUser.points,
-      predictionId: prediction.id,
+      predictionId: insertedPrediction.id,
       metadata: prediction,
     });
   });
