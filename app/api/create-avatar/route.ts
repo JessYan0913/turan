@@ -1,14 +1,13 @@
+import { experimental_generateImage as generateImage } from 'ai';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
-import { uploadFileToBlobStorage } from '@/lib/actions/file-upload';
-import { createPrediction } from '@/lib/actions/prediction';
+import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
+import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
-import { replicate } from '@/lib/replicate';
-import { WEBHOOK_HOST } from '@/lib/utils';
 
 export async function POST(request: Request) {
   try {
@@ -34,7 +33,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const imageFile = formData.get('image') as File | null;
     const background = formData.get('background') as string | null;
-    const size = formData.get('size') as string | null;
+    const aspectRatio = formData.get('aspectRatio') as string | null;
 
     // Validate required fields
     if (!imageFile) {
@@ -45,26 +44,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Background is required' }, { status: 400 });
     }
 
+    if (!aspectRatio) {
+      return NextResponse.json({ success: false, message: 'Aspect ratio is required' }, { status: 400 });
+    }
+
     const blobData = await uploadFileToBlobStorage(imageFile);
 
-    const prediction = await replicate.predictions.create({
-      model: 'flux-kontext-apps/professional-headshot',
-      input: {
-        userId,
-        background,
-        output_format: 'png',
-        input_image: blobData.url,
-        aspect_ratio: size,
-        seed: 2,
-        safety_tolerance: 2,
+    const { image } = await generateImage({
+      model: modelProvider.imageModel('create-avatar-model'),
+      prompt: '',
+      providerOptions: {
+        replicate: {
+          output_format: 'png',
+          input_image: blobData.url,
+          aspect_ratio: aspectRatio,
+          background,
+          seed: 2,
+          safety_tolerance: 2,
+        },
       },
-      webhook: `${WEBHOOK_HOST}/api/webhook/avatar-generate`,
-      webhook_events_filter: ['completed', 'logs', 'start'],
     });
+    const resultBlobData = await uploadGeneratedImageToBlobStorage(image);
 
-    createPrediction(user, 15, prediction);
+    // createPrediction(user, 15, prediction);
 
-    return NextResponse.json({ id: prediction.id, input: prediction.input }, { status: 201 });
+    return NextResponse.json({ ...resultBlobData }, { status: 200 });
   } catch (error) {
     console.error('Error processing avatar generate:', error);
     return NextResponse.json(

@@ -125,7 +125,7 @@ export function StylePreset() {
       <div className="flex flex-col">
         <Form {...form}>
           <form
-            onSubmit={() => submit()}
+            onSubmit={submit}
             className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-br from-white to-blue-50/50 p-6 shadow-sm ring-1 ring-black/5 transition-all duration-300 dark:from-gray-900 dark:to-blue-950/20 dark:ring-white/10"
           >
             <div className="space-y-6">

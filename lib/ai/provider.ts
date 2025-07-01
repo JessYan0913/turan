@@ -19,6 +19,7 @@ export const modelProvider = customProvider({
     'text-to-image-model': replicate.image('black-forest-labs/flux-schnell'),
     'image-edit-model': replicate.image('black-forest-labs/flux-kontext-pro'),
     'style-preset-model': replicate.image('black-forest-labs/flux-kontext-pro'),
+    'create-avatar-model': replicate.image('flux-kontext-apps/professional-headshot'),
     'remove-bg-model': replicate.image(
       '851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc'
     ),
