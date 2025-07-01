@@ -62,7 +62,14 @@ export function CreateAvatar() {
 
   // Define the form schema using Zod
   const avatarGenerationSchema = z.object({
-    image: z.instanceof(File, { message: t('form.image.message') }),
+    image: z
+      .any()
+      .refine((file) => file instanceof File || file === undefined, {
+        message: t('form.image.message'),
+      })
+      .refine((file) => file && file.size > 0, {
+        message: t('form.image.message'),
+      }),
     background: z.string({ required_error: t('form.background.message') }),
     aspectRatio: z.enum(
       ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3', '4:5', '5:4', '21:9', '9:21', '2:1', '1:2'],

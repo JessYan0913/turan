@@ -19,7 +19,14 @@ export function RemoveBg() {
   const t = useScopedI18n('remove-bg.tool');
   const router = useRouter();
   const imageEditSchema = z.object({
-    image: z.instanceof(File, { message: t('form.image.message') }),
+    image: z
+      .any()
+      .refine((file) => file instanceof File || file === undefined, {
+        message: t('form.image.message'),
+      })
+      .refine((file) => file && file.size > 0, {
+        message: t('form.image.message'),
+      }),
   });
 
   const form = useForm<z.infer<typeof imageEditSchema>>({

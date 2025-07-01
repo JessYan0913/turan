@@ -68,7 +68,14 @@ export function StylePreset() {
 
   // Define the form schema using Zod
   const styleTransformSchema = z.object({
-    image: z.instanceof(File, { message: t('form.image.message') }),
+    image: z
+      .any()
+      .refine((file) => file instanceof File || file === undefined, {
+        message: t('form.image.message'),
+      })
+      .refine((file) => file && file.size > 0, {
+        message: t('form.image.message'),
+      }),
     style: z.string().min(1, { message: t('form.style.message') }),
   });
 
