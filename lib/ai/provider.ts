@@ -22,7 +22,11 @@ export const modelProvider = customProvider({
     'create-avatar-model': replicate.image('flux-kontext-apps/professional-headshot'),
     'old-photo-restore-model': replicate.image('black-forest-labs/flux-kontext-pro'),
     'style-transfer-model': replicate.image('black-forest-labs/flux-kontext-pro'),
-    'remove-bg-model': replicate.image('851-labs/background-remover'),
-    'resolution-improvement-model': replicate.image('nightmareai/real-esrgan'),
+    'remove-bg-model': replicate.image(
+      '851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc'
+    ),
+    'resolution-improvement-model': replicate.image(
+      'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa'
+    ),
   },
 });

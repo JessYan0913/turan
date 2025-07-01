@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       providerOptions: {
         replicate: {
           image: blobData.url,
-          scale: 2,
+          scale: 4,
           face_enhance: true,
         },
       },
