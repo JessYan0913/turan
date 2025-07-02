@@ -124,6 +124,84 @@ export function PredictionInfo({ prediction }: PredictionInfoProps) {
     );
   };
 
+  const renderInput = (): React.ReactNode => {
+    if (!prediction.input) return null;
+
+    try {
+      const input = prediction.input as unknown;
+
+      // 处理输入是对象且包含图片URL的情况
+      if (typeof input === 'object' && input !== null) {
+        // 检查对象中是否有图片URL字段
+        const imageFields = Object.entries(input).filter(
+          ([key, value]) =>
+            typeof value === 'string' &&
+            (value.startsWith('http') || value.startsWith('/')) &&
+            (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(value as string) || /^data:image\//i.test(value as string))
+        );
+
+        if (imageFields.length > 0) {
+          return (
+            <div className="space-y-4">
+              {/* 显示包含图片的字段 */}
+              {imageFields.map(([key, value]) => (
+                <div key={key} className="space-y-2">
+                  <p className="text-sm font-medium">{key}:</p>
+                  <div className="bg-card relative aspect-square w-full max-w-md overflow-hidden rounded-md border">
+                    <Image src={value as string} alt={`Input ${key}`} fill className="object-contain" unoptimized />
+                  </div>
+                </div>
+              ))}
+
+              {/* 显示其他非图片字段 */}
+              {Object.entries(input).filter(([key]) => !imageFields.some(([imgKey]) => imgKey === key)).length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Other parameters:</p>
+                  <pre className="bg-card whitespace-pre-wrap break-words rounded-md border p-4 text-sm">
+                    {JSON.stringify(
+                      Object.fromEntries(
+                        Object.entries(input).filter(([key]) => !imageFields.some(([imgKey]) => imgKey === key))
+                      ),
+                      null,
+                      2
+                    )}
+                  </pre>
+                </div>
+              )}
+            </div>
+          );
+        }
+      }
+
+      // 处理输入是字符串且是图片URL的情况
+      if (
+        typeof input === 'string' &&
+        (input.startsWith('http') || input.startsWith('/')) &&
+        (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(input) || /^data:image\//i.test(input))
+      ) {
+        return (
+          <div className="bg-card relative aspect-square w-full max-w-md overflow-hidden rounded-md border">
+            <Image src={input} alt="Input" fill className="object-contain" unoptimized />
+          </div>
+        );
+      }
+
+      // 默认情况：显示JSON
+      return (
+        <pre className="bg-card whitespace-pre-wrap break-words rounded-md border p-4 text-sm">
+          {JSON.stringify(input, null, 2)}
+        </pre>
+      );
+    } catch (error) {
+      console.error('Error rendering input:', error);
+      return (
+        <pre className="whitespace-pre-wrap break-words rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
+          Error displaying input: {error instanceof Error ? error.message : String(error)}
+        </pre>
+      );
+    }
+  };
+
   const renderMetrics = () => {
     if (!prediction.metrics) return null;
 
@@ -186,14 +264,10 @@ export function PredictionInfo({ prediction }: PredictionInfoProps) {
                 </div>
               </div>
             </div>
-            {typeof prediction.input === 'object' && prediction.input && Object.keys(prediction.input).length > 0 && (
+            {!!prediction.input && (
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">{t('prediction.input')}</h3>
-                <div className="bg-card rounded-md border p-4">
-                  <pre className="whitespace-pre-wrap break-words text-sm">
-                    {JSON.stringify(prediction.input, null, 2)}
-                  </pre>
-                </div>
+                <div className="bg-card rounded-md border p-4">{renderInput()}</div>
               </div>
             )}
 
