@@ -2,8 +2,6 @@
 
 import { and, count, desc, eq } from 'drizzle-orm';
 
-import { generateTitle } from '@/lib/actions/ai';
-import { saveOnlineImage } from '@/lib/actions/file-upload';
 import { db } from '@/lib/db/client';
 import {
   type Prediction,
@@ -27,7 +25,7 @@ export async function createPrediction(
         id: nanoid(),
         userId: user.id,
         status: prediction.status,
-        model: prediction.model,
+        tool: prediction.tool,
         version: prediction.version,
         input: prediction.input,
         output: prediction.output ?? null,
@@ -57,53 +55,81 @@ export async function createPrediction(
   });
 }
 
-type ProcessPredictionConfig = {
-  type: WorkType;
-  points: number;
-  getWorkData: (input: any, processedImageUrl: string) => Record<string, unknown>;
-};
-
-export async function processPrediction(user: User, prediction: Prediction, config: ProcessPredictionConfig) {
+export async function processFailedPrediction(user: User, points: number, prediction: Prediction) {
   try {
-    const [predication] = await db
+    const [existingPrediction] = await db
       .select()
       .from(predictionTable)
-      .where(and(eq(predictionTable.id, prediction.id), eq(predictionTable.status, 'starting')));
+      .where(
+        and(
+          eq(predictionTable.id, prediction.id),
+          eq(predictionTable.status, 'starting'),
+          eq(predictionTable.userId, user.id)
+        )
+      );
 
-    if (!predication) throw new Error('Prediction not found', { cause: prediction });
+    if (!existingPrediction) {
+      throw new Error('Prediction not found', { cause: prediction });
+    }
+    if (!['failed', 'canceled'].includes(prediction.status)) {
+      throw new Error('Prediction is not failed or canceled', { cause: prediction });
+    }
 
+    await db.transaction(async (tx) => {
+      await tx
+        .update(predictionTable)
+        .set({
+          status: prediction.status,
+          output: prediction.output,
+          error: prediction.error,
+          metrics: prediction.metrics,
+          completedAt: new Date(),
+        })
+        .where(eq(predictionTable.id, prediction.id));
+
+      const [updatedUser] = await tx
+        .update(userTable)
+        .set({ points: user.points + points })
+        .where(eq(userTable.id, user.id))
+        .returning();
+
+      await tx.insert(transactionTable).values({
+        userId: user.id,
+        amount: points,
+        type: 'payment' as const,
+        status: 'completed' as const,
+        balanceBefore: user.points,
+        balanceAfter: updatedUser.points,
+        predictionId: prediction.id,
+        metadata: prediction,
+      });
+    });
+
+    console.log('✅ Successfully processed failed prediction:', prediction.id);
+  } catch (error) {
+    console.error('❌ Error processing failed prediction:', error);
+    throw error;
+  }
+}
+
+export async function processSuccessfulPrediction(user: User, prediction: Prediction) {
+  try {
+    const [existingPrediction] = await db
+      .select()
+      .from(predictionTable)
+      .where(
+        and(
+          eq(predictionTable.id, prediction.id),
+          eq(predictionTable.status, 'starting'),
+          eq(predictionTable.userId, user.id)
+        )
+      );
+
+    if (!existingPrediction) {
+      throw new Error('Prediction not found', { cause: prediction });
+    }
     if (prediction.status !== 'succeeded') {
-      if (['failed', 'canceled'].includes(prediction.status)) {
-        await db.transaction(async (tx) => {
-          await tx
-            .update(predictionTable)
-            .set({
-              status: prediction.status,
-              output: prediction.output,
-              error: prediction.error,
-              metrics: prediction.metrics,
-              completedAt: new Date(),
-            })
-            .where(eq(predictionTable.id, prediction.id));
-          const [updatedUser] = await tx
-            .update(userTable)
-            .set({ points: user.points + config.points })
-            .where(eq(userTable.id, user.id))
-            .returning();
-          await tx.insert(transactionTable).values({
-            userId: user.id,
-            amount: config.points,
-            type: 'payment' as const,
-            status: 'completed' as const,
-            balanceBefore: user.points,
-            balanceAfter: updatedUser.points,
-            predictionId: prediction.id,
-            metadata: prediction,
-          });
-        });
-      }
-      console.log('Prediction not succeeded, status:', prediction.status);
-      return;
+      throw new Error('Prediction is not completed', { cause: prediction });
     }
 
     await db
@@ -117,9 +143,10 @@ export async function processPrediction(user: User, prediction: Prediction, conf
       })
       .where(eq(predictionTable.id, prediction.id));
 
-    console.log('✅ Successfully processed prediction:', prediction.id);
+    console.log('✅ Successfully processed successful prediction:', prediction.id);
   } catch (error) {
     console.error('❌ Error processing prediction:', error);
+    throw error;
   }
 }
 

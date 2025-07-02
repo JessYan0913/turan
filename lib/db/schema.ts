@@ -89,7 +89,7 @@ export const predictionTable = pgTable(
       .notNull()
       .references(() => userTable.id, { onDelete: 'cascade' }),
     status: predictionStatusEnum('status').notNull(),
-    model: varchar('model', { length: 255 }).notNull(),
+    tool: varchar('tool', { length: 255 }).notNull(),
     version: varchar('version', { length: 100 }).notNull(),
     input: jsonb('input').notNull(),
     output: jsonb('output'),
@@ -123,7 +123,8 @@ export type WorkType =
   | 'style-transfer'
   | 'style-extract'
   | 'photo-restore'
-  | 'remove-bg';
+  | 'remove-bg'
+  | 'resolution-improvement';
 
 export const workTable = pgTable(
   'work',
@@ -142,6 +143,7 @@ export const workTable = pgTable(
         'style-extract',
         'photo-restore',
         'remove-bg',
+        'resolution-improvement',
       ],
     }).notNull(),
     prompt: text('prompt').notNull().default(''),

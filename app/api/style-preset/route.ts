@@ -4,11 +4,13 @@ import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
 import { uploadFileToBlobStorage, uploadGeneratedImageToBlobStorage } from '@/lib/actions/file-upload';
-import { createPrediction, processPrediction } from '@/lib/actions/prediction';
+import { createPrediction, processFailedPrediction, processSuccessfulPrediction } from '@/lib/actions/prediction';
 import { modelProvider } from '@/lib/ai/provider';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db/client';
 import { userTable } from '@/lib/db/schema';
+
+const NEED_POINTS = 15;
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -25,7 +27,7 @@ export async function POST(request: Request) {
     redirect('/login');
   }
 
-  if (user.points < 15) {
+  if (user.points < NEED_POINTS) {
     return NextResponse.json({ success: false, message: 'Insufficient points' }, { status: 400 });
   }
 
@@ -47,11 +49,11 @@ export async function POST(request: Request) {
 
   const prompt = `${style} style`;
 
-  const prediction = await createPrediction(user, 15, {
+  const prediction = await createPrediction(user, NEED_POINTS, {
     status: 'starting',
     error: null,
     userId: user.id,
-    model: 'style-preset-model',
+    tool: 'style-preset',
     version: '1',
     input: {
       image: blobData.url,
@@ -77,50 +79,27 @@ export async function POST(request: Request) {
     });
 
     const resultBlobData = await uploadGeneratedImageToBlobStorage(image);
-    // createPrediction(user, 15, prediction);
     setImmediate(() => {
-      processPrediction(
-        user,
-        {
-          ...prediction,
-          output: resultBlobData,
-          status: 'succeeded',
-          metrics: responses,
-          completedAt: new Date(),
-        },
-        {
-          type: 'style-preset',
-          points: 15,
-          getWorkData: (input: any, processedImageUrl: string) => ({
-            prompt: input.prompt,
-            processedImageUrl,
-          }),
-        }
-      );
+      processSuccessfulPrediction(user, {
+        ...prediction,
+        output: resultBlobData,
+        status: 'succeeded',
+        metrics: responses,
+        completedAt: new Date(),
+      });
     });
 
     return NextResponse.json({ ...resultBlobData }, { status: 200 });
   } catch (error) {
     setImmediate(() => {
-      processPrediction(
-        user,
-        {
-          ...prediction,
-          output: null,
-          status: 'failed',
-          metrics: null,
-          error: error,
-          completedAt: new Date(),
-        },
-        {
-          type: 'style-preset',
-          points: 15,
-          getWorkData: (input: any, processedImageUrl: string) => ({
-            prompt: input.prompt,
-            processedImageUrl,
-          }),
-        }
-      );
+      processFailedPrediction(user, NEED_POINTS, {
+        ...prediction,
+        output: null,
+        status: 'failed',
+        metrics: null,
+        error: error,
+        completedAt: new Date(),
+      });
     });
     console.error('Error processing style transform:', error);
     return NextResponse.json(

@@ -169,6 +169,13 @@
       "when": 1751364917767,
       "tag": "0023_funny_the_call",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1751457490773,
+      "tag": "0024_clumsy_red_shift",
+      "breakpoints": true
     }
   ]
 }
