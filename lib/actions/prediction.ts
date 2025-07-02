@@ -11,7 +11,6 @@ import {
   transactionTable,
   type User,
   userTable,
-  workTable,
   type WorkType,
 } from '@/lib/db/schema';
 import { nanoid } from '@/lib/utils';
@@ -64,7 +63,7 @@ type ProcessPredictionConfig = {
   getWorkData: (input: any, processedImageUrl: string) => Record<string, unknown>;
 };
 
-export async function processPrediction(prediction: Prediction, config: ProcessPredictionConfig) {
+export async function processPrediction(user: User, prediction: Prediction, config: ProcessPredictionConfig) {
   try {
     const [predication] = await db
       .select()
@@ -73,11 +72,6 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
 
     if (!predication) throw new Error('Prediction not found', { cause: prediction });
 
-    const { prompt, userId } = prediction.input as { prompt: string; userId: string; [key: string]: any };
-    const [user] = await db.select().from(userTable).where(eq(userTable.id, userId));
-    if (!user) {
-      throw new Error('User not found', { cause: userId });
-    }
     if (prediction.status !== 'succeeded') {
       if (['failed', 'canceled'].includes(prediction.status)) {
         await db.transaction(async (tx) => {
@@ -94,10 +88,10 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
           const [updatedUser] = await tx
             .update(userTable)
             .set({ points: user.points + config.points })
-            .where(eq(userTable.id, userId))
+            .where(eq(userTable.id, user.id))
             .returning();
           await tx.insert(transactionTable).values({
-            userId,
+            userId: user.id,
             amount: config.points,
             type: 'payment' as const,
             status: 'completed' as const,
@@ -112,40 +106,16 @@ export async function processPrediction(prediction: Prediction, config: ProcessP
       return;
     }
 
-    const title = await generateTitle(prompt);
-    const processedImageBlob = await saveOnlineImage(
-      Array.isArray(prediction.output) ? prediction.output[0] : prediction.output
-    );
-
-    await db.transaction(async (tx) => {
-      const [updatedPrediction] = await tx
-        .update(predictionTable)
-        .set({
-          status: prediction.status,
-          output: prediction.output,
-          error: prediction.error,
-          metrics: prediction.metrics,
-          completedAt: new Date(),
-        })
-        .where(eq(predictionTable.id, prediction.id))
-        .returning();
-
-      const workData = {
-        userId,
-        title,
-        prompt,
-        type: config.type,
-        points: config.points,
-        processedImage: processedImageBlob.url,
-        metadata: prediction.metrics,
+    await db
+      .update(predictionTable)
+      .set({
+        status: prediction.status,
+        output: prediction.output,
+        error: prediction.error,
+        metrics: prediction.metrics,
         completedAt: new Date(),
-        predictTime: null,
-        predictionId: updatedPrediction.id,
-        ...config.getWorkData(prediction.input, processedImageBlob.url),
-      };
-
-      await tx.insert(workTable).values(workData);
-    });
+      })
+      .where(eq(predictionTable.id, prediction.id));
 
     console.log('✅ Successfully processed prediction:', prediction.id);
   } catch (error) {

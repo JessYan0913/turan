@@ -99,7 +99,7 @@ export function ImageEdit() {
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
                         {t('form.image.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('form.image.description')}</p>
+                      <p className="text-xs text-muted-foreground">{t('form.image.description')}</p>
                     </div>
                     <FormControl>
                       <ImageUploader onImageChange={onChange} disabled={isProcessing} />
@@ -118,7 +118,7 @@ export function ImageEdit() {
                       <FormLabel className="font-medium text-blue-700 dark:text-cyan-400">
                         {t('form.prompt.label')}
                       </FormLabel>
-                      <p className="text-muted-foreground text-xs">{t('form.prompt.description')}</p>
+                      <p className="text-xs text-muted-foreground">{t('form.prompt.description')}</p>
                     </div>
                     <FormControl>
                       <Textarea
@@ -196,7 +196,7 @@ export function ImageEdit() {
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('idle.title')}</h3>
-              <p className="text-muted-foreground mt-2 max-w-xs text-sm">{t('idle.subtitle')}</p>
+              <p className="mt-2 max-w-xs text-sm text-muted-foreground">{t('idle.subtitle')}</p>
             </div>
           </div>
 
@@ -212,7 +212,7 @@ export function ImageEdit() {
             </div>
             <div className="text-center">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">{'Processing...'}</h3>
-              <p className="text-muted-foreground mt-2 text-sm">{'Generating your image...'}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{'Generating your image...'}</p>
             </div>
           </div>
 
@@ -228,7 +228,7 @@ export function ImageEdit() {
             </div>
             <div>
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">{t('error.title')}</h3>
-              <p className="text-muted-foreground mt-2 text-sm">{t('error.subtitle')}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t('error.subtitle')}</p>
               <Button
                 className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
                 onClick={submit}

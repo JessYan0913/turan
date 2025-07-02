@@ -80,6 +80,7 @@ export async function POST(request: Request) {
     // createPrediction(user, 15, prediction);
     setImmediate(() => {
       processPrediction(
+        user,
         {
           ...prediction,
           output: resultBlobData,
@@ -102,6 +103,7 @@ export async function POST(request: Request) {
   } catch (error) {
     setImmediate(() => {
       processPrediction(
+        user,
         {
           ...prediction,
           output: null,
