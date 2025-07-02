@@ -21,7 +21,7 @@ export async function createPrediction(
   points: number,
   prediction: Omit<Prediction, 'id' | 'createdAt' | 'updatedAt' | 'startedAt' | 'completedAt'>
 ) {
-  await db.transaction(async (tx) => {
+  return await db.transaction(async (tx) => {
     const [insertedPrediction] = await tx
       .insert(predictionTable)
       .values({
@@ -54,6 +54,7 @@ export async function createPrediction(
       predictionId: insertedPrediction.id,
       metadata: prediction,
     });
+    return insertedPrediction;
   });
 }
 
