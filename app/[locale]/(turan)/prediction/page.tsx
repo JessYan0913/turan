@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+import { PredictionInfo } from '@/components/prediction-info';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -82,12 +83,13 @@ export default async function PredictionPage({ params, searchParams }: PageProps
             <TableHeader>
               <TableRow>
                 <TableHead>{t('table.id')}</TableHead>
-                <TableHead>{t('table.model')}</TableHead>
+                <TableHead>{t('table.tool')}</TableHead>
                 <TableHead>{t('table.prompt')}</TableHead>
                 <TableHead>{t('table.status')}</TableHead>
                 <TableHead className="text-right">{t('table.createdAt')}</TableHead>
                 <TableHead className="text-right">{t('table.startedAt')}</TableHead>
                 <TableHead className="text-right">{t('table.completedAt')}</TableHead>
+                <TableHead className="w-32">{t('table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -95,7 +97,7 @@ export default async function PredictionPage({ params, searchParams }: PageProps
                 predictions.map((prediction) => (
                   <TableRow key={prediction.id}>
                     <TableCell className="font-mono text-xs">{prediction.id.slice(0, 8)}...</TableCell>
-                    <TableCell>{prediction.model || 'N/A'}</TableCell>
+                    <TableCell>{prediction.tool || 'N/A'}</TableCell>
                     <TableCell className="max-w-[300px] truncate">
                       {(prediction.input as any)['prompt'] || 'N/A'}
                     </TableCell>
@@ -109,11 +111,14 @@ export default async function PredictionPage({ params, searchParams }: PageProps
                     <TableCell className="text-right">
                       {prediction.completedAt ? format(new Date(prediction.completedAt), 'yyyy-MM-dd HH:mm') : 'N/A'}
                     </TableCell>
+                    <TableCell>
+                      <PredictionInfo prediction={prediction} />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center">
+                  <TableCell colSpan={8} className="h-24 text-center">
                     {t('noRecords')}
                   </TableCell>
                 </TableRow>

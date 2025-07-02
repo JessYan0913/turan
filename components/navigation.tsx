@@ -203,6 +203,21 @@ export function Navigation({ user }: { user: User | undefined }) {
                     {t('pricing')}
                   </NavigationMenuLink>
                 </NavigationMenuItem>
+
+                {user && (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      href="/prediction"
+                      className={cn(
+                        'group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                        'hover:bg-accent hover:text-accent-foreground',
+                        'data-[active]:bg-accent/50 data-[active]:text-accent-foreground'
+                      )}
+                    >
+                      {t('prediction')}
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )}
               </NavigationMenuList>
             </NavigationMenu>
           </div>

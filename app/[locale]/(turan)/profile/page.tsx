@@ -247,7 +247,7 @@ export default async function ProfilePage() {
             <Card className="card-base">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-semibold">{t('prediction.title')}</CardTitle>
-                <Link href="/profile/prediction" className="text-sm text-blue-500 hover:underline">
+                <Link href="/prediction" className="text-sm text-blue-500 hover:underline">
                   {t('prediction.viewAll')}
                 </Link>
               </CardHeader>
@@ -279,7 +279,7 @@ export default async function ProfilePage() {
                             </span>
                             <span className="mx-2">•</span>
                             <span className="truncate">
-                              {typeof gen.model === 'string' ? gen.model.split('/').pop() : 'Unknown'}
+                              {typeof gen.tool === 'string' ? gen.tool.split('/').pop() : 'Unknown'}
                             </span>
                             {gen.completedAt && (
                               <>
